@@ -4,5 +4,26 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_DB")
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+}
+
+model User {
+  id              String   @id @unique @default(uuid()) @db.Uuid
+  alma_id         String   @unique @db.Uuid
+  name            String   @unique @db.VarChar(250)
+  social_name     String?  @db.VarChar(250)
+  role            UserRole
+  professional_id String?  @db.Uuid
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt()
+
+  professional User?  @relation("ProfessionalClients", fields: [professional_id], references: [id])
+  clients      User[] @relation("ProfessionalClients")
+
+  @@map("users")
 }
