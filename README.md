@@ -8,7 +8,7 @@ A API LUMIN é uma solução desenvolvida para Rosemeire, uma psicóloga que bus
 
 Além disso, a API LUMIN realiza uma integração com a <a href="https://github.com/rafittu/back-alma" target="_blank">API ALMA</a>, permitindo a comunicação entre as duas para determinadas tarefas. Por exemplo, a criação de um novo usuário na API LUMIN aciona a API ALMA para garantir a sincronização dos dados do usuário em ambos os sistemas. 
 
-Ao adotar o nome "LUMIN" para a API, mergulhamos na essência da luz como fonte de inspiração, representando a intenção de trazer clareza aos processos de atendimento e destacando-se como uma solução tecnológica, proporcionando aos usuários praticidade e eficiência em seu cotidiano profissional.
+Ao adotar o nome "LUMIN" para a API, mergulhamos na essência da luz como fonte de inspiração, representando a intenção de trazer clareza aos processos de atendimento e destacando-se como uma solução tecnológica que proporciona praticidade e eficiência aos usuários em seu cotidiano profissional.
 
 <br>
 
