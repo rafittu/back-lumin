@@ -8,7 +8,7 @@ import * as Joi from 'joi';
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
-        PORT: Joi.number().default(3000),
+        PORT: Joi.number().default(3001),
         DATABASE_URL: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
         POSTGRES_USER: Joi.string().required(),
