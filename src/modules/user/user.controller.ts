@@ -23,7 +23,7 @@ export class UserController {
 
   @Post('/admin')
   createAdminUser(@Body() createUserDto: CreateUserDto) {
-    return this.adminUserService.create(createUserDto);
+    return this.adminUserService.execute(createUserDto);
   }
 
   // @Post('/client')
