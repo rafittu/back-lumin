@@ -1,3 +1,3 @@
-export interface IUser {}
+export interface AdminUser {}
 
 export interface UserFilter {}
