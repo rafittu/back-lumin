@@ -6,7 +6,7 @@ export interface IUserRepository {
   createAdminUser(data: CreateUserDto, role: UserRole): Promise<AdminUser>;
 }
 
-export interface PostAlmaUser {
+export interface AlmaUser {
   id: string;
   personal: {
     id: string;
@@ -14,7 +14,7 @@ export interface PostAlmaUser {
     socialName: string;
   };
   contact: {
-    id: 345678;
+    id: string;
     username: string;
     email: string;
   };
