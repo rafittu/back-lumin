@@ -26,8 +26,6 @@ model User {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt()
 
-  professional       User?               @relation("ProfessionalClients", fields: [id], references: [id])
-  clients            User[]              @relation("ProfessionalClients")
   schedulers         Scheduler[]         @relation("SchedulerProfessional")
   appointmentRecords AppointmentRecord[] @relation("AppointmentRecordProfessional")
   clientRecords      AppointmentRecord[] @relation("AppointmentRecordClient")
