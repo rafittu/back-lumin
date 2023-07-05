@@ -16,11 +16,8 @@ export class UserRepository implements IUserRepository {
       const response = await axios.post(path, body);
       return response.data;
     } catch (error) {
-      throw new AppError(
-        error.response.data.error.status,
-        error.response.data.error.code,
-        error.response.data.error.message,
-      );
+      const { status, code, message } = error.response.data.error;
+      throw new AppError(status, code, message);
     }
   }
 
