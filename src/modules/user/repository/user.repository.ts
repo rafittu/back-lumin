@@ -42,7 +42,19 @@ export class UserRepository implements IUserRepository {
         },
       });
 
-      return user;
+      const { id, alma_id, name, social_name, created_at, updated_at } = user;
+      const userResponse = {
+        id: id,
+        almaId: alma_id,
+        name: name,
+        socialName: social_name,
+        email: createUser.email,
+        role,
+        createdAt: created_at,
+        updatedAt: updated_at,
+      };
+
+      return userResponse;
     } catch (error) {
       if (error instanceof AppError) {
         throw new AppError(

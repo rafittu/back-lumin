@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserFilter } from './interfaces/user.interface';
+import { AdminUser, UserFilter } from './interfaces/user.interface';
 import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
 import { AppError } from '../../common/errors/Error';
 import { CreateAdminUserService } from './services/user-admin.service';
@@ -22,7 +22,7 @@ export class UserController {
   constructor(private readonly adminUserService: CreateAdminUserService) {}
 
   @Post('/admin')
-  createAdminUser(@Body() createUserDto: CreateUserDto) {
+  createAdminUser(@Body() createUserDto: CreateUserDto): Promise<AdminUser> {
     return this.adminUserService.execute(createUserDto);
   }
 
