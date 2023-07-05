@@ -19,6 +19,7 @@ Este projeto utiliza as seguintes tecnologias:
 - **Node.js** com framework **NestJS** e **TypeScript**;
 - **Prisma ORM** para comunicação e manipulação do banco de dados;
 - **Docker** como uma ferramenta de containerização;
+- **Axios** para realizar requisições HTTP;
 
 <br>
 
