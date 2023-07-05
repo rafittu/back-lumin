@@ -31,10 +31,16 @@ export class UserRepository implements IUserRepository {
     const signUpPath: string = process.env.SIGNUP_PATH;
 
     try {
-      const user = await this.almaPostRequest(signUpPath, createUser);
+      const almaUser = await this.almaPostRequest(signUpPath, createUser);
 
-      // format alma user
-      // create lumin user
+      const user = await this.prisma.user.create({
+        data: {
+          alma_id: almaUser.id,
+          name: `${createUser.firstName} ${createUser.lastName}`,
+          social_name: createUser.socialName,
+          role,
+        },
+      });
 
       return user;
     } catch (error) {
