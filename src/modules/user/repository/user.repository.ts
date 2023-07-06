@@ -6,6 +6,7 @@ import { UserRole } from '../enum/user-role.enum';
 import { IUserRepository, AlmaUser } from '../interfaces/repository.interface';
 import { User } from '../interfaces/user.interface';
 import axios from 'axios';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -55,6 +56,14 @@ export class UserRepository implements IUserRepository {
           'user-repository.createAdminUser',
           400,
           error.message,
+        );
+      }
+
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new AppError(
+          `user-repository.createAdminUser`,
+          400,
+          `[ '${error.meta?.target}' ] already in use`,
         );
       }
 
