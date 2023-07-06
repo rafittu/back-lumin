@@ -4,7 +4,7 @@ import { AppError } from '../../../common/errors/Error';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserRole } from '../enum/user-role.enum';
 import { IUserRepository, AlmaUser } from '../interfaces/repository.interface';
-import { AdminUser } from '../interfaces/user.interface';
+import { User } from '../interfaces/user.interface';
 import axios from 'axios';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class UserRepository implements IUserRepository {
   async createAdminUser(
     createUser: CreateUserDto,
     role: UserRole,
-  ): Promise<AdminUser> {
+  ): Promise<User> {
     const signUpPath: string = process.env.SIGNUP_PATH;
 
     try {

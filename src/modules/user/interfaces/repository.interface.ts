@@ -1,9 +1,9 @@
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserRole } from '../enum/user-role.enum';
-import { AdminUser } from './user.interface';
+import { User } from './user.interface';
 
 export interface IUserRepository {
-  createAdminUser(data: CreateUserDto, role: UserRole): Promise<AdminUser>;
+  createAdminUser(data: CreateUserDto, role: UserRole): Promise<User>;
 }
 
 export interface AlmaUser {
