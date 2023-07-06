@@ -21,10 +21,7 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  async createAdminUser(
-    createUser: CreateUserDto,
-    role: UserRole,
-  ): Promise<User> {
+  async createUser(createUser: CreateUserDto, role: UserRole): Promise<User> {
     const signUpPath: string = process.env.SIGNUP_PATH;
 
     try {

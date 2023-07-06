@@ -13,6 +13,6 @@ export class CreateAdminUserService {
   ) {}
 
   execute(data: CreateUserDto): Promise<User> {
-    return this.userRepository.createAdminUser(data, UserRole.ADMIN);
+    return this.userRepository.createUser(data, UserRole.ADMIN);
   }
 }

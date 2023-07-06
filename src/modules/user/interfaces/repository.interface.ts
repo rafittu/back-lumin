@@ -3,7 +3,7 @@ import { UserRole } from '../enum/user-role.enum';
 import { User } from './user.interface';
 
 export interface IUserRepository {
-  createAdminUser(data: CreateUserDto, role: UserRole): Promise<User>;
+  createUser(data: CreateUserDto, role: UserRole): Promise<User>;
 }
 
 export interface AlmaUser {
