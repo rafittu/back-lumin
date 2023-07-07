@@ -74,4 +74,42 @@ export class UserRepository implements IUserRepository {
       );
     }
   }
+
+  getProfessionalClients = async (professionalId: string) => {
+    try {
+      const appointmentRecords = await this.prisma.appointmentRecord.findMany({
+        where: {
+          professional_id: professionalId,
+        },
+        select: {
+          appointment: {
+            select: {
+              id: true,
+              client_name: true,
+              client_phone: true,
+            },
+          },
+        },
+      });
+
+      const clients = appointmentRecords.map((record) => ({
+        id: record.appointment.id,
+        name: record.appointment.client_name,
+        phone: record.appointment.client_phone,
+      }));
+
+      const result = {
+        professionalId,
+        clients,
+      };
+
+      return result;
+    } catch (error) {
+      throw new AppError(
+        'user-repository.getClientsByFilter',
+        500,
+        'could not get clients',
+      );
+    }
+  };
 }
