@@ -75,7 +75,7 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  getProfessionalClients = async (professionalId: string) => {
+  getClients = async (professionalId: string) => {
     try {
       const appointmentRecords = await this.prisma.appointmentRecord.findMany({
         where: {
