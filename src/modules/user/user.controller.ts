@@ -1,10 +1,12 @@
-import { Controller, Post, Body, UseFilters } from '@nestjs/common';
+import { Controller, Post, Body, UseFilters, Get, Query } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './interfaces/user.interface';
 import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
 import { AppError } from '../../common/errors/Error';
 import { CreateAdminUserService } from './services/user-admin.service';
 import { CreateClientUserService } from './services/user-client.service';
+import { GetClientsService } from './services/get-clients.service';
+import { ClientFilter } from './enum/client-filter.enum';
 
 @Controller('user')
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -12,6 +14,7 @@ export class UserController {
   constructor(
     private readonly adminUserService: CreateAdminUserService,
     private readonly clientUserService: CreateClientUserService,
+    private readonly getClientsService: GetClientsService,
   ) {}
 
   @Post('/admin')
@@ -24,10 +27,10 @@ export class UserController {
     return this.clientUserService.execute(createUserDto);
   }
 
-  // @Get()
-  // findAllByFilter(@Query('filter') filter: UserFilter) {
-  //   return this.userService.findAll();
-  // }
+  @Get('/professional/:id')
+  findAllByFilter(@Query('filter') filter: ClientFilter) {
+    return this.getClientsService.execute(filter);
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
