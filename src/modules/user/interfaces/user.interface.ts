@@ -10,11 +10,12 @@ export interface User {
 }
 
 export interface Client {
-  client: string;
+  id: string;
+  name: string;
   phone: string;
 }
 
-export interface ClientsByFilter {
-  professional_id: string;
+export interface ProfessionalClients {
+  professionalId: string;
   clients: Client[];
 }
