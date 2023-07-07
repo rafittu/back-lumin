@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma.service';
 import { UserRepository } from './repository/user.repository';
 import { CreateAdminUserService } from './services/user-admin.service';
 import { CreateClientUserService } from './services/user-client.service';
+import { GetClientsService } from './services/get-clients.service';
 
 @Module({
   controllers: [UserController],
@@ -12,6 +13,7 @@ import { CreateClientUserService } from './services/user-client.service';
     UserRepository,
     CreateAdminUserService,
     CreateClientUserService,
+    GetClientsService,
   ],
 })
 export class UserModule {}
