@@ -1,10 +1,11 @@
-import { Controller, Post, Body, UseFilters } from '@nestjs/common';
+import { Controller, Post, Body, UseFilters, Get, Param } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './interfaces/user.interface';
+import { ProfessionalClients, User } from './interfaces/user.interface';
 import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
 import { AppError } from '../../common/errors/Error';
 import { CreateAdminUserService } from './services/user-admin.service';
 import { CreateClientUserService } from './services/user-client.service';
+import { GetClientsService } from './services/get-clients.service';
 
 @Controller('user')
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -12,6 +13,7 @@ export class UserController {
   constructor(
     private readonly adminUserService: CreateAdminUserService,
     private readonly clientUserService: CreateClientUserService,
+    private readonly getClientsService: GetClientsService,
   ) {}
 
   @Post('/admin')
@@ -20,14 +22,16 @@ export class UserController {
   }
 
   @Post('/client')
-  createClientUser(@Body() createUserDto: CreateUserDto) {
+  createClientUser(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.clientUserService.execute(createUserDto);
   }
 
-  // @Get()
-  // findAllByFilter(@Query('filter') filter: UserFilter) {
-  //   return this.userService.findAll();
-  // }
+  @Get('/professional/:id')
+  findAllProfessionalClients(
+    @Param('id') professionalId: string,
+  ): Promise<ProfessionalClients> {
+    return this.getClientsService.execute(professionalId);
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {
