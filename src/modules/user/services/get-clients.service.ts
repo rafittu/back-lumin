@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UserRepository } from '../repository/user.repository';
 import { IUserRepository } from '../interfaces/repository.interface';
-import { ClientsByFilter } from '../interfaces/user.interface';
+import { ProfessionalClients } from '../interfaces/user.interface';
 
 @Injectable()
 export class GetClientsService {
@@ -10,7 +10,7 @@ export class GetClientsService {
     private userRepository: IUserRepository,
   ) {}
 
-  execute(professionalId: string): Promise<ClientsByFilter> {
+  execute(professionalId: string): Promise<ProfessionalClients> {
     return this.userRepository.getClients(professionalId);
   }
 }

@@ -4,7 +4,7 @@ import { AppError } from '../../../common/errors/Error';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserRole } from '../enum/user-role.enum';
 import { IUserRepository, AlmaUser } from '../interfaces/repository.interface';
-import { User } from '../interfaces/user.interface';
+import { ProfessionalClients, User } from '../interfaces/user.interface';
 import axios from 'axios';
 import { Prisma } from '@prisma/client';
 
@@ -75,7 +75,7 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  getClients = async (professionalId: string) => {
+  getClients = async (professionalId: string): Promise<ProfessionalClients> => {
     try {
       const appointmentRecords = await this.prisma.appointmentRecord.findMany({
         where: {

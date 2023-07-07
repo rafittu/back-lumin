@@ -1,6 +1,6 @@
 import { Controller, Post, Body, UseFilters, Get, Param } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './interfaces/user.interface';
+import { ProfessionalClients, User } from './interfaces/user.interface';
 import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
 import { AppError } from '../../common/errors/Error';
 import { CreateAdminUserService } from './services/user-admin.service';
@@ -27,7 +27,9 @@ export class UserController {
   }
 
   @Get('/professional/:id')
-  findAllProfessionalClients(@Param('id') professionalId: string) {
+  findAllProfessionalClients(
+    @Param('id') professionalId: string,
+  ): Promise<ProfessionalClients> {
     return this.getClientsService.execute(professionalId);
   }
 
