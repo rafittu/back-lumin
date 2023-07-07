@@ -9,4 +9,12 @@ export interface User {
   role: UserRole;
 }
 
-export interface UserFilter {}
+export interface Client {
+  client: string;
+  phone: string;
+}
+
+export interface ClientsByFilter {
+  professional_id: string;
+  clients: Client[];
+}
