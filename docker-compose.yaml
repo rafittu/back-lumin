@@ -12,3 +12,9 @@ services:
       - ${POSTGRES_HOST_CONTAINER}
     volumes:
       - .docker/dbdata:/var/lib/postgresql/data
+
+  redis-lumin:
+    image: redis:latest
+    restart: 'no'
+    ports:
+      - ${REDIS_HOST_CONTAINER}

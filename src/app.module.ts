@@ -4,8 +4,8 @@ import { PrismaService } from './prisma.service';
 import { UserModule } from './modules/user/user.module';
 import * as Joi from 'joi';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './common/authentication/guards/jwt-auth-.guard';
-import { JwtStrategy } from './common/authentication/strategies/jwt.strategy';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtAuthGuard } from './modules/auth/infra/guards/jwt-auth-.guard';
 
 @Module({
   imports: [
@@ -19,9 +19,16 @@ import { JwtStrategy } from './common/authentication/strategies/jwt.strategy';
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_HOST_CONTAINER: Joi.string().required(),
         SIGNUP_PATH: Joi.string().required(),
+        SIGNIN_PATH: Joi.string().required(),
+        GET_ME_PATH: Joi.string().required(),
+        REDIS_HOST_CONTAINER: Joi.string().required(),
+        REDIS_CONFIG_HOST: Joi.string().required(),
+        REDIS_CONFIG_PORT: Joi.number().required(),
+        JWT_SECRET: Joi.string().required(),
       }),
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [
@@ -30,7 +37,6 @@ import { JwtStrategy } from './common/authentication/strategies/jwt.strategy';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-    JwtStrategy,
   ],
 })
 export class AppModule {}
