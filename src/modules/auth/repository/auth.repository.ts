@@ -42,14 +42,19 @@ export class AuthRepository implements IAuthRepository {
         credentialsDto,
       );
 
-      // get almaId from accessToken
-      const userAlmaId = await this.almaGetRequest(getMePath, accessToken);
+      const { id } = await this.almaGetRequest(getMePath, accessToken);
 
-      // get user role by almaId
+      const { role } = await this.prisma.user.findFirst({
+        where: {
+          alma_id: id,
+        },
+        select: {
+          role: true,
+        },
+      });
 
-      return accessToken;
+      return { accessToken, role };
     } catch (error) {
-      // console.log(error);
       if (error instanceof AppError) {
         throw new AppError('auth-repository.signIn', 500, error.message);
       }
