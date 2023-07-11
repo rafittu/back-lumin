@@ -6,7 +6,7 @@ import { AppError } from '../../common/errors/Error';
 import { CreateAdminUserService } from './services/user-admin.service';
 import { CreateClientUserService } from './services/user-client.service';
 import { GetClientsService } from './services/get-clients.service';
-import { isPublic } from 'src/common/authentication/decorators/is-public.decorator';
+import { isPublic } from 'src/modules/auth/infra/decorators/is-public.decorator';
 
 @Controller('user')
 @UseFilters(new HttpExceptionFilter(new AppError()))

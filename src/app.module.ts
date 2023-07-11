@@ -4,9 +4,8 @@ import { PrismaService } from './prisma.service';
 import { UserModule } from './modules/user/user.module';
 import * as Joi from 'joi';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './common/authentication/guards/jwt-auth-.guard';
-import { JwtStrategy } from './common/authentication/strategies/jwt.strategy';
 import { AuthModule } from './modules/auth/auth.module';
+import { JwtAuthGuard } from './modules/auth/infra/guards/jwt-auth-.guard';
 
 @Module({
   imports: [
@@ -32,7 +31,6 @@ import { AuthModule } from './modules/auth/auth.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-    JwtStrategy,
   ],
 })
 export class AppModule {}
