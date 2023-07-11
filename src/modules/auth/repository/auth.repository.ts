@@ -4,10 +4,14 @@ import axios from 'axios';
 import { IAuthRepository } from '../interfaces/repository.interface';
 import { AppError } from '../../../common/errors/Error';
 import { JwtToken, UserCredentials } from '../interfaces/auth.interface';
+import { RedisCacheService } from '../infra/cache/redis-cache.service';
 
 @Injectable()
 export class AuthRepository implements IAuthRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly redisCacheService: RedisCacheService,
+  ) {}
 
   private async almaPostRequest(path: string, body: object) {
     try {
@@ -53,6 +57,9 @@ export class AuthRepository implements IAuthRepository {
           role: true,
         },
       });
+
+      const redisExpirationTime = 60 * 60 * 24 * 27;
+      await this.redisCacheService.set(accessToken, role, redisExpirationTime);
 
       return { accessToken };
     } catch (error) {
