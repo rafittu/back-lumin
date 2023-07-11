@@ -3,6 +3,7 @@ import { PrismaService } from '../../../prisma.service';
 import axios from 'axios';
 import { IAuthRepository } from '../interfaces/repository.interface';
 import { AppError } from '../../../common/errors/Error';
+import { JwtToken, UserCredentials } from '../interfaces/auth.interface';
 
 @Injectable()
 export class AuthRepository implements IAuthRepository {
@@ -32,14 +33,14 @@ export class AuthRepository implements IAuthRepository {
     }
   }
 
-  async signIn(credentialsDto) {
+  async signIn(credentials: UserCredentials): Promise<JwtToken> {
     const signInPath: string = process.env.SIGNIN_PATH;
     const getMePath: string = process.env.GET_ME_PATH;
 
     try {
       const { accessToken } = await this.almaPostRequest(
         signInPath,
-        credentialsDto,
+        credentials,
       );
 
       const { id } = await this.almaGetRequest(getMePath, accessToken);
@@ -53,7 +54,7 @@ export class AuthRepository implements IAuthRepository {
         },
       });
 
-      return { accessToken, role };
+      return { accessToken };
     } catch (error) {
       if (error instanceof AppError) {
         throw new AppError('auth-repository.signIn', 500, error.message);

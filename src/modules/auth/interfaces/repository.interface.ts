@@ -1,3 +1,5 @@
+import { JwtToken, UserCredentials } from './auth.interface';
+
 export interface IAuthRepository {
-  signIn(credentialsDto);
+  signIn(credentials: UserCredentials): Promise<JwtToken>;
 }

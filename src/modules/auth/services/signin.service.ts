@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { AuthRepository } from '../repository/auth.repository';
 import { IAuthRepository } from '../interfaces/repository.interface';
+import { JwtToken, UserCredentials } from '../interfaces/auth.interface';
 
 @Injectable()
 export class SignInService {
@@ -9,7 +10,7 @@ export class SignInService {
     private authRepository: IAuthRepository,
   ) {}
 
-  execute(credentialsDto) {
-    return this.authRepository.signIn(credentialsDto);
+  execute(credentials: UserCredentials): Promise<JwtToken> {
+    return this.authRepository.signIn(credentials);
   }
 }
