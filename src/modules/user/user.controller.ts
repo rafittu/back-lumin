@@ -6,6 +6,7 @@ import { AppError } from '../../common/errors/Error';
 import { CreateAdminUserService } from './services/user-admin.service';
 import { CreateClientUserService } from './services/user-client.service';
 import { GetClientsService } from './services/get-clients.service';
+import { isPublic } from 'src/common/authentication/decorators/is-public.decorator';
 
 @Controller('user')
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -16,11 +17,13 @@ export class UserController {
     private readonly getClientsService: GetClientsService,
   ) {}
 
+  @isPublic()
   @Post('/admin')
   createAdminUser(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.adminUserService.execute(createUserDto);
   }
 
+  @isPublic()
   @Post('/client')
   createClientUser(@Body() createUserDto: CreateUserDto): Promise<User> {
     return this.clientUserService.execute(createUserDto);
