@@ -6,6 +6,7 @@ import * as Joi from 'joi';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './common/authentication/guards/jwt-auth-.guard';
 import { JwtStrategy } from './common/authentication/strategies/jwt.strategy';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { JwtStrategy } from './common/authentication/strategies/jwt.strategy';
       }),
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [
