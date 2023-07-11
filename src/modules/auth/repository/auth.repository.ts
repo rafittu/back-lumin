@@ -33,6 +33,7 @@ export class AuthRepository implements IAuthRepository {
 
       return accessToken;
     } catch (error) {
+      console.log(error);
       if (error instanceof AppError) {
         throw new AppError('auth-repository.signIn', 500, error.message);
       }
