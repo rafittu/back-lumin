@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseFilters, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseFilters,
+  Get,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ProfessionalClients, User } from './interfaces/user.interface';
 import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
@@ -7,9 +15,13 @@ import { CreateAdminUserService } from './services/user-admin.service';
 import { CreateClientUserService } from './services/user-client.service';
 import { GetClientsService } from './services/get-clients.service';
 import { isPublic } from 'src/modules/auth/infra/decorators/is-public.decorator';
+import { Roles } from '../auth/infra/decorators/role.decorator';
+import { UserRole } from './enum/user-role.enum';
+import { RolesGuard } from '../auth/infra/guards/role.guard';
 
-@Controller('user')
+@UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
+@Controller('user')
 export class UserController {
   constructor(
     private readonly adminUserService: CreateAdminUserService,
@@ -30,6 +42,7 @@ export class UserController {
   }
 
   @Get('/professional/:id')
+  @Roles(UserRole.ADMIN)
   findAllProfessionalClients(
     @Param('id') professionalId: string,
   ): Promise<ProfessionalClients> {
