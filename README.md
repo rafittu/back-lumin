@@ -20,6 +20,8 @@ Este projeto utiliza as seguintes tecnologias:
 - **Prisma ORM** para comunicação e manipulação do banco de dados;
 - **Docker** como uma ferramenta de containerização;
 - **Axios** para realizar requisições HTTP;
+- **JWT Passport** para autenticação e autorização baseada em tokens JWT;
+- **Redis** para cache e armazenamento de dados em memória;
 
 <br>
 
