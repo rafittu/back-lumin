@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ProfessionalClients, User } from './interfaces/user.interface';
@@ -18,6 +19,7 @@ import { isPublic } from 'src/modules/auth/infra/decorators/is-public.decorator'
 import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from './enum/user-role.enum';
 import { RolesGuard } from '../auth/infra/guards/role.guard';
+import { GetUserService } from './services/get-user.service';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -27,6 +29,7 @@ export class UserController {
     private readonly adminUserService: CreateAdminUserService,
     private readonly clientUserService: CreateClientUserService,
     private readonly getClientsService: GetClientsService,
+    private readonly getUserService: GetUserService,
   ) {}
 
   @isPublic()
@@ -49,10 +52,10 @@ export class UserController {
     return this.getClientsService.execute(professionalId);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.userService.findOne(+id);
-  // }
+  @Get('/user/:id')
+  findUser(@Param('id') userId: string) {
+    return this.getUserService.execute(userId);
+  }
 
   // @Patch('/update/:id')
   // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
