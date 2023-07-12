@@ -106,10 +106,24 @@ export class UserRepository implements IUserRepository {
       return result;
     } catch (error) {
       throw new AppError(
-        'user-repository.getClientsByFilter',
+        'user-repository.getClients',
         500,
         'could not get clients',
       );
+    }
+  };
+
+  getUser = async (userId: string) => {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: {
+          id: userId,
+        },
+      });
+
+      return user;
+    } catch (error) {
+      throw new AppError('user-repository.getUser', 500, 'could not get user');
     }
   };
 }
