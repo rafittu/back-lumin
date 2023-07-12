@@ -5,7 +5,7 @@ import { ProfessionalClients, User } from './user.interface';
 export interface IUserRepository {
   createUser(data: CreateUserDto, role: UserRole): Promise<User>;
   getClients(professionalId: string): Promise<ProfessionalClients>;
-  getUser(userId: string);
+  getUser(userId: string, accessToken: string);
 }
 
 export interface AlmaUser {

@@ -6,7 +6,6 @@ import {
   Get,
   Param,
   UseGuards,
-  Query,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ProfessionalClients, User } from './interfaces/user.interface';
@@ -20,6 +19,7 @@ import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from './enum/user-role.enum';
 import { RolesGuard } from '../auth/infra/guards/role.guard';
 import { GetUserService } from './services/get-user.service';
+import { AccessToken } from '../auth/infra/decorators/access-token.decorator';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -53,8 +53,8 @@ export class UserController {
   }
 
   @Get('/user/:id')
-  findUser(@Param('id') userId: string) {
-    return this.getUserService.execute(userId);
+  findUser(@Param('id') userId: string, @AccessToken() accessToken: string) {
+    return this.getUserService.execute(userId, accessToken);
   }
 
   // @Patch('/update/:id')

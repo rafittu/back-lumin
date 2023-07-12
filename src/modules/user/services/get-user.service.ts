@@ -9,7 +9,7 @@ export class GetUserService {
     private userRepository: IUserRepository,
   ) {}
 
-  execute(userId: string) {
-    return this.userRepository.getUser(userId);
+  execute(userId: string, accessToken: string) {
+    return this.userRepository.getUser(userId, accessToken);
   }
 }

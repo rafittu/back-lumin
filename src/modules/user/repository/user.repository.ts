@@ -113,7 +113,7 @@ export class UserRepository implements IUserRepository {
     }
   };
 
-  getUser = async (userId: string) => {
+  getUser = async (userId: string, accessToken: string) => {
     try {
       const user = await this.prisma.user.findFirst({
         where: {
