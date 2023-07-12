@@ -1,11 +1,11 @@
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserRole } from '../enum/user-role.enum';
-import { ProfessionalClients, User } from './user.interface';
+import { ProfessionalClients, User, UserData } from './user.interface';
 
 export interface IUserRepository {
   createUser(data: CreateUserDto, role: UserRole): Promise<User>;
   getClients(professionalId: string): Promise<ProfessionalClients>;
-  getUser(userId: string, accessToken: string);
+  getUser(userId: string, accessToken: string): Promise<UserData>;
 }
 
 export interface AlmaUser {

@@ -8,7 +8,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ProfessionalClients, User } from './interfaces/user.interface';
+import {
+  ProfessionalClients,
+  User,
+  UserData,
+} from './interfaces/user.interface';
 import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
 import { AppError } from '../../common/errors/Error';
 import { CreateAdminUserService } from './services/user-admin.service';
@@ -53,7 +57,10 @@ export class UserController {
   }
 
   @Get('/user/:id')
-  findUser(@Param('id') userId: string, @AccessToken() accessToken: string) {
+  findUser(
+    @Param('id') userId: string,
+    @AccessToken() accessToken: string,
+  ): Promise<UserData> {
     return this.getUserService.execute(userId, accessToken);
   }
 
