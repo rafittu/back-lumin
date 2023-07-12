@@ -21,6 +21,7 @@ import { JwtAuthGuard } from './modules/auth/infra/guards/jwt-auth-.guard';
         SIGNUP_PATH: Joi.string().required(),
         SIGNIN_PATH: Joi.string().required(),
         GET_ME_PATH: Joi.string().required(),
+        GET_USER_PATH: Joi.string().required(),
         REDIS_HOST_CONTAINER: Joi.string().required(),
         REDIS_CONFIG_HOST: Joi.string().required(),
         REDIS_CONFIG_PORT: Joi.number().required(),

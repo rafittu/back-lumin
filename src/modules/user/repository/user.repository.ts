@@ -4,7 +4,11 @@ import { AppError } from '../../../common/errors/Error';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserRole } from '../enum/user-role.enum';
 import { IUserRepository, AlmaUser } from '../interfaces/repository.interface';
-import { ProfessionalClients, User } from '../interfaces/user.interface';
+import {
+  ProfessionalClients,
+  User,
+  UserData,
+} from '../interfaces/user.interface';
 import axios from 'axios';
 import { Prisma } from '@prisma/client';
 
@@ -15,6 +19,20 @@ export class UserRepository implements IUserRepository {
   private async almaPostRequest(path: string, body: object): Promise<AlmaUser> {
     try {
       const response = await axios.post(path, body);
+      return response.data;
+    } catch (error) {
+      const { status, code, message } = error.response.data.error;
+      throw new AppError(status, code, message);
+    }
+  }
+
+  private async almaGetRequest(path: string, accessToken: string) {
+    try {
+      const response = await axios.get(path, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       return response.data;
     } catch (error) {
       const { status, code, message } = error.response.data.error;
@@ -106,10 +124,50 @@ export class UserRepository implements IUserRepository {
       return result;
     } catch (error) {
       throw new AppError(
-        'user-repository.getClientsByFilter',
+        'user-repository.getClients',
         500,
         'could not get clients',
       );
+    }
+  };
+
+  getUser = async (userId: string, accessToken: string): Promise<UserData> => {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: {
+          id: userId,
+        },
+      });
+
+      const getUserPath = `${process.env.GET_USER_PATH}/${user.alma_id}`;
+      const userAlmaData = await this.almaGetRequest(getUserPath, accessToken);
+
+      const { socialName, bornDate, motherName } = userAlmaData.personal;
+      const { username, email, phone } = userAlmaData.contact;
+      const { status } = userAlmaData.security;
+      const { id, name, created_at, updated_at } = user;
+
+      const userData = {
+        id,
+        name,
+        socialName,
+        bornDate,
+        motherName,
+        username,
+        email,
+        phone,
+        status,
+        createdAt: created_at,
+        updatedAt: updated_at,
+      };
+
+      return userData;
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw new AppError('user-repository.getUser', 503, error.message);
+      }
+
+      throw new AppError('user-repository.getUser', 500, 'could not get user');
     }
   };
 }
