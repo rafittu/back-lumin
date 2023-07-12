@@ -22,6 +22,20 @@ export class UserRepository implements IUserRepository {
     }
   }
 
+  private async almaGetRequest(path: string, accessToken: string) {
+    try {
+      const response = await axios.get(path, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      const { status, code, message } = error.response.data.error;
+      throw new AppError(status, code, message);
+    }
+  }
+
   async createUser(createUser: CreateUserDto, role: UserRole): Promise<User> {
     const signUpPath: string = process.env.SIGNUP_PATH;
 
@@ -121,8 +135,34 @@ export class UserRepository implements IUserRepository {
         },
       });
 
-      return user;
+      const getUserPath = `${process.env.GET_USER_PATH}/${user.alma_id}`;
+      const userAlmaData = await this.almaGetRequest(getUserPath, accessToken);
+
+      const { socialName, bornDate, motherName } = userAlmaData.personal;
+      const { username, email, phone } = userAlmaData.contact;
+      const { status } = userAlmaData.security;
+      const { id, name, created_at, updated_at } = user;
+
+      const userData = {
+        id,
+        name,
+        socialName,
+        bornDate,
+        motherName,
+        username,
+        email,
+        phone,
+        status,
+        createdAt: created_at,
+        updatedAt: updated_at,
+      };
+
+      return userData;
     } catch (error) {
+      if (error instanceof AppError) {
+        throw new AppError('user-repository.getUser', 503, error.message);
+      }
+
       throw new AppError('user-repository.getUser', 500, 'could not get user');
     }
   };
