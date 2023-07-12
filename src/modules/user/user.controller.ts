@@ -23,7 +23,7 @@ import { GetUserService } from './services/get-user.service';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(
     private readonly adminUserService: CreateAdminUserService,
