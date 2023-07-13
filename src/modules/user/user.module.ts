@@ -7,6 +7,7 @@ import { CreateClientUserService } from './services/user-client.service';
 import { GetClientsService } from './services/get-clients.service';
 import { RedisCacheService } from '../auth/infra/cache/redis-cache.service';
 import { GetUserService } from './services/get-user.service';
+import { UpdateUserService } from './services/update-user.service';
 
 @Module({
   controllers: [UserController],
@@ -18,6 +19,7 @@ import { GetUserService } from './services/get-user.service';
     CreateClientUserService,
     GetClientsService,
     GetUserService,
+    UpdateUserService,
   ],
 })
 export class UserModule {}
