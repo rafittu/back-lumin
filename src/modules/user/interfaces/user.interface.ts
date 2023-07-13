@@ -23,6 +23,27 @@ export interface UserData {
   updatedAt: Date;
 }
 
+export interface UpdatedUser {
+  id: string;
+  personal: {
+    firstName: string;
+    lastName: string;
+    socialName?: string;
+    updatedAt: Date;
+  };
+  contact: {
+    username?: string;
+    email: string;
+    updatedAt: Date;
+  };
+  security: {
+    status: string;
+    updatedAt: Date;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface Client {
   id: string;
   name: string;

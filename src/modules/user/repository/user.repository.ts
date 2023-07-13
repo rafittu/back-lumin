@@ -6,6 +6,7 @@ import { UserRole } from '../enum/user-role.enum';
 import { IUserRepository, AlmaUser } from '../interfaces/repository.interface';
 import {
   ProfessionalClients,
+  UpdatedUser,
   User,
   UserData,
 } from '../interfaces/user.interface';
@@ -195,7 +196,7 @@ export class UserRepository implements IUserRepository {
     userId: string,
     accessToken: string,
     updateUser: UpdateUserDto,
-  ) => {
+  ): Promise<UpdatedUser> => {
     try {
       const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
       const userAlmaId = decodedToken?.sub;

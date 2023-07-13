@@ -11,6 +11,7 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import {
   ProfessionalClients,
+  UpdatedUser,
   User,
   UserData,
 } from './interfaces/user.interface';
@@ -73,7 +74,7 @@ export class UserController {
     @Param('id') userId: string,
     @AccessToken() accessToken: string,
     @Body() dataToUpdate: UpdateUserDto,
-  ) {
+  ): Promise<UpdatedUser> {
     return this.updateUserService.execute(userId, accessToken, dataToUpdate);
   }
 
