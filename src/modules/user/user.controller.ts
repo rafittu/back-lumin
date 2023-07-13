@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import {
@@ -24,6 +25,8 @@ import { UserRole } from './enum/user-role.enum';
 import { RolesGuard } from '../auth/infra/guards/role.guard';
 import { GetUserService } from './services/get-user.service';
 import { AccessToken } from '../auth/infra/decorators/access-token.decorator';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserService } from './services/update-user.service';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -34,6 +37,7 @@ export class UserController {
     private readonly clientUserService: CreateClientUserService,
     private readonly getClientsService: GetClientsService,
     private readonly getUserService: GetUserService,
+    private readonly updateUserService: UpdateUserService,
   ) {}
 
   @isPublic()
@@ -64,10 +68,14 @@ export class UserController {
     return this.getUserService.execute(userId, accessToken);
   }
 
-  // @Patch('/update/:id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.userService.update(+id, updateUserDto);
-  // }
+  @Patch('/update/:id')
+  update(
+    @Param('id') userId: string,
+    @AccessToken() accessToken: string,
+    @Body() dataToUpdate: UpdateUserDto,
+  ) {
+    return this.updateUserService.execute(userId, accessToken, dataToUpdate);
+  }
 
   // @Delete('/delete/:id')
   // remove(@Param('id') id: string) {
