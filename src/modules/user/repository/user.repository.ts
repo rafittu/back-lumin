@@ -208,10 +208,9 @@ export class UserRepository implements IUserRepository {
       );
 
       const { firstName, lastName, socialName } = updateUser;
+      const { personal, contact, security } = userAlmaDataUpdated;
 
       if (firstName || lastName || socialName) {
-        const { personal } = userAlmaDataUpdated;
-
         await this.prisma.user.update({
           data: {
             name: `${personal.firstName} ${personal.lastName}`,
@@ -223,7 +222,16 @@ export class UserRepository implements IUserRepository {
         });
       }
 
-      return userAlmaDataUpdated;
+      delete personal.id;
+      delete contact.id;
+      delete security.id;
+
+      const updatedUser = {
+        ...userAlmaDataUpdated,
+        id: userId,
+      };
+
+      return updatedUser;
     } catch (error) {
       if (error instanceof AppError) {
         throw new AppError('user-repository.updateUser', 400, error.message);
