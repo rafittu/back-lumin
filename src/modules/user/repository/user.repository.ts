@@ -6,11 +6,14 @@ import { UserRole } from '../enum/user-role.enum';
 import { IUserRepository, AlmaUser } from '../interfaces/repository.interface';
 import {
   ProfessionalClients,
+  UpdatedUser,
   User,
   UserData,
 } from '../interfaces/user.interface';
 import axios from 'axios';
 import { Prisma } from '@prisma/client';
+import { UpdateUserDto } from '../dto/update-user.dto';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -29,6 +32,24 @@ export class UserRepository implements IUserRepository {
   private async almaGetRequest(path: string, accessToken: string) {
     try {
       const response = await axios.get(path, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      const { status, code, message } = error.response.data.error;
+      throw new AppError(status, code, message);
+    }
+  }
+
+  private async almaPatchRequest(
+    path: string,
+    accessToken: string,
+    body: object,
+  ) {
+    try {
+      const response = await axios.patch(path, body, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -168,6 +189,60 @@ export class UserRepository implements IUserRepository {
       }
 
       throw new AppError('user-repository.getUser', 500, 'could not get user');
+    }
+  };
+
+  updateUser = async (
+    userId: string,
+    accessToken: string,
+    updateUser: UpdateUserDto,
+  ): Promise<UpdatedUser> => {
+    try {
+      const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+      const userAlmaId = decodedToken?.sub;
+
+      const updateUserPath = `${process.env.UPDATE_USER_PATH}/${userAlmaId}`;
+      const userAlmaDataUpdated = await this.almaPatchRequest(
+        updateUserPath,
+        accessToken,
+        updateUser,
+      );
+
+      const { firstName, lastName, socialName } = updateUser;
+      const { personal, contact, security } = userAlmaDataUpdated;
+
+      if (firstName || lastName || socialName) {
+        await this.prisma.user.update({
+          data: {
+            name: `${personal.firstName} ${personal.lastName}`,
+            social_name: personal.socialName,
+          },
+          where: {
+            id: userId,
+          },
+        });
+      }
+
+      delete personal.id;
+      delete contact.id;
+      delete security.id;
+
+      const updatedUser = {
+        ...userAlmaDataUpdated,
+        id: userId,
+      };
+
+      return updatedUser;
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw new AppError('user-repository.updateUser', 400, error.message);
+      }
+
+      throw new AppError(
+        'user-repository.updateUser',
+        500,
+        'could not update user',
+      );
     }
   };
 }
