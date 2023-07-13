@@ -77,9 +77,4 @@ export class UserController {
   ): Promise<UpdatedUser> {
     return this.updateUserService.execute(userId, accessToken, dataToUpdate);
   }
-
-  // @Delete('/delete/:id')
-  // remove(@Param('id') id: string) {
-  //   return this.userService.remove(+id);
-  // }
 }
