@@ -12,6 +12,7 @@ import {
 import axios from 'axios';
 import { Prisma } from '@prisma/client';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -196,17 +197,36 @@ export class UserRepository implements IUserRepository {
     updateUser: UpdateUserDto,
   ) => {
     try {
-      // extract alma_id from accessToken
-      // update user in alma api
-      // if updating name or social name, update in lumin api
-      // return updated user
+      const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+      const userAlmaId = decodedToken?.sub;
+
+      const updateUserPath = `${process.env.UPDATE_USER_PATH}/${userAlmaId}`;
+      const userAlmaDataUpdated = await this.almaPatchRequest(
+        updateUserPath,
+        accessToken,
+        updateUser,
+      );
+
+      const { firstName, lastName, socialName } = updateUser;
+
+      if (firstName || lastName || socialName) {
+        const { personal } = userAlmaDataUpdated;
+
+        await this.prisma.user.update({
+          data: {
+            name: `${personal.firstName} ${personal.lastName}`,
+            social_name: personal.socialName,
+          },
+          where: {
+            id: userId,
+          },
+        });
+      }
+
+      return userAlmaDataUpdated;
     } catch (error) {
       if (error instanceof AppError) {
-        throw new AppError(
-          'user-repository.updateUser',
-          error.code,
-          error.message,
-        );
+        throw new AppError('user-repository.updateUser', 400, error.message);
       }
 
       throw new AppError(
