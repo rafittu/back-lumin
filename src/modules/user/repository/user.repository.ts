@@ -11,6 +11,7 @@ import {
 } from '../interfaces/user.interface';
 import axios from 'axios';
 import { Prisma } from '@prisma/client';
+import { UpdateUserDto } from '../dto/update-user.dto';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -29,6 +30,24 @@ export class UserRepository implements IUserRepository {
   private async almaGetRequest(path: string, accessToken: string) {
     try {
       const response = await axios.get(path, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      const { status, code, message } = error.response.data.error;
+      throw new AppError(status, code, message);
+    }
+  }
+
+  private async almaPatchRequest(
+    path: string,
+    accessToken: string,
+    body: object,
+  ) {
+    try {
+      const response = await axios.patch(path, body, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -168,6 +187,33 @@ export class UserRepository implements IUserRepository {
       }
 
       throw new AppError('user-repository.getUser', 500, 'could not get user');
+    }
+  };
+
+  updateUser = async (
+    userId: string,
+    accessToken: string,
+    updateUser: UpdateUserDto,
+  ) => {
+    try {
+      // extract alma_id from accessToken
+      // update user in alma api
+      // if updating name or social name, update in lumin api
+      // return updated user
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw new AppError(
+          'user-repository.updateUser',
+          error.code,
+          error.message,
+        );
+      }
+
+      throw new AppError(
+        'user-repository.updateUser',
+        500,
+        'could not update user',
+      );
     }
   };
 }
