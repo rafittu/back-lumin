@@ -11,6 +11,7 @@ import {
   mockCreateUserBody,
   mockNewAdminUser,
   mockNewClientUser,
+  mockProfessionalClients,
   mockUserData,
 } from './mocks/controller.mock';
 
@@ -49,7 +50,7 @@ describe('UserController', () => {
         {
           provide: GetClientsService,
           useValue: {
-            execute: jest.fn(),
+            execute: jest.fn().mockResolvedValue(mockProfessionalClients),
           },
         },
         {
@@ -132,6 +133,17 @@ describe('UserController', () => {
       await expect(
         controller.findUser(mockNewClientUser.id, mockAccessToken),
       ).rejects.toThrowError();
+    });
+  });
+
+  describe('find all professional clients', () => {
+    it('should get clients successfully', async () => {
+      const result = await controller.findAllProfessionalClients(
+        mockNewAdminUser.id,
+      );
+
+      expect(getClientsService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalClients);
     });
   });
 });
