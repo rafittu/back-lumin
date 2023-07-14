@@ -10,5 +10,13 @@ module.exports = {
   },
   collectCoverageFrom: ['**/*.(t|j)s'],
   coverageDirectory: '../coverage',
+  coveragePathIgnorePatterns: [
+    '/common',
+    '/main.ts',
+    '/prisma.service.ts',
+    '/modules/auth/infra',
+    '.*\\.config\\.ts$',
+    '.*\\.module\\.ts$',
+  ],
   testEnvironment: 'node',
 };
