@@ -20,7 +20,7 @@ import { AppError } from '../../common/errors/Error';
 import { CreateAdminUserService } from './services/user-admin.service';
 import { CreateClientUserService } from './services/user-client.service';
 import { GetClientsService } from './services/get-clients.service';
-import { isPublic } from 'src/modules/auth/infra/decorators/is-public.decorator';
+import { isPublic } from '../../modules/auth/infra/decorators/is-public.decorator';
 import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from './enum/user-role.enum';
 import { RolesGuard } from '../auth/infra/guards/role.guard';

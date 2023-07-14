@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { AppError } from 'src/common/errors/Error';
+import { AppError } from '../../../../common/errors/Error';
 
 export const AccessToken = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {
