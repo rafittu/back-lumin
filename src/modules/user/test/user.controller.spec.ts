@@ -78,5 +78,15 @@ describe('UserController', () => {
       expect(createAdminService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockNewAdminUser);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(createAdminService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.createAdminUser(mockCreateUserBody),
+      ).rejects.toThrowError();
+    });
   });
 });
