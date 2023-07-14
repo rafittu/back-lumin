@@ -101,5 +101,15 @@ describe('UserController', () => {
       expect(createClientService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockNewClientUser);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(createClientService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.createClientUser(mockCreateUserBody),
+      ).rejects.toThrowError();
+    });
   });
 });
