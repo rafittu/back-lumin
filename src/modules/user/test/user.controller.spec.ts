@@ -12,6 +12,8 @@ import {
   mockNewAdminUser,
   mockNewClientUser,
   mockProfessionalClients,
+  mockUpdateUser,
+  mockUpdatedUser,
   mockUserData,
 } from './mocks/controller.mock';
 
@@ -56,7 +58,7 @@ describe('UserController', () => {
         {
           provide: UpdateUserService,
           useValue: {
-            execute: jest.fn(),
+            execute: jest.fn().mockResolvedValue(mockUpdatedUser),
           },
         },
       ],
@@ -154,6 +156,19 @@ describe('UserController', () => {
       await expect(
         controller.findAllProfessionalClients(mockNewClientUser.id),
       ).rejects.toThrowError();
+    });
+  });
+
+  describe('update user', () => {
+    it('should update successfully', async () => {
+      const result = await controller.update(
+        mockUserData.id,
+        mockAccessToken,
+        mockUpdateUser,
+      );
+
+      expect(updateUserService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUpdatedUser);
     });
   });
 });

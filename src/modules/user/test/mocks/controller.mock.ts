@@ -3,10 +3,12 @@ import { CreateUserDto } from '../../dto/create-user.dto';
 import {
   Client,
   ProfessionalClients,
+  UpdatedUser,
   User,
   UserData,
 } from '../../interfaces/user.interface';
 import { UserRole } from '../../enum/user-role.enum';
+import { UpdateUserDto } from '../../dto/update-user.dto';
 
 export const mockAccessToken = faker.string.alphanumeric();
 
@@ -64,4 +66,29 @@ const mockClient: Client = {
 export const mockProfessionalClients: ProfessionalClients = {
   professionalId: mockNewAdminUser.id,
   clients: [mockClient],
+};
+
+export const mockUpdateUser: UpdateUserDto = {
+  username: faker.internet.userName(),
+};
+
+export const mockUpdatedUser: UpdatedUser = {
+  id: mockUserData.id,
+  personal: {
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    socialName: faker.person.fullName(),
+    updatedAt: faker.date.recent(),
+  },
+  contact: {
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    updatedAt: faker.date.recent(),
+  },
+  security: {
+    status: faker.string.sample(),
+    updatedAt: faker.date.recent(),
+  },
+  createdAt: faker.date.recent(),
+  updatedAt: faker.date.recent(),
 };
