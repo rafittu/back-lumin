@@ -10,10 +10,11 @@ import {
   mockCreateUserBody,
   mockNewAdminUser,
   mockNewClientUser,
+  mockProfessionalClients,
   mockUserData,
 } from './mocks/controller.mock';
 
-describe('UserServices', () => {
+describe('UserService', () => {
   let createAdminService: CreateAdminUserService;
   let createClientService: CreateClientUserService;
   let getUserService: GetUserService;
@@ -35,7 +36,7 @@ describe('UserServices', () => {
           useValue: {
             createUser: jest.fn(),
             getUser: jest.fn().mockResolvedValue(mockUserData),
-            getClients: jest.fn(),
+            getClients: jest.fn().mockResolvedValue(mockProfessionalClients),
             updateUser: jest.fn(),
           },
         },
@@ -98,6 +99,15 @@ describe('UserServices', () => {
 
       expect(userRepository.getUser).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockUserData);
+    });
+  });
+
+  describe('find all professional clients', () => {
+    it('should get clients successfully', async () => {
+      const result = await getClientsService.execute(mockNewAdminUser.id);
+
+      expect(userRepository.getClients).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalClients);
     });
   });
 });
