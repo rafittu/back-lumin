@@ -170,5 +170,15 @@ describe('UserController', () => {
       expect(updateUserService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockUpdatedUser);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(updateUserService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.update(mockUserData.id, mockAccessToken, mockUpdateUser),
+      ).rejects.toThrowError();
+    });
   });
 });
