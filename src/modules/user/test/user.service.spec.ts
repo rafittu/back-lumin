@@ -5,6 +5,7 @@ import { GetUserService } from '../services/get-user.service';
 import { GetClientsService } from '../services/get-clients.service';
 import { UpdateUserService } from '../services/update-user.service';
 import { UserRepository } from '../repository/user.repository';
+import { mockCreateUserBody, mockNewAdminUser } from './mocks/controller.mock';
 
 describe('UserServices', () => {
   let createAdminService: CreateAdminUserService;
@@ -44,6 +45,8 @@ describe('UserServices', () => {
     getUserService = module.get<GetUserService>(GetUserService);
     getClientsService = module.get<GetClientsService>(GetClientsService);
     updateUserService = module.get<UpdateUserService>(UpdateUserService);
+
+    userRepository = module.get<UserRepository>(UserRepository);
   });
 
   it('should be defined', () => {
@@ -52,5 +55,18 @@ describe('UserServices', () => {
     expect(getUserService).toBeDefined();
     expect(getClientsService).toBeDefined();
     expect(updateUserService).toBeDefined();
+  });
+
+  describe('create admin user', () => {
+    it('should create a new one successfully', async () => {
+      jest
+        .spyOn(userRepository, 'createUser')
+        .mockResolvedValueOnce(mockNewAdminUser);
+
+      const result = await createAdminService.execute(mockCreateUserBody);
+
+      expect(userRepository.createUser).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockNewAdminUser);
+    });
   });
 });
