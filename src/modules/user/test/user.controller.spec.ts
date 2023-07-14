@@ -7,9 +7,11 @@ import { GetClientsService } from '../services/get-clients.service';
 import { UpdateUserService } from '../services/update-user.service';
 import { RedisCacheService } from '../../../modules/auth/infra/cache/redis-cache.service';
 import {
+  mockAccessToken,
   mockCreateUserBody,
   mockNewAdminUser,
   mockNewClientUser,
+  mockUserData,
 } from './mocks/controller.mock';
 
 describe('UserController', () => {
@@ -41,7 +43,7 @@ describe('UserController', () => {
         {
           provide: GetUserService,
           useValue: {
-            execute: jest.fn(),
+            execute: jest.fn().mockResolvedValue(mockUserData),
           },
         },
         {
@@ -110,6 +112,18 @@ describe('UserController', () => {
       await expect(
         controller.createClientUser(mockCreateUserBody),
       ).rejects.toThrowError();
+    });
+  });
+
+  describe('find user by id', () => {
+    it('should get an user by id successfully', async () => {
+      const result = await controller.findUser(
+        mockNewClientUser.id,
+        mockAccessToken,
+      );
+
+      expect(getUserService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUserData);
     });
   });
 });

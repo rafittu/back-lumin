@@ -1,7 +1,9 @@
 import { faker } from '@faker-js/faker';
 import { CreateUserDto } from '../../dto/create-user.dto';
-import { User } from '../../interfaces/user.interface';
+import { User, UserData } from '../../interfaces/user.interface';
 import { UserRole } from '../../enum/user-role.enum';
+
+export const mockAccessToken = faker.string.alphanumeric();
 
 export const mockCreateUserBody: CreateUserDto = {
   firstName: faker.person.firstName(),
@@ -32,4 +34,18 @@ export const mockNewClientUser: User = {
   socialName: faker.person.firstName('female'),
   email: faker.internet.email(),
   role: UserRole.CLIENT,
+};
+
+export const mockUserData: UserData = {
+  id: mockNewClientUser.id,
+  name: mockNewClientUser.name,
+  socialName: mockNewClientUser.socialName,
+  bornDate: faker.date.birthdate().toISOString().split('T')[0],
+  motherName: faker.person.fullName({ sex: 'female' }),
+  username: faker.internet.userName(),
+  email: mockNewClientUser.email,
+  phone: faker.phone.number(),
+  status: faker.string.sample(),
+  createdAt: faker.date.recent(),
+  updatedAt: faker.date.recent(),
 };
