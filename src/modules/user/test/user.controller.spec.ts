@@ -6,6 +6,7 @@ import { GetUserService } from '../services/get-user.service';
 import { GetClientsService } from '../services/get-clients.service';
 import { UpdateUserService } from '../services/update-user.service';
 import { RedisCacheService } from '../../../modules/auth/infra/cache/redis-cache.service';
+import { mockCreateUserBody, mockNewAdminUser } from './mocks/controller.mock';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -24,7 +25,7 @@ describe('UserController', () => {
         {
           provide: CreateAdminUserService,
           useValue: {
-            execute: jest.fn(),
+            execute: jest.fn().mockResolvedValue(mockNewAdminUser),
           },
         },
         {
@@ -68,5 +69,14 @@ describe('UserController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  describe('create admin user', () => {
+    it('should create a new one successfully', async () => {
+      const result = await controller.createAdminUser(mockCreateUserBody);
+
+      expect(createAdminService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockNewAdminUser);
+    });
   });
 });
