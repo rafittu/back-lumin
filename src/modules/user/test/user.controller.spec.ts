@@ -116,7 +116,7 @@ describe('UserController', () => {
   });
 
   describe('find user by id', () => {
-    it('should get an user by id successfully', async () => {
+    it('should get an user successfully', async () => {
       const result = await controller.findUser(
         mockNewClientUser.id,
         mockAccessToken,
@@ -124,6 +124,14 @@ describe('UserController', () => {
 
       expect(getUserService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockUserData);
+    });
+
+    it('should throw an error', async () => {
+      jest.spyOn(getUserService, 'execute').mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.findUser(mockNewClientUser.id, mockAccessToken),
+      ).rejects.toThrowError();
     });
   });
 });
