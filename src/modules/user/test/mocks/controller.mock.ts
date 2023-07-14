@@ -24,3 +24,12 @@ export const mockNewAdminUser: User = {
   email: faker.internet.email(),
   role: UserRole.ADMIN,
 };
+
+export const mockNewClientUser: User = {
+  id: faker.string.uuid(),
+  almaId: faker.string.uuid(),
+  name: faker.person.fullName({ sex: 'male' }),
+  socialName: faker.person.firstName('female'),
+  email: faker.internet.email(),
+  role: UserRole.CLIENT,
+};
