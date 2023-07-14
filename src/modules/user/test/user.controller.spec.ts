@@ -145,5 +145,15 @@ describe('UserController', () => {
       expect(getClientsService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockProfessionalClients);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(getClientsService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.findAllProfessionalClients(mockNewClientUser.id),
+      ).rejects.toThrowError();
+    });
   });
 });
