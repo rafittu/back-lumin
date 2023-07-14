@@ -6,9 +6,11 @@ import { GetClientsService } from '../services/get-clients.service';
 import { UpdateUserService } from '../services/update-user.service';
 import { UserRepository } from '../repository/user.repository';
 import {
+  mockAccessToken,
   mockCreateUserBody,
   mockNewAdminUser,
   mockNewClientUser,
+  mockUserData,
 } from './mocks/controller.mock';
 
 describe('UserServices', () => {
@@ -32,7 +34,7 @@ describe('UserServices', () => {
           provide: UserRepository,
           useValue: {
             createUser: jest.fn(),
-            getUser: jest.fn(),
+            getUser: jest.fn().mockResolvedValue(mockUserData),
             getClients: jest.fn(),
             updateUser: jest.fn(),
           },
@@ -84,6 +86,18 @@ describe('UserServices', () => {
 
       expect(userRepository.createUser).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockNewClientUser);
+    });
+  });
+
+  describe('find user by id', () => {
+    it('should get an user successfully', async () => {
+      const result = await getUserService.execute(
+        mockNewClientUser.id,
+        mockAccessToken,
+      );
+
+      expect(userRepository.getUser).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUserData);
     });
   });
 });
