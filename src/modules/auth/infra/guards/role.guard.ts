@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RedisCacheService } from '../cache/redis-cache.service';
-import { AppError } from 'src/common/errors/Error';
+import { AppError } from '../../../../common/errors/Error';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
