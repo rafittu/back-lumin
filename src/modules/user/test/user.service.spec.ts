@@ -5,7 +5,11 @@ import { GetUserService } from '../services/get-user.service';
 import { GetClientsService } from '../services/get-clients.service';
 import { UpdateUserService } from '../services/update-user.service';
 import { UserRepository } from '../repository/user.repository';
-import { mockCreateUserBody, mockNewAdminUser } from './mocks/controller.mock';
+import {
+  mockCreateUserBody,
+  mockNewAdminUser,
+  mockNewClientUser,
+} from './mocks/controller.mock';
 
 describe('UserServices', () => {
   let createAdminService: CreateAdminUserService;
@@ -67,6 +71,19 @@ describe('UserServices', () => {
 
       expect(userRepository.createUser).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockNewAdminUser);
+    });
+  });
+
+  describe('create client user', () => {
+    it('should create a new one successfully', async () => {
+      jest
+        .spyOn(userRepository, 'createUser')
+        .mockResolvedValueOnce(mockNewClientUser);
+
+      const result = await createClientService.execute(mockCreateUserBody);
+
+      expect(userRepository.createUser).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockNewClientUser);
     });
   });
 });
