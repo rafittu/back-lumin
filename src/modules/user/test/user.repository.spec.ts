@@ -127,5 +127,25 @@ describe('UserRepository', () => {
       expect(prismaService.user.findFirst).toHaveBeenCalledTimes(1);
       expect(result).toEqual(getUser);
     });
+
+    it('should throw an AppError when almaGetRequest throws an error', async () => {
+      jest
+        .spyOn(prismaService.user, 'findFirst')
+        .mockResolvedValueOnce(mockPrismaUser);
+
+      jest
+        .spyOn(userRepository as any, 'almaGetRequest')
+        .mockRejectedValueOnce(
+          new AppError('error.code', 500, 'Error message'),
+        );
+
+      try {
+        await userRepository.getUser(mockPrismaUser.id, mockAccessToken);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(503);
+        expect(error.message).toBe('Error message');
+      }
+    });
   });
 });
