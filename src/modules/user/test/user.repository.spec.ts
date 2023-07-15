@@ -8,6 +8,7 @@ import {
 } from './mocks/repository.mock';
 import { UserRole } from '../enum/user-role.enum';
 import { mockCreateUserBody } from './mocks/controller.mock';
+import { AppError } from '../../../common/errors/Error';
 
 describe('UserRepository', () => {
   let userRepository: UserRepository;
@@ -44,6 +45,22 @@ describe('UserRepository', () => {
       expect(userRepository['almaPostRequest']).toHaveBeenCalledTimes(1);
       expect(prismaService.user.create).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockNewUser);
+    });
+
+    it('should throw an AppError when almaPostRequest throws an error', async () => {
+      jest
+        .spyOn(userRepository as any, 'almaPostRequest')
+        .mockRejectedValueOnce(
+          new AppError('error.code', 500, 'Error message'),
+        );
+
+      try {
+        await userRepository.createUser(mockCreateUserBody, UserRole.CLIENT);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('Error message');
+      }
     });
   });
 });
