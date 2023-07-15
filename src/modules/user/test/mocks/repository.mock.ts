@@ -73,7 +73,7 @@ export const mockAlmaUserData: AlmaUserData = {
   updatedAt: faker.date.recent(),
 };
 
-export const getUser: Interfaces.UserData = {
+export const mockgetUser: Interfaces.UserData = {
   id: mockPrismaUser.id,
   name: mockPrismaUser.name,
   socialName: mockPrismaUser.social_name,
