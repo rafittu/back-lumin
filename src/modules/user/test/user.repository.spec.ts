@@ -94,9 +94,7 @@ describe('UserRepository', () => {
     it('should throw an error if user is not created', async () => {
       jest
         .spyOn(prismaService.user, 'create')
-        .mockRejectedValueOnce(
-          new AppError('user-repository.createUser', 500, 'user not created'),
-        );
+        .mockRejectedValueOnce(new Error());
 
       try {
         await userRepository.createUser(mockCreateUserBody, UserRole.CLIENT);
