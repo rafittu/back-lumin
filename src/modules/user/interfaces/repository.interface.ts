@@ -54,3 +54,16 @@ export interface AlmaUserData extends AlmaUser {
     updatedAt: Date;
   };
 }
+
+export interface AlmaUserUpdated extends AlmaUser {
+  personal: AlmaUser['personal'] & {
+    lastName: string;
+    updatedAt: Date;
+  };
+  contact: AlmaUser['contact'] & {
+    updatedAt: Date;
+  };
+  security: AlmaUser['security'] & {
+    updatedAt: Date;
+  };
+}

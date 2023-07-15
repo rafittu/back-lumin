@@ -7,6 +7,7 @@ import {
   IUserRepository,
   AlmaUser,
   AlmaUserData,
+  AlmaUserUpdated,
 } from '../interfaces/repository.interface';
 import {
   ProfessionalClients,
@@ -54,7 +55,7 @@ export class UserRepository implements IUserRepository {
     path: string,
     accessToken: string,
     body: object,
-  ) {
+  ): Promise<AlmaUserUpdated> {
     try {
       const response = await axios.patch(path, body, {
         headers: {
