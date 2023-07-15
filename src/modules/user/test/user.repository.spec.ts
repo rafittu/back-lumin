@@ -1,13 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../../prisma.service';
 import { UserRepository } from '../repository/user.repository';
 import {
+  getUser,
   mockAlmaUser,
+  mockAlmaUserData,
   mockNewUser,
-  mockPrismaCreatedUser,
+  mockPrismaUser,
 } from './mocks/repository.mock';
 import { UserRole } from '../enum/user-role.enum';
-import { mockCreateUserBody } from './mocks/controller.mock';
+import { mockAccessToken, mockCreateUserBody } from './mocks/controller.mock';
 import { AppError } from '../../../common/errors/Error';
 import { Prisma } from '@prisma/client';
 
@@ -36,7 +39,7 @@ describe('UserRepository', () => {
 
       jest
         .spyOn(prismaService.user, 'create')
-        .mockResolvedValueOnce(mockPrismaCreatedUser);
+        .mockResolvedValueOnce(mockPrismaUser);
 
       const result = await userRepository.createUser(
         mockCreateUserBody,
@@ -102,6 +105,27 @@ describe('UserRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('user not created');
       }
+    });
+  });
+
+  describe('getUser', () => {
+    it('should find an user by id successfully', async () => {
+      jest
+        .spyOn(prismaService.user, 'findFirst')
+        .mockResolvedValueOnce(mockPrismaUser);
+
+      jest
+        .spyOn(userRepository as any, 'almaGetRequest')
+        .mockResolvedValueOnce(mockAlmaUserData);
+
+      const result = await userRepository.getUser(
+        mockPrismaUser.id,
+        mockAccessToken,
+      );
+
+      expect(userRepository['almaGetRequest']).toHaveBeenCalledTimes(1);
+      expect(prismaService.user.findFirst).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(getUser);
     });
   });
 });
