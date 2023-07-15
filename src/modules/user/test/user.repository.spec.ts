@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../../prisma.service';
 import { UserRepository } from '../repository/user.repository';
 import {
-  mockgetUser,
+  mockGetUser,
   mockAlmaUser,
   mockAlmaUserData,
   mockNewUser,
@@ -123,7 +123,7 @@ describe('UserRepository', () => {
 
       expect(userRepository['almaGetRequest']).toHaveBeenCalledTimes(1);
       expect(prismaService.user.findFirst).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(mockgetUser);
+      expect(result).toEqual(mockGetUser);
     });
 
     it('should throw an AppError when almaGetRequest throws an error', async () => {
