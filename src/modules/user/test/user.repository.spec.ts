@@ -9,6 +9,7 @@ import {
 import { UserRole } from '../enum/user-role.enum';
 import { mockCreateUserBody } from './mocks/controller.mock';
 import { AppError } from '../../../common/errors/Error';
+import { Prisma } from '@prisma/client';
 
 describe('UserRepository', () => {
   let userRepository: UserRepository;
@@ -60,6 +61,30 @@ describe('UserRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(400);
         expect(error.message).toBe('Error message');
+      }
+    });
+
+    it('should throw an AppError for PrismaClientKnownRequestError', async () => {
+      const prismaError = new Prisma.PrismaClientKnownRequestError(
+        'error message',
+        {
+          code: 'error code',
+          clientVersion: '',
+        },
+      );
+
+      jest
+        .spyOn(userRepository as any, 'almaPostRequest')
+        .mockRejectedValueOnce(prismaError);
+
+      try {
+        await userRepository.createUser(mockCreateUserBody, UserRole.CLIENT);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          `[ '${error.meta?.target}' ] already in use`,
+        );
       }
     });
   });
