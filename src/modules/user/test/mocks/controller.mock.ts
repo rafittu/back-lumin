@@ -32,6 +32,8 @@ export const mockNewAdminUser: User = {
   socialName: faker.person.firstName('female'),
   email: faker.internet.email(),
   role: UserRole.ADMIN,
+  createdAt: faker.date.recent(),
+  updatedAt: faker.date.recent(),
 };
 
 export const mockNewClientUser: User = {
@@ -41,6 +43,8 @@ export const mockNewClientUser: User = {
   socialName: faker.person.firstName('female'),
   email: faker.internet.email(),
   role: UserRole.CLIENT,
+  createdAt: faker.date.recent(),
+  updatedAt: faker.date.recent(),
 };
 
 export const mockUserData: UserData = {
