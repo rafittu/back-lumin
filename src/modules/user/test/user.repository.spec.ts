@@ -147,5 +147,19 @@ describe('UserRepository', () => {
         expect(error.message).toBe('Error message');
       }
     });
+
+    it('should throw an error if user is not found', async () => {
+      jest
+        .spyOn(prismaService.user, 'findFirst')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await userRepository.getUser(mockPrismaUser.id, mockAccessToken);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('could not get user');
+      }
+    });
   });
 });
