@@ -35,6 +35,22 @@ export interface AlmaUser {
     id: string;
     status: string;
   };
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AlmaUserData extends AlmaUser {
+  personal: AlmaUser['personal'] & {
+    lastName: string;
+    bornDate: string;
+    motherName: string;
+    updatedAt: Date;
+  };
+  contact: AlmaUser['contact'] & {
+    phone: string;
+    updatedAt: Date;
+  };
+  security: AlmaUser['security'] & {
+    updatedAt: Date;
+  };
 }
