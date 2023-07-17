@@ -244,5 +244,31 @@ describe('UserRepository', () => {
         expect(error.message).toBe('Error message');
       }
     });
+
+    it('should throw an error if user not updated', async () => {
+      jest
+        .spyOn(jwt, 'verify')
+        .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
+
+      jest
+        .spyOn(userRepository as any, 'almaPatchRequest')
+        .mockResolvedValueOnce(mockAlmaUserData);
+
+      jest
+        .spyOn(prismaService.user, 'update')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await userRepository.updateUser(
+          mockPrismaUser.id,
+          mockAccessToken,
+          mockUserDataToUpdate,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('could not update user');
+      }
+    });
   });
 });
