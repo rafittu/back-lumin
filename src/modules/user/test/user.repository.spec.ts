@@ -10,11 +10,13 @@ import {
   mockPrismaUser,
   mockGetProfessionalClient,
   mockProfessionalClients,
+  mockUserDataToUpdate,
 } from './mocks/repository.mock';
 import { UserRole } from '../enum/user-role.enum';
 import { mockAccessToken, mockCreateUserBody } from './mocks/controller.mock';
 import { AppError } from '../../../common/errors/Error';
 import { Prisma } from '@prisma/client';
+import * as jwt from 'jsonwebtoken';
 
 describe('UserRepository', () => {
   let userRepository: UserRepository;
@@ -189,6 +191,34 @@ describe('UserRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('could not get clients');
       }
+    });
+  });
+
+  describe('updateUser', () => {
+    it('should update an user successfully', async () => {
+      jest
+        .spyOn(jwt, 'verify')
+        .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
+
+      jest
+        .spyOn(userRepository as any, 'almaPatchRequest')
+        .mockResolvedValueOnce(mockAlmaUserData);
+
+      jest
+        .spyOn(prismaService.user, 'update')
+        .mockResolvedValueOnce(mockPrismaUser);
+
+      const result = await userRepository.updateUser(
+        mockPrismaUser.id,
+        mockAccessToken,
+        mockUserDataToUpdate,
+      );
+
+      result.id = mockAlmaUserData.id;
+
+      expect(userRepository['almaPatchRequest']).toHaveBeenCalledTimes(1);
+      expect(prismaService.user.update).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockAlmaUserData);
     });
   });
 });

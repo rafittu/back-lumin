@@ -4,6 +4,7 @@ import { AppointmentRecord, Scheduler, User } from '@prisma/client';
 import * as Interfaces from '../../interfaces/user.interface';
 import { UserRole } from '../../enum/user-role.enum';
 import { mockCreateUserBody } from './controller.mock';
+import { UpdateUserDto } from '../../dto/update-user.dto';
 
 export const mockAlmaUser: AlmaUser = {
   id: faker.string.uuid(),
@@ -121,4 +122,8 @@ export const mockProfessionalClients: Interfaces.ProfessionalClients = {
       phone: mockGetProfessionalClient[0].appointment.client_phone,
     },
   ],
+};
+
+export const mockUserDataToUpdate: UpdateUserDto = {
+  socialName: faker.person.fullName(),
 };
