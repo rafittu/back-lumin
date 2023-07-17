@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from '../auth.controller';
 import { SignInService } from '../services/signin.service';
 import { RedisCacheService } from '../../../modules/auth/infra/cache/redis-cache.service';
+import { mockAccessToken, mockUserCredentials } from './mocks/controller.mock';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -16,7 +17,7 @@ describe('AuthController', () => {
         {
           provide: SignInService,
           useValue: {
-            execute: jest.fn(),
+            execute: jest.fn().mockResolvedValue(mockAccessToken),
           },
         },
       ],
@@ -28,5 +29,14 @@ describe('AuthController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  describe('user signin', () => {
+    it('user should sign in successfully', async () => {
+      const result = await controller.signIn(mockUserCredentials);
+
+      expect(signInService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockAccessToken);
+    });
   });
 });
