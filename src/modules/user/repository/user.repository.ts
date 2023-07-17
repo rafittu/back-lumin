@@ -3,7 +3,12 @@ import { PrismaService } from '../../../prisma.service';
 import { AppError } from '../../../common/errors/Error';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserRole } from '../enum/user-role.enum';
-import { IUserRepository, AlmaUser } from '../interfaces/repository.interface';
+import {
+  IUserRepository,
+  AlmaUser,
+  AlmaUserData,
+  AlmaUserUpdated,
+} from '../interfaces/repository.interface';
 import {
   ProfessionalClients,
   UpdatedUser,
@@ -29,7 +34,10 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  private async almaGetRequest(path: string, accessToken: string) {
+  private async almaGetRequest(
+    path: string,
+    accessToken: string,
+  ): Promise<AlmaUserData> {
     try {
       const response = await axios.get(path, {
         headers: {
@@ -47,7 +55,7 @@ export class UserRepository implements IUserRepository {
     path: string,
     accessToken: string,
     body: object,
-  ) {
+  ): Promise<AlmaUserUpdated> {
     try {
       const response = await axios.patch(path, body, {
         headers: {

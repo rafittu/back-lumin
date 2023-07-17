@@ -7,6 +7,8 @@ export interface User {
   socialName: string;
   email: string;
   role: UserRole;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface UserData {
