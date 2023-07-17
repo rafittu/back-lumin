@@ -38,5 +38,13 @@ describe('AuthController', () => {
       expect(signInService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockAccessToken);
     });
+
+    it('should throw an error', async () => {
+      jest.spyOn(signInService, 'execute').mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.signIn(mockUserCredentials),
+      ).rejects.toThrowError();
+    });
   });
 });
