@@ -176,5 +176,19 @@ describe('UserRepository', () => {
       expect(prismaService.appointmentRecord.findMany).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockProfessionalClients);
     });
+
+    it('should throw an error if clients is not found', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findMany')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await userRepository.getClients(mockPrismaUser.id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('could not get clients');
+      }
+    });
   });
 });
