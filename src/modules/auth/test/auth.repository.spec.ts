@@ -6,6 +6,7 @@ import { RedisCacheService } from '../infra/cache/redis-cache.service';
 import { mockAccessToken, mockUserCredentials } from './mocks/controller.mock';
 import * as jwt from 'jsonwebtoken';
 import { mockPrismaUser } from './mocks/repository.mock';
+import { AppError } from '../../../common/errors/Error';
 
 describe('AuthRepository', () => {
   let authRepository: AuthRepository;
@@ -40,6 +41,22 @@ describe('AuthRepository', () => {
 
       expect(authRepository['almaPostRequest']).toHaveBeenCalledTimes(1);
       expect(prismaService.user.findFirst).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw an AppError when almaPostRequest throws an error', async () => {
+      jest
+        .spyOn(authRepository as any, 'almaPostRequest')
+        .mockRejectedValueOnce(
+          new AppError('error.code', 500, 'Error message'),
+        );
+
+      try {
+        await authRepository.signIn(mockUserCredentials);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('Error message');
+      }
     });
   });
 });
