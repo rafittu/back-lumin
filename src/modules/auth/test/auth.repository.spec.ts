@@ -3,8 +3,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../../prisma.service';
 import { AuthRepository } from '../repository/auth.repository';
 import { RedisCacheService } from '../infra/cache/redis-cache.service';
+import { mockAccessToken, mockUserCredentials } from './mocks/controller.mock';
+import * as jwt from 'jsonwebtoken';
+import { mockPrismaUser } from './mocks/repository.mock';
 
-describe('UserRepository', () => {
+describe('AuthRepository', () => {
   let authRepository: AuthRepository;
   let prismaService: PrismaService;
 
@@ -19,5 +22,24 @@ describe('UserRepository', () => {
 
   it('should be defined', () => {
     expect(authRepository).toBeDefined();
+  });
+
+  describe('signIn', () => {
+    it('user should sign in successfully', async () => {
+      jest
+        .spyOn(authRepository as any, 'almaPostRequest')
+        .mockResolvedValueOnce(mockAccessToken);
+
+      jest.spyOn(jwt, 'verify').mockResolvedValueOnce(mockAccessToken as never);
+
+      jest
+        .spyOn(prismaService.user, 'findFirst')
+        .mockResolvedValueOnce(mockPrismaUser);
+
+      await authRepository.signIn(mockUserCredentials);
+
+      expect(authRepository['almaPostRequest']).toHaveBeenCalledTimes(1);
+      expect(prismaService.user.findFirst).toHaveBeenCalledTimes(1);
+    });
   });
 });
