@@ -5,6 +5,7 @@ import { IAuthRepository } from '../interfaces/repository.interface';
 import { AppError } from '../../../common/errors/Error';
 import { JwtToken, UserCredentials } from '../interfaces/auth.interface';
 import { RedisCacheService } from '../infra/cache/redis-cache.service';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthRepository implements IAuthRepository {
@@ -23,23 +24,8 @@ export class AuthRepository implements IAuthRepository {
     }
   }
 
-  private async almaGetRequest(path: string, accessToken: string) {
-    try {
-      const response = await axios.get(path, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      const { status, code, message } = error.response.data.error;
-      throw new AppError(status, code, message);
-    }
-  }
-
   async signIn(credentials: UserCredentials): Promise<JwtToken> {
     const signInPath: string = process.env.SIGNIN_PATH;
-    const getMePath: string = process.env.GET_ME_PATH;
 
     try {
       const { accessToken } = await this.almaPostRequest(
@@ -47,11 +33,12 @@ export class AuthRepository implements IAuthRepository {
         credentials,
       );
 
-      const { id } = await this.almaGetRequest(getMePath, accessToken);
+      const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+      const userAlmaId = decodedToken?.sub;
 
       const { role } = await this.prisma.user.findFirst({
         where: {
-          alma_id: id,
+          alma_id: String(userAlmaId),
         },
         select: {
           role: true,
