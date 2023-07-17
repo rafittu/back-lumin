@@ -8,6 +8,8 @@ import {
   mockAlmaUserData,
   mockNewUser,
   mockPrismaUser,
+  mockGetProfessionalClient,
+  mockProfessionalClients,
 } from './mocks/repository.mock';
 import { UserRole } from '../enum/user-role.enum';
 import { mockAccessToken, mockCreateUserBody } from './mocks/controller.mock';
@@ -158,6 +160,21 @@ describe('UserRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('could not get user');
       }
+    });
+  });
+
+  describe('getClients', () => {
+    it('should find all professional clients successfully', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findMany')
+        .mockResolvedValueOnce(mockGetProfessionalClient);
+
+      const result = await userRepository.getClients(
+        mockGetProfessionalClient[0].id,
+      );
+
+      expect(prismaService.appointmentRecord.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalClients);
     });
   });
 });
