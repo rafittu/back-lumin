@@ -220,5 +220,29 @@ describe('UserRepository', () => {
       expect(prismaService.user.update).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockAlmaUserData);
     });
+
+    it('should throw an AppError when almaPatchRequest throws an error', async () => {
+      jest
+        .spyOn(jwt, 'verify')
+        .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
+
+      jest
+        .spyOn(userRepository as any, 'almaPatchRequest')
+        .mockRejectedValueOnce(
+          new AppError('error.code', 500, 'Error message'),
+        );
+
+      try {
+        await userRepository.updateUser(
+          mockPrismaUser.id,
+          mockAccessToken,
+          mockUserDataToUpdate,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('Error message');
+      }
+    });
   });
 });
