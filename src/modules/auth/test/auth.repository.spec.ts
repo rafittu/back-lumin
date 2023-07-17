@@ -58,5 +58,25 @@ describe('AuthRepository', () => {
         expect(error.message).toBe('Error message');
       }
     });
+
+    it('should throw an error if user could not sign in', async () => {
+      jest
+        .spyOn(authRepository as any, 'almaPostRequest')
+        .mockResolvedValueOnce(mockAccessToken);
+
+      jest.spyOn(jwt, 'verify').mockResolvedValueOnce(mockAccessToken as never);
+
+      jest
+        .spyOn(prismaService.user, 'findFirst')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await authRepository.signIn(mockUserCredentials);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('internal server error');
+      }
+    });
   });
 });
