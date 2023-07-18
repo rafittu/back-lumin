@@ -346,5 +346,33 @@ describe('UserRepository', () => {
       );
       expect(result).toEqual(mockGetUserAxiosResponse.data);
     });
+
+    it('should throw an AppError if request fails', async () => {
+      const errorResponse = {
+        response: {
+          data: {
+            error: {
+              status: 500,
+              code: 'ERROR_CODE',
+              message: 'Error message',
+            },
+          },
+        },
+      };
+
+      (
+        axios.get as jest.MockedFunction<typeof axios.get>
+      ).mockRejectedValueOnce(errorResponse);
+
+      const path = 'example.com/api/:id';
+
+      try {
+        await userRepository['almaGetRequest'](path, mockAccessToken);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe('ERROR_CODE');
+        expect(error.message).toBe('Error message');
+      }
+    });
   });
 });
