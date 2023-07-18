@@ -112,6 +112,108 @@
           }
         }
       }
+    },
+    "/users/client": {
+      "post": {
+        "summary": "Create a new client user",
+        "description": "Route to register new client users",
+        "tags": ["User"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignUp"
+              },
+              "examples": {
+                "example1": {
+                  "summary": "Example of a valid user registration",
+                  "value": {
+                    "firstName": "Riley",
+                    "lastName": "Doe",
+                    "socialName": "RD",
+                    "username": "rileydoe",
+                    "bornDate": "1991-01-01",
+                    "motherName": "Jane Doe",
+                    "email": "rileydoe@example.com",
+                    "phone": "1234567890",
+                    "password": "password123",
+                    "passwordConfirmation": "password123"
+                  }
+                },
+                "example2": {
+                  "summary": "Example of required fields only",
+                  "value": {
+                    "firstName": "Riley",
+                    "lastName": "Doe",
+                    "motherName": "Jane Doe",
+                    "email": "rileydoe@example.com",
+                    "password": "password123",
+                    "passwordConfirmation": "password123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "example": {
+                  "id": "78910",
+                  "almaId": "123456",
+                  "name": "Riley Doe",
+                  "socialName": "RD",
+                  "email": "rileydoe@example.com",
+                  "role": "CLIENT",
+                  "createdAt": "2023-07-18T12:00:00Z",
+                  "updatedAt": "2023-07-18T12:00:00Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": ["One or more fields are missing or invalid"],
+                    "code": "bad.request",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "user not created",
+                    "code": "user-repository.createUser",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
