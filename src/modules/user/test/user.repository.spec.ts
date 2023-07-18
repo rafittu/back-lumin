@@ -402,5 +402,37 @@ describe('UserRepository', () => {
       );
       expect(result).toEqual(mockUpdateUserAxiosResponse.data);
     });
+
+    it('should throw an AppError if request fails', async () => {
+      const errorResponse = {
+        response: {
+          data: {
+            error: {
+              status: 500,
+              code: 'ERROR_CODE',
+              message: 'Error message',
+            },
+          },
+        },
+      };
+
+      (
+        axios.patch as jest.MockedFunction<typeof axios.patch>
+      ).mockRejectedValueOnce(errorResponse);
+
+      const path = 'example.com/api/:id';
+
+      try {
+        await userRepository['almaPatchRequest'](
+          path,
+          mockAccessToken,
+          mockUserDataToUpdate,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe('ERROR_CODE');
+        expect(error.message).toBe('Error message');
+      }
+    });
   });
 });
