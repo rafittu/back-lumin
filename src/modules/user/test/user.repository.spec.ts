@@ -13,6 +13,7 @@ import {
   mockUserDataToUpdate,
   mockCreateUserAxiosResponse,
   mockGetUserAxiosResponse,
+  mockUpdateUserAxiosResponse,
 } from './mocks/repository.mock';
 import { UserRole } from '../enum/user-role.enum';
 import { mockAccessToken, mockCreateUserBody } from './mocks/controller.mock';
@@ -373,6 +374,33 @@ describe('UserRepository', () => {
         expect(error.code).toBe('ERROR_CODE');
         expect(error.message).toBe('Error message');
       }
+    });
+  });
+
+  describe('almaPatchRequest', () => {
+    it('should make a patch request and return response data', async () => {
+      (
+        axios.patch as jest.MockedFunction<typeof axios.patch>
+      ).mockResolvedValueOnce(mockUpdateUserAxiosResponse);
+
+      const path = 'example.com/api/:id';
+
+      const result = await userRepository['almaPatchRequest'](
+        path,
+        mockAccessToken,
+        mockUserDataToUpdate,
+      );
+
+      expect(axios.patch).toHaveBeenCalledWith(
+        path,
+        mockUserDataToUpdate,
+        expect.objectContaining({
+          headers: {
+            Authorization: `Bearer ${mockAccessToken}`,
+          },
+        }),
+      );
+      expect(result).toEqual(mockUpdateUserAxiosResponse.data);
     });
   });
 });
