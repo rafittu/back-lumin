@@ -5,8 +5,14 @@ import { AuthRepository } from '../repository/auth.repository';
 import { RedisCacheService } from '../infra/cache/redis-cache.service';
 import { mockAccessToken, mockUserCredentials } from './mocks/controller.mock';
 import * as jwt from 'jsonwebtoken';
-import { mockPrismaUser } from './mocks/repository.mock';
+import {
+  mockPrismaUser,
+  mockSignInAxiosResponse,
+} from './mocks/repository.mock';
 import { AppError } from '../../../common/errors/Error';
+import axios from 'axios';
+
+jest.mock('axios');
 
 describe('AuthRepository', () => {
   let authRepository: AuthRepository;
@@ -85,6 +91,52 @@ describe('AuthRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
         expect(error.message).toBe('internal server error');
+      }
+    });
+  });
+
+  describe('almaPostRequest', () => {
+    it('should make a post request and return response data', async () => {
+      (
+        axios.post as jest.MockedFunction<typeof axios.post>
+      ).mockResolvedValueOnce(mockSignInAxiosResponse);
+
+      const path = 'example.com/api';
+
+      const result = await authRepository['almaPostRequest'](
+        path,
+        mockUserCredentials,
+      );
+
+      expect(axios.post).toHaveBeenCalledWith(path, mockUserCredentials);
+      expect(result).toEqual(mockSignInAxiosResponse.data);
+    });
+
+    it('should throw an AppError if request fails', async () => {
+      const errorResponse = {
+        response: {
+          data: {
+            error: {
+              status: 500,
+              code: 'ERROR_CODE',
+              message: 'Error message',
+            },
+          },
+        },
+      };
+
+      (
+        axios.post as jest.MockedFunction<typeof axios.post>
+      ).mockRejectedValueOnce(errorResponse);
+
+      const path = 'example.com/api';
+
+      try {
+        await authRepository['almaPostRequest'](path, mockUserCredentials);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe('ERROR_CODE');
+        expect(error.message).toBe('Error message');
       }
     });
   });

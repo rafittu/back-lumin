@@ -10,3 +10,9 @@ export const mockPrismaUser: User = {
   created_at: faker.date.recent(),
   updated_at: faker.date.recent(),
 };
+
+export const mockSignInAxiosResponse = {
+  data: {
+    accessToken: 'jwtAccessToken',
+  },
+};
