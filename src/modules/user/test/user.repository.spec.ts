@@ -12,6 +12,7 @@ import {
   mockProfessionalClients,
   mockUserDataToUpdate,
   mockCreateUserAxiosResponse,
+  mockGetUserAxiosResponse,
 } from './mocks/repository.mock';
 import { UserRole } from '../enum/user-role.enum';
 import { mockAccessToken, mockCreateUserBody } from './mocks/controller.mock';
@@ -319,6 +320,31 @@ describe('UserRepository', () => {
         expect(error.code).toBe('ERROR_CODE');
         expect(error.message).toBe('Error message');
       }
+    });
+  });
+
+  describe('almaGetRequest', () => {
+    it('should make a get request and return response data', async () => {
+      (
+        axios.get as jest.MockedFunction<typeof axios.get>
+      ).mockResolvedValueOnce(mockGetUserAxiosResponse);
+
+      const path = 'example.com/api/:id';
+
+      const result = await userRepository['almaGetRequest'](
+        path,
+        mockAccessToken,
+      );
+
+      expect(axios.get).toHaveBeenCalledWith(
+        path,
+        expect.objectContaining({
+          headers: {
+            Authorization: `Bearer ${mockAccessToken}`,
+          },
+        }),
+      );
+      expect(result).toEqual(mockGetUserAxiosResponse.data);
     });
   });
 });

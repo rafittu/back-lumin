@@ -130,6 +130,12 @@ export const mockUserDataToUpdate: UpdateUserDto = {
 
 export const mockCreateUserAxiosResponse = {
   data: {
+    mockAlmaUser,
+  },
+};
+
+export const mockGetUserAxiosResponse = {
+  data: {
     mockAlmaUserData,
   },
 };
