@@ -11,12 +11,16 @@ import {
   mockGetProfessionalClient,
   mockProfessionalClients,
   mockUserDataToUpdate,
+  mockCreateUserAxiosResponse,
 } from './mocks/repository.mock';
 import { UserRole } from '../enum/user-role.enum';
 import { mockAccessToken, mockCreateUserBody } from './mocks/controller.mock';
 import { AppError } from '../../../common/errors/Error';
 import { Prisma } from '@prisma/client';
 import * as jwt from 'jsonwebtoken';
+import axios from 'axios';
+
+jest.mock('axios');
 
 describe('UserRepository', () => {
   let userRepository: UserRepository;
@@ -269,6 +273,24 @@ describe('UserRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('could not update user');
       }
+    });
+  });
+
+  describe('almaPostRequest', () => {
+    it('should make a post request and return response data', async () => {
+      (
+        axios.post as jest.MockedFunction<typeof axios.post>
+      ).mockResolvedValueOnce(mockCreateUserAxiosResponse);
+
+      const path = 'example.com/api';
+
+      const result = await userRepository['almaPostRequest'](
+        path,
+        mockCreateUserBody,
+      );
+
+      expect(axios.post).toHaveBeenCalledWith(path, mockCreateUserBody);
+      expect(result).toEqual(mockCreateUserAxiosResponse.data);
     });
   });
 });
