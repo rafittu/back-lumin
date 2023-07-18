@@ -127,3 +127,21 @@ export const mockProfessionalClients: Interfaces.ProfessionalClients = {
 export const mockUserDataToUpdate: UpdateUserDto = {
   socialName: faker.person.fullName(),
 };
+
+export const mockCreateUserAxiosResponse = {
+  data: {
+    mockAlmaUser,
+  },
+};
+
+export const mockGetUserAxiosResponse = {
+  data: {
+    mockAlmaUserData,
+  },
+};
+
+export const mockUpdateUserAxiosResponse = {
+  data: {
+    mockAlmaUserData,
+  },
+};
