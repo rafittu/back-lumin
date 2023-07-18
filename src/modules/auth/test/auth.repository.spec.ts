@@ -14,7 +14,16 @@ describe('AuthRepository', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthRepository, PrismaService, RedisCacheService],
+      providers: [
+        AuthRepository,
+        PrismaService,
+        {
+          provide: RedisCacheService,
+          useValue: {
+            set: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     authRepository = module.get<AuthRepository>(AuthRepository);
