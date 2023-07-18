@@ -288,6 +288,96 @@
           }
         }
       }
+    },
+    "/users/professional/{id}": {
+      "get": {
+        "summary": "Get professional clients",
+        "description": "Route to get all professional clients",
+        "tags": ["User"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Professional id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Professional clients",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfessionalClients"
+                },
+                "example": {
+                  "professionalId": "314",
+                  "clients": [
+                    {
+                      "id": "123456",
+                      "name": "Riley Doe",
+                      "phone": "1234567890"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "could not get clients",
+                    "code": "user-repository.getClients",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -437,6 +527,35 @@
           "updatedAt": {
             "type": "string",
             "description": "Date and time of user creation"
+          }
+        }
+      },
+      "ProfessionalClients": {
+        "type": "object",
+        "properties": {
+          "professionalId": {
+            "type": "string",
+            "description": "Professional ID"
+          },
+          "clients": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Client ID"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Client name"
+                },
+                "phone": {
+                  "type": "string",
+                  "description": "Client phone number"
+                }
+              }
+            }
           }
         }
       },
