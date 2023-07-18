@@ -111,5 +111,33 @@ describe('AuthRepository', () => {
       expect(axios.post).toHaveBeenCalledWith(path, mockUserCredentials);
       expect(result).toEqual(mockSignInAxiosResponse.data);
     });
+
+    it('should throw an AppError if request fails', async () => {
+      const errorResponse = {
+        response: {
+          data: {
+            error: {
+              status: 500,
+              code: 'ERROR_CODE',
+              message: 'Error message',
+            },
+          },
+        },
+      };
+
+      (
+        axios.post as jest.MockedFunction<typeof axios.post>
+      ).mockRejectedValueOnce(errorResponse);
+
+      const path = 'example.com/api';
+
+      try {
+        await authRepository['almaPostRequest'](path, mockUserCredentials);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe('ERROR_CODE');
+        expect(error.message).toBe('Error message');
+      }
+    });
   });
 });
