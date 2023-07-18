@@ -292,5 +292,33 @@ describe('UserRepository', () => {
       expect(axios.post).toHaveBeenCalledWith(path, mockCreateUserBody);
       expect(result).toEqual(mockCreateUserAxiosResponse.data);
     });
+
+    it('should throw an AppError if request fails', async () => {
+      const errorResponse = {
+        response: {
+          data: {
+            error: {
+              status: 500,
+              code: 'ERROR_CODE',
+              message: 'Error message',
+            },
+          },
+        },
+      };
+
+      (
+        axios.post as jest.MockedFunction<typeof axios.post>
+      ).mockRejectedValueOnce(errorResponse);
+
+      const path = 'example.com/api';
+
+      try {
+        await userRepository['almaPostRequest'](path, mockCreateUserBody);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe('ERROR_CODE');
+        expect(error.message).toBe('Error message');
+      }
+    });
   });
 });
