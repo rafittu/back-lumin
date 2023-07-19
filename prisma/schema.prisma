@@ -4,5 +4,79 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_DB")
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+}
+
+enum PaymentMethod {
+  PIX
+  CASH
+}
+
+model User {
+  id          String   @id @unique @default(uuid()) @db.Uuid
+  alma_id     String   @unique @db.Uuid
+  name        String   @unique @db.VarChar(250)
+  social_name String?  @db.VarChar(250)
+  role        UserRole
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt()
+
+  schedulers         Scheduler[]         @relation("SchedulerProfessional")
+  appointmentRecords AppointmentRecord[] @relation("AppointmentRecordProfessional")
+  payments           Payment[]           @relation("PaymentProfessional")
+  userPayments       Payment[]           @relation("PaymentClient")
+
+  @@map("users")
+}
+
+model Scheduler {
+  id              String   @id @unique @default(uuid()) @db.Uuid
+  client_name     String   @db.VarChar(250)
+  client_phone    String   @db.VarChar(15)
+  scheduled_at    DateTime
+  professional_id String   @db.Uuid
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt()
+
+  professional       User                @relation("SchedulerProfessional", fields: [professional_id], references: [id])
+  appointmentRecords AppointmentRecord[] @relation("AppointmentRecordScheduler")
+
+  @@map("schedules")
+}
+
+model AppointmentRecord {
+  id              String   @id @unique @default(uuid()) @db.Uuid
+  professional_id String   @db.Uuid
+  schedule_id     String   @db.Uuid
+  actual_date     DateTime
+  record          String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt()
+
+  professional User      @relation("AppointmentRecordProfessional", fields: [professional_id], references: [id])
+  appointment  Scheduler @relation("AppointmentRecordScheduler", fields: [schedule_id], references: [id])
+
+  @@map("appointment_records")
+}
+
+model Payment {
+  id               String        @id @unique @default(uuid()) @db.Uuid
+  professional_id  String        @db.Uuid
+  user_id          String        @db.Uuid
+  appointment_date DateTime[]
+  payment_date     DateTime
+  total_paid       String
+  payment_method   PaymentMethod
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt()
+
+  professional User @relation("PaymentProfessional", fields: [professional_id], references: [id])
+  user         User @relation("PaymentClient", fields: [user_id], references: [id])
+
+  @@map("payments")
 }
