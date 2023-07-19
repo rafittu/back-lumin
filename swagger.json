@@ -553,6 +553,78 @@
           }
         }
       }
+    },
+    "/auth/signin": {
+      "post": {
+        "summary": "User login",
+        "description": "Authenticate a user with the provided credentials",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCredentials"
+              },
+              "example": {
+                "email": "johndoe@example.com",
+                "password": "password123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User authenticated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessToken"
+                },
+                "example": {
+                  "accessToken": "eyJhbGciOiJ.eyJzdW5MDIyfQ.SflKxwk6yJV_adQssw5c"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "email or password is invalid",
+                    "code": "auth-repository.signIn",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Internal Server Error",
+                    "code": "auth-repository.signIn",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -811,6 +883,19 @@
           "updatedAt": {
             "type": "string",
             "description": "Date and time of last user update"
+          }
+        }
+      },
+      "UserCredentials": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address of the user"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password of the user"
           }
         }
       },
