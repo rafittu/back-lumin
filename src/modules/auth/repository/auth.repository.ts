@@ -51,7 +51,7 @@ export class AuthRepository implements IAuthRepository {
       return { accessToken };
     } catch (error) {
       if (error instanceof AppError) {
-        throw new AppError('auth-repository.signIn', 500, error.message);
+        throw new AppError('auth-repository.signIn', 401, error.message);
       }
 
       throw new AppError(

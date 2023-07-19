@@ -69,7 +69,7 @@ describe('AuthRepository', () => {
         await authRepository.signIn(mockUserCredentials);
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
-        expect(error.code).toBe(500);
+        expect(error.code).toBe(401);
         expect(error.message).toBe('Error message');
       }
     });
