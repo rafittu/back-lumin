@@ -17,8 +17,45 @@ Ao adotar o nome "LUMIN" para a API, mergulhamos na essência da luz como fonte 
 Este projeto utiliza as seguintes tecnologias:
 
 - **Node.js** com framework **NestJS** e **TypeScript**;
-- **Prisma ORM** para comunicação e manipulação do banco de dados;
+- **Prisma ORM** para comunicação e manipulação do banco de dados **PostgreSQL**;
 - **Docker** como uma ferramenta de containerização;
+
+- **Axios** para realizar requisições HTTP;
+- **JWT Passport** para autenticação e autorização baseada em tokens JWT;
+- **Redis** para cache e armazenamento de dados em memória;
+
+- **Jest** para execução dos testes unitários;
+- **Swagger** para documentação da API;
+
+<br>
+
+## Lista de tarefas
+
+1. Módulo de autenticação
+    - [x] Rota para login
+
+2. Módulo de usuários
+    - [x] Criar administrador
+    - [x] Criar cliente
+    - [x] Buscar um usuário
+    - [x] Buscar todos os clientes de um profissional
+    - [x] Atualizar usuário
+
+3. Módulo de agendamento
+    - [ ] Criar um agendamento
+    - [ ] Buscar agentamentos de um profissional
+    - [ ] Atualizar agendamento
+    - [ ] Cancelar agendamento
+
+4. Módulo de gerenciamento de sessões
+    - [ ] Criar ficha de atendimento
+    - [ ] Buscar registros de cliente
+    - [ ] Atualizar um registro
+
+5. Módulo financeiro
+    - [ ] Registrar pagamento de sessões
+    - [ ] Buscar valores em aberto
+    - [ ] Consultar histórico de pagamento
 
 <br>
 
@@ -51,6 +88,34 @@ $ npm run start
 # modo de observação
 $ npm run start:dev
 ```
+
+<br>
+
+## Testes
+
+A API possui uma cobertura de testes unitários abrangente, com 100% de cobertura em cada parte essencial do código, garantindo a qualidade e o correto funcionamento do sistema.
+
+Para executar os testes unitários, utilize o seguinte comando:
+
+```bash
+$ npm run test
+```
+
+Você também pode gerar um relatório de cobertura dos testes para verificar quais partes do código foram testadas. Para gerar esse relatório, utilize o seguinte comando:
+
+```bash
+$ npm run test:cov
+```
+
+<br>
+
+## Documentação
+
+A documentação completa da API está disponível através do Swagger. Para acessá-la, siga as etapas abaixo:
+
+- Certifique-se de ter a API em execução localmente ou em um ambiente acessível;
+- Abra um navegador da web e acesse a seguinte URL: `http://localhost:3001/api-doc` (substitua `3001` pelo número da porta inserida no arquivo `.env`);
+- A documentação interativa da API será exibida no Swagger UI, onde você poderá explorar todos os endpoints, seus parâmetros e exemplos de solicitação.
 
 <br>
 

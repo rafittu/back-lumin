@@ -26,11 +26,8 @@ model User {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt()
 
-  professional       User?               @relation("ProfessionalClients", fields: [id], references: [id])
-  clients            User[]              @relation("ProfessionalClients")
   schedulers         Scheduler[]         @relation("SchedulerProfessional")
   appointmentRecords AppointmentRecord[] @relation("AppointmentRecordProfessional")
-  clientRecords      AppointmentRecord[] @relation("AppointmentRecordClient")
   payments           Payment[]           @relation("PaymentProfessional")
   userPayments       Payment[]           @relation("PaymentClient")
 
@@ -55,16 +52,14 @@ model Scheduler {
 model AppointmentRecord {
   id              String   @id @unique @default(uuid()) @db.Uuid
   professional_id String   @db.Uuid
-  user_id         String   @db.Uuid
-  schedule_id     String?  @db.Uuid
+  schedule_id     String   @db.Uuid
   actual_date     DateTime
   record          String
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt()
 
-  professional User       @relation("AppointmentRecordProfessional", fields: [professional_id], references: [id])
-  user         User       @relation("AppointmentRecordClient", fields: [user_id], references: [id])
-  appointment  Scheduler? @relation("AppointmentRecordScheduler", fields: [schedule_id], references: [id])
+  professional User      @relation("AppointmentRecordProfessional", fields: [professional_id], references: [id])
+  appointment  Scheduler @relation("AppointmentRecordScheduler", fields: [schedule_id], references: [id])
 
   @@map("appointment_records")
 }
