@@ -8,20 +8,37 @@ import {
   Delete,
   UseGuards,
   UseFilters,
+  Query,
 } from '@nestjs/common';
-import { CreateSchedulerDto } from './dto/create-scheduler.dto';
+import { CreateAppointmmentDto } from './dto/create-scheduler.dto';
 import { UpdateSchedulerDto } from './dto/update-scheduler.dto';
 import { RolesGuard } from '../auth/infra/guards/role.guard';
 import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
 import { AppError } from '../../common/errors/Error';
+import { CreateAppointmmentService } from './services/create-appt.service';
+import { Roles } from '../auth/infra/decorators/role.decorator';
+import { UserRole } from '../user/enum/user-role.enum';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
 @Controller('schedules')
 export class SchedulerController {
-  @Post()
-  create(@Body() createSchedulerDto: CreateSchedulerDto) {
-    return 'schedule created';
+  constructor(
+    private readonly createAppointmmentService: CreateAppointmmentService,
+  ) {}
+
+  @Post('/create')
+  @Roles(UserRole.ADMIN)
+  async create(
+    @Body() createAppointmmentDto: CreateAppointmmentDto,
+    @Query() pofessionalId: string,
+  ) {
+    const newAppointmment = {
+      pofessionalId,
+      createAppointmmentDto,
+    };
+
+    return await this.createAppointmmentService.execute(newAppointmment);
   }
 
   @Get()
