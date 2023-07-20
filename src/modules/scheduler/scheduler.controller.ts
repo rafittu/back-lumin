@@ -31,14 +31,12 @@ export class SchedulerController {
   @Roles(UserRole.ADMIN)
   async create(
     @Body() createAppointmentDto: CreateAppointmentDto,
-    @Query() pofessionalId: string,
+    @Query('professionalId') professionalId: string,
   ) {
-    const newAppointmment = {
-      pofessionalId,
+    return await this.createAppointmmentService.execute(
+      professionalId,
       createAppointmentDto,
-    };
-
-    return await this.createAppointmmentService.execute(newAppointmment);
+    );
   }
 
   @Get()

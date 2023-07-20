@@ -9,7 +9,10 @@ export class CreateAppointmentService {
     private schedulerRepository: ISchedulerRepository,
   ) {}
 
-  async execute(newAppointment) {
-    return await this.schedulerRepository.createAppointment(newAppointment);
+  async execute(professionalId, createAppointmentDto) {
+    return await this.schedulerRepository.createAppointment(
+      professionalId,
+      createAppointmentDto,
+    );
   }
 }
