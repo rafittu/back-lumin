@@ -7,6 +7,7 @@ import {
   mockProfessionalId,
 } from './mocks/controller.mock';
 import { mockNewAppointment } from './mocks/common.mock';
+import { AppError } from '../../../common/errors/Error';
 
 describe('SchedulerRepository', () => {
   let schedulerRepository: SchedulerRepository;
@@ -40,6 +41,31 @@ describe('SchedulerRepository', () => {
 
       expect(prismaService.scheduler.create).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockNewAppointment);
+    });
+
+    it('should throw an AppError when the requested appointment time is already booked', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'findFirst')
+        .mockRejectedValueOnce(
+          new AppError(
+            'scheduler-repository.createAppt',
+            400,
+            'an appointment already exists at this time',
+          ),
+        );
+
+      try {
+        await schedulerRepository.createAppointment(
+          mockProfessionalId,
+          mockCreateAppointment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'an appointment already exists at this time',
+        );
+      }
     });
   });
 });
