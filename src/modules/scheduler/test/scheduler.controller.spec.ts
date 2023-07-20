@@ -2,6 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SchedulerController } from '../scheduler.controller';
 import { RedisCacheService } from '../../../modules/auth/infra/cache/redis-cache.service';
 import { CreateAppointmentService } from '../services/create-appt.service';
+import {
+  mockCreateAppointment,
+  mockProfessionalId,
+} from './mocks/controller.mock';
+import { mockNewAppointment } from './mocks/common.mock';
 
 describe('SchedulerController', () => {
   let controller: SchedulerController;
@@ -16,7 +21,7 @@ describe('SchedulerController', () => {
         {
           provide: CreateAppointmentService,
           useValue: {
-            execute: jest.fn(),
+            execute: jest.fn().mockResolvedValue(mockNewAppointment),
           },
         },
       ],
@@ -31,5 +36,17 @@ describe('SchedulerController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  describe('create an appointment', () => {
+    it('should create a new appointment successfully', async () => {
+      const result = await controller.create(
+        mockCreateAppointment,
+        mockProfessionalId,
+      );
+
+      expect(createAppointmentService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockNewAppointment);
+    });
   });
 });
