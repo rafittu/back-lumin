@@ -1,14 +1,13 @@
-import { faker } from '@faker-js/faker';
 import { NewAppointment } from '../../interfaces/appointment.interface';
-import { mockCreateAppointment, mockProfessionalId } from './controller.mock';
+import { mockPrismaNewAppointment } from './repository.mock';
 
 export const mockNewAppointment: NewAppointment = {
-  id: faker.string.uuid(),
-  professionalId: mockProfessionalId,
-  clientName: mockCreateAppointment.clientName,
-  clientPhone: mockCreateAppointment.clientPhone,
-  appointmentDate: mockCreateAppointment.appointmentDate,
-  appointmentTime: mockCreateAppointment.appointmentTime,
-  createdAt: faker.date.recent(),
-  updatedAt: faker.date.recent(),
+  id: mockPrismaNewAppointment.id,
+  professionalId: mockPrismaNewAppointment.professional_id,
+  clientName: mockPrismaNewAppointment.client_name,
+  clientPhone: mockPrismaNewAppointment.client_phone,
+  appointmentDate: mockPrismaNewAppointment.appointment_date,
+  appointmentTime: mockPrismaNewAppointment.appointment_time,
+  createdAt: mockPrismaNewAppointment.created_at,
+  updatedAt: mockPrismaNewAppointment.updated_at,
 };

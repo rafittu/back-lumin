@@ -1,6 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../../prisma.service';
 import { SchedulerRepository } from '../repository/scheduler.repository';
+import { mockPrismaNewAppointment } from './mocks/repository.mock';
+import {
+  mockCreateAppointment,
+  mockProfessionalId,
+} from './mocks/controller.mock';
+import { mockNewAppointment } from './mocks/common.mock';
 
 describe('SchedulerRepository', () => {
   let schedulerRepository: SchedulerRepository;
@@ -21,16 +27,19 @@ describe('SchedulerRepository', () => {
     expect(prismaService).toBeDefined();
   });
 
-  // describe('create admin user', () => {
-  //   it('should create a new one successfully', async () => {
-  //     jest
-  //       .spyOn(userRepository, 'createUser')
-  //       .mockResolvedValueOnce(mockNewAdminUser);
+  describe('create an appointment', () => {
+    it('should create a new appointment successfully', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'create')
+        .mockResolvedValueOnce(mockPrismaNewAppointment);
 
-  //     const result = await createAdminService.execute(mockCreateUserBody);
+      const result = await schedulerRepository.createAppointment(
+        mockProfessionalId,
+        mockCreateAppointment,
+      );
 
-  //     expect(userRepository.createUser).toHaveBeenCalledTimes(1);
-  //     expect(result).toEqual(mockNewAdminUser);
-  //   });
-  // });
+      expect(prismaService.scheduler.create).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockNewAppointment);
+    });
+  });
 });
