@@ -6,7 +6,7 @@ import {
   MaxLength,
 } from 'class-validator';
 
-export class CreateAppointmmentDto {
+export class CreateAppointmentDto {
   @IsNotEmpty()
   @IsString()
   clientName: string;
@@ -24,5 +24,12 @@ export class CreateAppointmmentDto {
       message: 'must be a valid date and formatted as yyyy-mm-dd',
     },
   )
-  scheduledAt: string;
+  appointmentDate: Date;
+
+  @IsNotEmpty()
+  @IsString()
+  @Matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: 'must be a valid time (HH:mm) and formatted as 24-hours',
+  })
+  appointmentTime: string;
 }
