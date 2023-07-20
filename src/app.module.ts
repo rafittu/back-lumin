@@ -6,6 +6,7 @@ import * as Joi from 'joi';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/infra/guards/jwt-auth-.guard';
+import { SchedulerModule } from './modules/scheduler/scheduler.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { JwtAuthGuard } from './modules/auth/infra/guards/jwt-auth-.guard';
     }),
     UserModule,
     AuthModule,
+    SchedulerModule,
   ],
   controllers: [],
   providers: [
