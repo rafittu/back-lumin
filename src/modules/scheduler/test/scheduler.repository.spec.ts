@@ -46,13 +46,7 @@ describe('SchedulerRepository', () => {
     it('should throw an AppError when the requested appointment time is already booked', async () => {
       jest
         .spyOn(prismaService.scheduler, 'findFirst')
-        .mockRejectedValueOnce(
-          new AppError(
-            'scheduler-repository.createAppt',
-            400,
-            'an appointment already exists at this time',
-          ),
-        );
+        .mockResolvedValueOnce(mockPrismaNewAppointment);
 
       try {
         await schedulerRepository.createAppointment(
@@ -61,7 +55,7 @@ describe('SchedulerRepository', () => {
         );
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
-        expect(error.code).toBe(400);
+        expect(error.code).toBe(409);
         expect(error.message).toBe(
           'an appointment already exists at this time',
         );
