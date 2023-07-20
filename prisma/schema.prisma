@@ -39,7 +39,7 @@ model Scheduler {
   professional_id  String   @db.Uuid
   client_name      String   @db.VarChar(250)
   client_phone     String   @db.VarChar(15)
-  appointment_date DateTime
+  appointment_date String   @db.VarChar(10)
   appointment_time String
   created_at       DateTime @default(now())
   updated_at       DateTime @updatedAt()
