@@ -35,13 +35,14 @@ model User {
 }
 
 model Scheduler {
-  id              String   @id @unique @default(uuid()) @db.Uuid
-  client_name     String   @db.VarChar(250)
-  client_phone    String   @db.VarChar(15)
-  scheduled_at    DateTime
-  professional_id String   @db.Uuid
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt()
+  id               String   @id @unique @default(uuid()) @db.Uuid
+  professional_id  String   @db.Uuid
+  client_name      String   @db.VarChar(250)
+  client_phone     String   @db.VarChar(15)
+  appointment_date DateTime
+  appointment_time String
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt()
 
   professional       User                @relation("SchedulerProfessional", fields: [professional_id], references: [id])
   appointmentRecords AppointmentRecord[] @relation("AppointmentRecordScheduler")
