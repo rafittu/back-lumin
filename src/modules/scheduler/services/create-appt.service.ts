@@ -3,7 +3,7 @@ import { ISchedulerRepository } from '../interfaces/repository.interface';
 import { SchedulerRepository } from '../repository/scheduler.repository';
 import { CreateAppointmentDto } from '../dto/create-scheduler.dto';
 import { NewAppointment } from '../interfaces/appointment.interface';
-import { AppError } from 'src/common/errors/Error';
+import { AppError } from '../../../common/errors/Error';
 
 @Injectable()
 export class CreateAppointmentService {
