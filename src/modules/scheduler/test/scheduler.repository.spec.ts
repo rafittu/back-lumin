@@ -67,5 +67,22 @@ describe('SchedulerRepository', () => {
         );
       }
     });
+
+    it('should throw an error if appointment is not booked', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'create')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await schedulerRepository.createAppointment(
+          mockProfessionalId,
+          mockCreateAppointment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to create appointment');
+      }
+    });
   });
 });
