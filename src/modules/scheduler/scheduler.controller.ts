@@ -18,6 +18,7 @@ import { AppError } from '../../common/errors/Error';
 import { CreateAppointmentService } from './services/create-appt.service';
 import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from '../user/enum/user-role.enum';
+import { NewAppointment } from './interfaces/appointment.interface';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -32,7 +33,7 @@ export class SchedulerController {
   async create(
     @Body() createAppointmentDto: CreateAppointmentDto,
     @Query('professionalId') professionalId: string,
-  ) {
+  ): Promise<NewAppointment> {
     return await this.createAppointmmentService.execute(
       professionalId,
       createAppointmentDto,

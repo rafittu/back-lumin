@@ -2,12 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma.service';
 import { AppError } from '../../../common/errors/Error';
 import { ISchedulerRepository } from '../interfaces/repository.interface';
+import { CreateAppointmentDto } from '../dto/create-scheduler.dto';
+import { NewAppointment } from '../interfaces/appointment.interface';
 
 @Injectable()
 export class SchedulerRepository implements ISchedulerRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createAppointment(professionalId, createAppointmentDto) {
+  async createAppointment(
+    professionalId: string,
+    createAppointmentDto: CreateAppointmentDto,
+  ): Promise<NewAppointment> {
     const { clientName, clientPhone, appointmentDate, appointmentTime } =
       createAppointmentDto;
 
