@@ -31,6 +31,10 @@ describe('SchedulerRepository', () => {
   describe('create an appointment', () => {
     it('should create a new appointment successfully', async () => {
       jest
+        .spyOn(prismaService.scheduler, 'findFirst')
+        .mockResolvedValueOnce(null);
+
+      jest
         .spyOn(prismaService.scheduler, 'create')
         .mockResolvedValueOnce(mockPrismaNewAppointment);
 
