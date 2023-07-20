@@ -3,13 +3,13 @@ import { ISchedulerRepository } from '../interfaces/repository.interface';
 import { SchedulerRepository } from '../repository/scheduler.repository';
 
 @Injectable()
-export class CreateAppointmmentService {
+export class CreateAppointmentService {
   constructor(
     @Inject(SchedulerRepository)
     private schedulerRepository: ISchedulerRepository,
   ) {}
 
-  async execute(newAppointmment) {
-    return await this.schedulerRepository.createAppointmment(newAppointmment);
+  async execute(newAppointment) {
+    return await this.schedulerRepository.createAppointment(newAppointment);
   }
 }
