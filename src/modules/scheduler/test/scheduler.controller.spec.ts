@@ -48,5 +48,15 @@ describe('SchedulerController', () => {
       expect(createAppointmentService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockNewAppointment);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(createAppointmentService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.create(mockCreateAppointment, mockProfessionalId),
+      ).rejects.toThrowError();
+    });
   });
 });
