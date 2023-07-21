@@ -784,7 +784,7 @@
       }
     },
     "/schedules/professional/:id": {
-      "post": {
+      "get": {
         "summary": "Get all appointments",
         "description": "Route to find all professional appointments",
         "tags": ["Scheduler"],
@@ -878,6 +878,127 @@
                   "error": {
                     "message": "failed to get appointments",
                     "code": "scheduler-repository.findAllAppts",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedules/professional/filter/:id": {
+      "get": {
+        "summary": "Get an appointment by filter",
+        "description": "Route to find an appointment by filter",
+        "tags": ["Scheduler"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "professional id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientName",
+            "in": "query",
+            "description": "name of the client",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentDate",
+            "in": "query",
+            "description": "appointment date booked",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentTime",
+            "in": "query",
+            "description": "appointment time booked",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appointments found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfessionalAppointments"
+                },
+                "example": {
+                  "appointments": [
+                    {
+                      "id": "123456",
+                      "professionalId": "78910",
+                      "clientName": "Riley Doe",
+                      "clientPhone": "1234567890",
+                      "appointmentDate": "2023-08-03",
+                      "appointmentTime": "09:00",
+                      "createdAt": "2023-07-20T12:00:00Z",
+                      "updatedAt": "2023-07-20T12:00:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "failed to get appointment",
+                    "code": "scheduler-repository.getApptByFilter",
                     "status": true
                   },
                   "data": {}
