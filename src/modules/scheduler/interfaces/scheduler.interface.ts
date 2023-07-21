@@ -23,3 +23,9 @@ export interface Appointment {
 export interface ProfessionalAppointments {
   appointments: Appointment[];
 }
+
+export interface AppointmentFilters {
+  clientName?: string;
+  appointmentDate?: string;
+  appointmentTime?: string;
+}

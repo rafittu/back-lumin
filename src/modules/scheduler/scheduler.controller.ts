@@ -16,10 +16,12 @@ import { CreateAppointmentService } from './services/create-appt.service';
 import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from '../user/enum/user-role.enum';
 import {
+  AppointmentFilters,
   NewAppointment,
   ProfessionalAppointments,
 } from './interfaces/scheduler.interface';
 import { FindAllAppointmentService } from './services/find-all-appts.service';
+import { GetAppointmentByFilterService } from './services/appt-by-filter.service';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -28,6 +30,7 @@ export class SchedulerController {
   constructor(
     private readonly createApptService: CreateAppointmentService,
     private readonly findAllApptsService: FindAllAppointmentService,
+    private readonly getApptByFilterService: GetAppointmentByFilterService,
   ) {}
 
   @Post('/create')
@@ -48,5 +51,14 @@ export class SchedulerController {
     @Param('id') professionalId: string,
   ): Promise<ProfessionalAppointments> {
     return await this.findAllApptsService.execute(professionalId);
+  }
+
+  @Get('/professional/filter/:id')
+  @Roles(UserRole.ADMIN)
+  async findAppointmentByFilter(
+    @Param('id') professionalId: string,
+    @Query() filter: AppointmentFilters,
+  ) {
+    return await this.getApptByFilterService.execute(professionalId, filter);
   }
 }
