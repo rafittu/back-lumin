@@ -11,10 +11,12 @@ import {
 } from './mocks/controller.mock';
 import { AppError } from '../../../common/errors/Error';
 import { FindAllAppointmentService } from '../services/find-all-appts.service';
+import { GetAppointmentByFilterService } from '../services/appt-by-filter.service';
 
 describe('SchedulerService', () => {
   let createAppointmentService: CreateAppointmentService;
   let findAllAppointmentsService: FindAllAppointmentService;
+  let getAppointmentByFilterService: GetAppointmentByFilterService;
 
   let schedulerRepository: SchedulerRepository;
 
@@ -23,11 +25,15 @@ describe('SchedulerService', () => {
       providers: [
         CreateAppointmentService,
         FindAllAppointmentService,
+        GetAppointmentByFilterService,
         {
           provide: SchedulerRepository,
           useValue: {
             createAppointment: jest.fn().mockResolvedValue(mockNewAppointment),
             findAllAppointments: jest
+              .fn()
+              .mockResolvedValue(mockProfessionalAppointments),
+            getApptByFilter: jest
               .fn()
               .mockResolvedValue(mockProfessionalAppointments),
           },
@@ -41,6 +47,9 @@ describe('SchedulerService', () => {
     findAllAppointmentsService = module.get<FindAllAppointmentService>(
       FindAllAppointmentService,
     );
+    getAppointmentByFilterService = module.get<GetAppointmentByFilterService>(
+      GetAppointmentByFilterService,
+    );
 
     schedulerRepository = module.get<SchedulerRepository>(SchedulerRepository);
   });
@@ -48,6 +57,7 @@ describe('SchedulerService', () => {
   it('should be defined', () => {
     expect(createAppointmentService).toBeDefined();
     expect(findAllAppointmentsService).toBeDefined();
+    expect(getAppointmentByFilterService).toBeDefined();
   });
 
   describe('create appointment', () => {
@@ -82,6 +92,18 @@ describe('SchedulerService', () => {
       );
 
       expect(schedulerRepository.findAllAppointments).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalAppointments);
+    });
+  });
+
+  describe('get an appointment by filter', () => {
+    it('should get an appointment by filter successfully', async () => {
+      const result = await getAppointmentByFilterService.execute(
+        mockProfessionalId,
+        { clientName: mockNewAppointment.clientName },
+      );
+
+      expect(schedulerRepository.getApptByFilter).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockProfessionalAppointments);
     });
   });
