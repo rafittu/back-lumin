@@ -133,8 +133,6 @@ export class SchedulerRepository implements ISchedulerRepository {
         ? (appointmentQuery.appointment_time = appointmentTime)
         : appointmentQuery;
 
-      console.log(appointmentQuery);
-
       const appointments = await this.prisma.scheduler.findMany({
         where: appointmentQuery,
       });
@@ -153,7 +151,7 @@ export class SchedulerRepository implements ISchedulerRepository {
       return apptsResponse;
     } catch (error) {
       throw new AppError(
-        'scheduler-repository.findAllAppts',
+        'scheduler-repository.getApptByFilter',
         500,
         'failed to get appointments',
       );
