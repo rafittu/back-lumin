@@ -161,5 +161,21 @@ describe('SchedulerRepository', () => {
       expect(prismaService.scheduler.findMany).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockProfessionalAppointments);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'findMany')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await schedulerRepository.getApptByFilter(mockProfessionalId, {
+          appointmentDate: mockNewAppointment.appointmentDate,
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to get appointment');
+      }
+    });
   });
 });
