@@ -12,3 +12,9 @@ export const mockPrismaNewAppointment: Scheduler = {
   created_at: faker.date.recent(),
   updated_at: faker.date.recent(),
 };
+
+export const mockPrismaProfessionalAppointments: Scheduler[] = [
+  {
+    ...mockPrismaNewAppointment,
+  },
+];

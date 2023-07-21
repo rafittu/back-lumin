@@ -46,7 +46,8 @@ Este projeto utiliza as seguintes tecnologias:
 3. Módulo de agendamento
 
    - [x] Criar um agendamento
-   - [ ] Buscar agentamentos de um profissional
+   - [x] Buscar agentamento por filtro
+   - [x] Buscar agentamentos de um profissional
    - [ ] Atualizar agendamento
    - [ ] Cancelar agendamento
 

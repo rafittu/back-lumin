@@ -1,12 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../../prisma.service';
 import { SchedulerRepository } from '../repository/scheduler.repository';
-import { mockPrismaNewAppointment } from './mocks/repository.mock';
+import {
+  mockPrismaNewAppointment,
+  mockPrismaProfessionalAppointments,
+} from './mocks/repository.mock';
 import {
   mockCreateAppointment,
   mockProfessionalId,
 } from './mocks/controller.mock';
-import { mockNewAppointment } from './mocks/common.mock';
+import {
+  mockNewAppointment,
+  mockProfessionalAppointments,
+} from './mocks/common.mock';
 import { AppError } from '../../../common/errors/Error';
 
 describe('SchedulerRepository', () => {
@@ -80,6 +86,95 @@ describe('SchedulerRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to create appointment');
+      }
+    });
+  });
+
+  describe('find all professional appointments', () => {
+    it('should get all appointments successfully', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'findMany')
+        .mockResolvedValueOnce(mockPrismaProfessionalAppointments);
+
+      const result = await schedulerRepository.findAllAppointments(
+        mockProfessionalId,
+      );
+
+      expect(prismaService.scheduler.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalAppointments);
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'findMany')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await schedulerRepository.findAllAppointments(mockProfessionalId);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to get appointments');
+      }
+    });
+  });
+
+  describe('get an appointment by filter', () => {
+    it('should get an appointment by client name successfully', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'findMany')
+        .mockResolvedValueOnce(mockPrismaProfessionalAppointments);
+
+      const result = await schedulerRepository.getApptByFilter(
+        mockProfessionalId,
+        { clientName: mockNewAppointment.clientName },
+      );
+
+      expect(prismaService.scheduler.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalAppointments);
+    });
+
+    it('should get an appointment by appointment date successfully', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'findMany')
+        .mockResolvedValueOnce(mockPrismaProfessionalAppointments);
+
+      const result = await schedulerRepository.getApptByFilter(
+        mockProfessionalId,
+        { appointmentDate: mockNewAppointment.appointmentDate },
+      );
+
+      expect(prismaService.scheduler.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalAppointments);
+    });
+
+    it('should get an appointment by appointment time successfully', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'findMany')
+        .mockResolvedValueOnce(mockPrismaProfessionalAppointments);
+
+      const result = await schedulerRepository.getApptByFilter(
+        mockProfessionalId,
+        { appointmentTime: mockNewAppointment.appointmentTime },
+      );
+
+      expect(prismaService.scheduler.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalAppointments);
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'findMany')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await schedulerRepository.getApptByFilter(mockProfessionalId, {
+          appointmentDate: mockNewAppointment.appointmentDate,
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to get appointment');
       }
     });
   });

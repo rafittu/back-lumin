@@ -6,12 +6,19 @@ import {
   mockCreateAppointment,
   mockProfessionalId,
 } from './mocks/controller.mock';
-import { mockNewAppointment } from './mocks/common.mock';
+import {
+  mockNewAppointment,
+  mockProfessionalAppointments,
+} from './mocks/common.mock';
+import { FindAllAppointmentService } from '../services/find-all-appts.service';
+import { GetAppointmentByFilterService } from '../services/appt-by-filter.service';
 
 describe('SchedulerController', () => {
   let controller: SchedulerController;
 
   let createAppointmentService: CreateAppointmentService;
+  let findAllAppointmentsService: FindAllAppointmentService;
+  let getAppointmentByFilterService: GetAppointmentByFilterService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,6 +31,18 @@ describe('SchedulerController', () => {
             execute: jest.fn().mockResolvedValue(mockNewAppointment),
           },
         },
+        {
+          provide: FindAllAppointmentService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(mockProfessionalAppointments),
+          },
+        },
+        {
+          provide: GetAppointmentByFilterService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(mockProfessionalAppointments),
+          },
+        },
       ],
     }).compile();
 
@@ -31,6 +50,12 @@ describe('SchedulerController', () => {
 
     createAppointmentService = module.get<CreateAppointmentService>(
       CreateAppointmentService,
+    );
+    findAllAppointmentsService = module.get<FindAllAppointmentService>(
+      FindAllAppointmentService,
+    );
+    getAppointmentByFilterService = module.get<GetAppointmentByFilterService>(
+      GetAppointmentByFilterService,
     );
   });
 
@@ -56,6 +81,49 @@ describe('SchedulerController', () => {
 
       await expect(
         controller.create(mockCreateAppointment, mockProfessionalId),
+      ).rejects.toThrowError();
+    });
+  });
+
+  describe('get all appointments', () => {
+    it('should get all professional appointments successfully', async () => {
+      const result = await controller.findAllAppointments(mockProfessionalId);
+
+      expect(findAllAppointmentsService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalAppointments);
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(findAllAppointmentsService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.findAllAppointments(mockProfessionalId),
+      ).rejects.toThrowError();
+    });
+  });
+
+  describe('get an appointment by filter', () => {
+    it('should get an appointment by filter successfully', async () => {
+      const result = await controller.findAppointmentByFilter(
+        mockProfessionalId,
+        { clientName: mockNewAppointment.clientName },
+      );
+
+      expect(getAppointmentByFilterService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalAppointments);
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(getAppointmentByFilterService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.findAppointmentByFilter(mockProfessionalId, {
+          clientName: mockNewAppointment.clientName,
+        }),
       ).rejects.toThrowError();
     });
   });
