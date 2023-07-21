@@ -3,7 +3,10 @@ import { PrismaService } from '../../../prisma.service';
 import { AppError } from '../../../common/errors/Error';
 import { ISchedulerRepository } from '../interfaces/repository.interface';
 import { CreateAppointmentDto } from '../dto/create-scheduler.dto';
-import { NewAppointment } from '../interfaces/appointment.interface';
+import {
+  NewAppointment,
+  ProfessionalAppointments,
+} from '../interfaces/scheduler.interface';
 
 @Injectable()
 export class SchedulerRepository implements ISchedulerRepository {
@@ -66,6 +69,44 @@ export class SchedulerRepository implements ISchedulerRepository {
         'scheduler-repository.createAppt',
         500,
         'failed to create appointment',
+      );
+    }
+  }
+
+  async findAllAppointments(
+    professionalId: string,
+  ): Promise<ProfessionalAppointments> {
+    try {
+      const currentDate = new Date().toISOString().slice(0, 10);
+
+      const appointments = await this.prisma.scheduler.findMany({
+        where: {
+          professional_id: professionalId,
+          appointment_date: {
+            gte: currentDate,
+          },
+        },
+      });
+
+      const apptsResponse = appointments.map((appointment) => ({
+        id: appointment.id,
+        professionalId: appointment.professional_id,
+        clientName: appointment.client_name,
+        clientPhone: appointment.client_phone,
+        appointmentDate: appointment.appointment_date,
+        appointmentTime: appointment.appointment_time,
+        createdAt: appointment.created_at,
+        updatedAt: appointment.updated_at,
+      }));
+
+      return {
+        appointments: apptsResponse,
+      };
+    } catch (error) {
+      throw new AppError(
+        'scheduler-repository.findAllAppts',
+        500,
+        'failed to get appointments',
       );
     }
   }

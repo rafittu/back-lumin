@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ISchedulerRepository } from '../interfaces/repository.interface';
 import { SchedulerRepository } from '../repository/scheduler.repository';
 import { CreateAppointmentDto } from '../dto/create-scheduler.dto';
-import { NewAppointment } from '../interfaces/appointment.interface';
+import { NewAppointment } from '../interfaces/scheduler.interface';
 import { AppError } from '../../../common/errors/Error';
 
 @Injectable()
