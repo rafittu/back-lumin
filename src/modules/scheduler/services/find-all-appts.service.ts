@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ISchedulerRepository } from '../interfaces/repository.interface';
 import { SchedulerRepository } from '../repository/scheduler.repository';
+import { ProfessionalAppointments } from '../interfaces/scheduler.interface';
 
 @Injectable()
 export class FindAllAppointmentService {
@@ -9,7 +10,7 @@ export class FindAllAppointmentService {
     private schedulerRepository: ISchedulerRepository,
   ) {}
 
-  async execute(professionalId: string) {
+  async execute(professionalId: string): Promise<ProfessionalAppointments> {
     return await this.schedulerRepository.findAllAppointments(professionalId);
   }
 }

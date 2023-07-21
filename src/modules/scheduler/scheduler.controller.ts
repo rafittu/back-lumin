@@ -15,7 +15,10 @@ import { AppError } from '../../common/errors/Error';
 import { CreateAppointmentService } from './services/create-appt.service';
 import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from '../user/enum/user-role.enum';
-import { NewAppointment } from './interfaces/scheduler.interface';
+import {
+  NewAppointment,
+  ProfessionalAppointments,
+} from './interfaces/scheduler.interface';
 import { FindAllAppointmentService } from './services/find-all-appts.service';
 
 @UseGuards(RolesGuard)
@@ -41,7 +44,9 @@ export class SchedulerController {
 
   @Get('/professional/:id')
   @Roles(UserRole.ADMIN)
-  async findAllAppointments(@Param('id') professionalId: string) {
+  async findAllAppointments(
+    @Param('id') professionalId: string,
+  ): Promise<ProfessionalAppointments> {
     return await this.findAllApptsService.execute(professionalId);
   }
 }

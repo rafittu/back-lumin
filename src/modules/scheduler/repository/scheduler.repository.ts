@@ -3,7 +3,10 @@ import { PrismaService } from '../../../prisma.service';
 import { AppError } from '../../../common/errors/Error';
 import { ISchedulerRepository } from '../interfaces/repository.interface';
 import { CreateAppointmentDto } from '../dto/create-scheduler.dto';
-import { NewAppointment } from '../interfaces/scheduler.interface';
+import {
+  NewAppointment,
+  ProfessionalAppointments,
+} from '../interfaces/scheduler.interface';
 
 @Injectable()
 export class SchedulerRepository implements ISchedulerRepository {
@@ -70,7 +73,9 @@ export class SchedulerRepository implements ISchedulerRepository {
     }
   }
 
-  async findAllAppointments(professionalId: string) {
+  async findAllAppointments(
+    professionalId: string,
+  ): Promise<ProfessionalAppointments> {
     try {
       const currentDate = new Date().toISOString().slice(0, 10);
 
