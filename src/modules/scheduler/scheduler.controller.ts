@@ -5,6 +5,7 @@ import {
   UseGuards,
   UseFilters,
   Query,
+  Get,
 } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-scheduler.dto';
 import { RolesGuard } from '../auth/infra/guards/role.guard';
@@ -33,5 +34,10 @@ export class SchedulerController {
       professionalId,
       createAppointmentDto,
     );
+  }
+
+  @Get()
+  findAllAppointments() {
+    return 'all appointments';
   }
 }
