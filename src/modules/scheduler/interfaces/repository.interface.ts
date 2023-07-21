@@ -1,5 +1,5 @@
 import { CreateAppointmentDto } from '../dto/create-scheduler.dto';
-import { NewAppointment } from './appointment.interface';
+import { NewAppointment } from './scheduler.interface';
 
 export interface ISchedulerRepository {
   createAppointment(

@@ -15,7 +15,7 @@ import { AppError } from '../../common/errors/Error';
 import { CreateAppointmentService } from './services/create-appt.service';
 import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from '../user/enum/user-role.enum';
-import { NewAppointment } from './interfaces/appointment.interface';
+import { NewAppointment } from './interfaces/scheduler.interface';
 import { FindAllAppointmentService } from './services/find-all-appts.service';
 
 @UseGuards(RolesGuard)

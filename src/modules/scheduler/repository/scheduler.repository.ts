@@ -3,7 +3,7 @@ import { PrismaService } from '../../../prisma.service';
 import { AppError } from '../../../common/errors/Error';
 import { ISchedulerRepository } from '../interfaces/repository.interface';
 import { CreateAppointmentDto } from '../dto/create-scheduler.dto';
-import { NewAppointment } from '../interfaces/appointment.interface';
+import { NewAppointment } from '../interfaces/scheduler.interface';
 
 @Injectable()
 export class SchedulerRepository implements ISchedulerRepository {
