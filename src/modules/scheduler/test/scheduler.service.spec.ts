@@ -57,6 +57,7 @@ describe('SchedulerService', () => {
   it('should be defined', () => {
     expect(createAppointmentService).toBeDefined();
     expect(findAllAppointmentsService).toBeDefined();
+    expect(getAppointmentByFilterService).toBeDefined();
   });
 
   describe('create appointment', () => {
