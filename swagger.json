@@ -554,6 +554,7 @@
         }
       }
     },
+
     "/auth/signin": {
       "post": {
         "summary": "User login",
@@ -616,6 +617,388 @@
                   "error": {
                     "message": "Internal Server Error",
                     "code": "auth-repository.signIn",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/schedules/create": {
+      "post": {
+        "summary": "Create a new appointment",
+        "description": "Route to book a new appointment time",
+        "tags": ["Scheduler"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Professional id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAppointment"
+              },
+              "examples": {
+                "example1": {
+                  "summary": "Example 1 of a valid appointment request",
+                  "value": {
+                    "clientName": "Riley Doe",
+                    "clientPhone": "1234567890",
+                    "appointmentDate": "2023-08-03",
+                    "appointmentTime": "09:00"
+                  }
+                },
+                "example2": {
+                  "summary": "Example 2 of a valid appointment request",
+                  "value": {
+                    "clientName": "Riley Doe",
+                    "clientPhone": "1234567890",
+                    "appointmentDate": "2023-08-03",
+                    "appointmentTime": "15:30"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Appointment booked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewAppointment"
+                },
+                "example": {
+                  "id": "123456",
+                  "professionalId": "78910",
+                  "clientName": "Riley Doe",
+                  "clientPhone": "1234567890",
+                  "appointmentDate": "2023-08-03",
+                  "appointmentTime": "09:00",
+                  "createdAt": "2023-07-20T12:00:00Z",
+                  "updatedAt": "2023-07-20T12:00:00Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "missing query parameter [professionalId]",
+                    "code": "appt-module.createAppointment",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "an appointment already exists at this time",
+                    "code": "scheduler-repository.createAppt",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "failed to create appointment",
+                    "code": "scheduler-repository.createAppt",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedules/professional/:id": {
+      "get": {
+        "summary": "Get all appointments",
+        "description": "Route to find all professional appointments",
+        "tags": ["Scheduler"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "professional id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All professional appointments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfessionalAppointments"
+                },
+                "examples": {
+                  "example1": {
+                    "summary": "Example of found appointments",
+                    "value": {
+                      "appointments": [
+                        {
+                          "id": "123456",
+                          "professionalId": "78910",
+                          "clientName": "Riley Doe",
+                          "clientPhone": "1234567890",
+                          "appointmentDate": "2023-08-03",
+                          "appointmentTime": "09:00",
+                          "createdAt": "2023-07-20T12:00:00Z",
+                          "updatedAt": "2023-07-20T12:00:00Z"
+                        }
+                      ]
+                    }
+                  },
+                  "example2": {
+                    "summary": "Example of appointments not found",
+                    "value": {
+                      "appointments": []
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "failed to get appointments",
+                    "code": "scheduler-repository.findAllAppts",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedules/professional/filter/:id": {
+      "get": {
+        "summary": "Get an appointment by filter",
+        "description": "Route to find an appointment by filter",
+        "tags": ["Scheduler"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "professional id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientName",
+            "in": "query",
+            "description": "name of the client",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentDate",
+            "in": "query",
+            "description": "appointment date booked",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentTime",
+            "in": "query",
+            "description": "appointment time booked",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appointments found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfessionalAppointments"
+                },
+                "example": {
+                  "appointments": [
+                    {
+                      "id": "123456",
+                      "professionalId": "78910",
+                      "clientName": "Riley Doe",
+                      "clientPhone": "1234567890",
+                      "appointmentDate": "2023-08-03",
+                      "appointmentTime": "09:00",
+                      "createdAt": "2023-07-20T12:00:00Z",
+                      "updatedAt": "2023-07-20T12:00:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "failed to get appointment",
+                    "code": "scheduler-repository.getApptByFilter",
                     "status": true
                   },
                   "data": {}
@@ -773,7 +1156,7 @@
           },
           "updatedAt": {
             "type": "string",
-            "description": "Date and time of user creation"
+            "description": "Date and time of user updated"
           }
         }
       },
@@ -896,6 +1279,108 @@
           "password": {
             "type": "string",
             "description": "Password of the user"
+          }
+        }
+      },
+      "CreateAppointment": {
+        "type": "object",
+        "properties": {
+          "clientName": {
+            "type": "string",
+            "description": "Name of the client"
+          },
+          "clientPhone": {
+            "type": "string",
+            "description": "Client phone number"
+          },
+          "appointmentDate": {
+            "type": "string",
+            "description": "Date to be scheduled"
+          },
+          "appointmentTime": {
+            "type": "string",
+            "description": "Time to be scheduled"
+          }
+        }
+      },
+      "NewAppointment": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Appointment ID"
+          },
+          "professionalId": {
+            "type": "string",
+            "description": "Professional ID"
+          },
+          "clientName": {
+            "type": "string",
+            "description": "Name of the client"
+          },
+          "clientPhone": {
+            "type": "string",
+            "description": "Client phone number"
+          },
+          "appointmentDate": {
+            "type": "string",
+            "description": "Date to be scheduled"
+          },
+          "appointmentTime": {
+            "type": "string",
+            "description": "Time to be scheduled"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time of appointment creation"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Date and time of appointment updated"
+          }
+        }
+      },
+      "ProfessionalAppointments": {
+        "type": "object",
+        "properties": {
+          "appointments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Appointment ID"
+                },
+                "professionalId": {
+                  "type": "string",
+                  "description": "Professional ID"
+                },
+                "clientName": {
+                  "type": "string",
+                  "description": "Name of the client"
+                },
+                "clientPhone": {
+                  "type": "string",
+                  "description": "Client phone number"
+                },
+                "appointmentDate": {
+                  "type": "string",
+                  "description": "Date to be scheduled"
+                },
+                "appointmentTime": {
+                  "type": "string",
+                  "description": "Time to be scheduled"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "Date and time of appointment creation"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "description": "Date and time of appointment updated"
+                }
+              }
+            }
           }
         }
       },
