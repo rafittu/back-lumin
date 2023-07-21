@@ -5,6 +5,7 @@ import { RedisCacheService } from '../auth/infra/cache/redis-cache.service';
 import { CreateAppointmentService } from './services/create-appt.service';
 import { SchedulerRepository } from './repository/scheduler.repository';
 import { FindAllAppointmentService } from './services/find-all-appts.service';
+import { GetAppointmentByFilterService } from './services/appt-by-filter.service';
 
 @Module({
   controllers: [SchedulerController],
@@ -14,6 +15,7 @@ import { FindAllAppointmentService } from './services/find-all-appts.service';
     SchedulerRepository,
     CreateAppointmentService,
     FindAllAppointmentService,
+    GetAppointmentByFilterService,
   ],
 })
 export class SchedulerModule {}
