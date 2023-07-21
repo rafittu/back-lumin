@@ -1,5 +1,6 @@
 import { CreateAppointmentDto } from '../dto/create-scheduler.dto';
 import {
+  AppointmentFilters,
   NewAppointment,
   ProfessionalAppointments,
 } from './scheduler.interface';
@@ -11,5 +12,9 @@ export interface ISchedulerRepository {
   ): Promise<NewAppointment>;
   findAllAppointments(
     professionalId: string,
+  ): Promise<ProfessionalAppointments>;
+  getApptByFilter(
+    professionalId: string,
+    filter: AppointmentFilters,
   ): Promise<ProfessionalAppointments>;
 }
