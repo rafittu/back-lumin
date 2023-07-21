@@ -6,12 +6,17 @@ import {
   mockCreateAppointment,
   mockProfessionalId,
 } from './mocks/controller.mock';
-import { mockNewAppointment } from './mocks/common.mock';
+import {
+  mockNewAppointment,
+  mockProfessionalAppointments,
+} from './mocks/common.mock';
+import { FindAllAppointmentService } from '../services/find-all-appts.service';
 
 describe('SchedulerController', () => {
   let controller: SchedulerController;
 
   let createAppointmentService: CreateAppointmentService;
+  let findAllAppointmentsService: FindAllAppointmentService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,6 +29,12 @@ describe('SchedulerController', () => {
             execute: jest.fn().mockResolvedValue(mockNewAppointment),
           },
         },
+        {
+          provide: FindAllAppointmentService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(mockProfessionalAppointments),
+          },
+        },
       ],
     }).compile();
 
@@ -31,6 +42,9 @@ describe('SchedulerController', () => {
 
     createAppointmentService = module.get<CreateAppointmentService>(
       CreateAppointmentService,
+    );
+    findAllAppointmentsService = module.get<FindAllAppointmentService>(
+      FindAllAppointmentService,
     );
   });
 
@@ -57,6 +71,15 @@ describe('SchedulerController', () => {
       await expect(
         controller.create(mockCreateAppointment, mockProfessionalId),
       ).rejects.toThrowError();
+    });
+  });
+
+  describe('get all appointments', () => {
+    it('should get all professional appointments successfully', async () => {
+      const result = await controller.findAllAppointments(mockProfessionalId);
+
+      expect(findAllAppointmentsService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalAppointments);
     });
   });
 });
