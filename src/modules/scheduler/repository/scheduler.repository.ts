@@ -158,7 +158,7 @@ export class SchedulerRepository implements ISchedulerRepository {
       throw new AppError(
         'scheduler-repository.getApptByFilter',
         500,
-        'failed to get appointments',
+        'failed to get appointment',
       );
     }
   }
