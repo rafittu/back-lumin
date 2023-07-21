@@ -1,12 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../../prisma.service';
 import { SchedulerRepository } from '../repository/scheduler.repository';
-import { mockPrismaNewAppointment } from './mocks/repository.mock';
+import {
+  mockPrismaNewAppointment,
+  mockPrismaProfessionalAppointments,
+} from './mocks/repository.mock';
 import {
   mockCreateAppointment,
   mockProfessionalId,
 } from './mocks/controller.mock';
-import { mockNewAppointment } from './mocks/common.mock';
+import {
+  mockNewAppointment,
+  mockProfessionalAppointments,
+} from './mocks/common.mock';
 import { AppError } from '../../../common/errors/Error';
 
 describe('SchedulerRepository', () => {
@@ -81,6 +87,21 @@ describe('SchedulerRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to create appointment');
       }
+    });
+  });
+
+  describe('find all professional appointments', () => {
+    it('should get all appointments successfully', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'findMany')
+        .mockResolvedValueOnce(mockPrismaProfessionalAppointments);
+
+      const result = await schedulerRepository.findAllAppointments(
+        mockProfessionalId,
+      );
+
+      expect(prismaService.scheduler.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalAppointments);
     });
   });
 });

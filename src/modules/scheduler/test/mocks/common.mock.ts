@@ -1,4 +1,7 @@
-import { NewAppointment } from '../../interfaces/scheduler.interface';
+import {
+  NewAppointment,
+  ProfessionalAppointments,
+} from '../../interfaces/scheduler.interface';
 import { mockPrismaNewAppointment } from './repository.mock';
 
 export const mockNewAppointment: NewAppointment = {
@@ -10,4 +13,8 @@ export const mockNewAppointment: NewAppointment = {
   appointmentTime: mockPrismaNewAppointment.appointment_time,
   createdAt: mockPrismaNewAppointment.created_at,
   updatedAt: mockPrismaNewAppointment.updated_at,
+};
+
+export const mockProfessionalAppointments: ProfessionalAppointments = {
+  appointments: [mockNewAppointment],
 };
