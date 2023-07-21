@@ -6,4 +6,5 @@ export interface ISchedulerRepository {
     professionalId: string,
     createAppointmentDto: CreateAppointmentDto,
   ): Promise<NewAppointment>;
+  findAllAppointments(professionalId: string);
 }
