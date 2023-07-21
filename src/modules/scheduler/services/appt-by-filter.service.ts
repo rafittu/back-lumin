@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ISchedulerRepository } from '../interfaces/repository.interface';
 import { SchedulerRepository } from '../repository/scheduler.repository';
-import { AppointmentFilters } from '../interfaces/scheduler.interface';
+import {
+  AppointmentFilters,
+  ProfessionalAppointments,
+} from '../interfaces/scheduler.interface';
 
 @Injectable()
 export class GetAppointmentByFilterService {
@@ -10,7 +13,10 @@ export class GetAppointmentByFilterService {
     private schedulerRepository: ISchedulerRepository,
   ) {}
 
-  async execute(professionalId: string, filter: AppointmentFilters) {
+  async execute(
+    professionalId: string,
+    filter: AppointmentFilters,
+  ): Promise<ProfessionalAppointments> {
     return await this.schedulerRepository.getApptByFilter(
       professionalId,
       filter,

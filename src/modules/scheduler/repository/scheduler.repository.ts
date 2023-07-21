@@ -113,7 +113,10 @@ export class SchedulerRepository implements ISchedulerRepository {
     }
   }
 
-  async getApptByFilter(professionalId: string, filter: AppointmentFilters) {
+  async getApptByFilter(
+    professionalId: string,
+    filter: AppointmentFilters,
+  ): Promise<ProfessionalAppointments> {
     const { clientName, appointmentDate, appointmentTime } = filter;
 
     try {
@@ -148,7 +151,9 @@ export class SchedulerRepository implements ISchedulerRepository {
         updatedAt: appointment.updated_at,
       }));
 
-      return apptsResponse;
+      return {
+        appointments: apptsResponse,
+      };
     } catch (error) {
       throw new AppError(
         'scheduler-repository.getApptByFilter',

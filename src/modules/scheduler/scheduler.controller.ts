@@ -58,7 +58,7 @@ export class SchedulerController {
   async findAppointmentByFilter(
     @Param('id') professionalId: string,
     @Query() filter: AppointmentFilters,
-  ) {
+  ): Promise<ProfessionalAppointments> {
     return await this.getApptByFilterService.execute(professionalId, filter);
   }
 }

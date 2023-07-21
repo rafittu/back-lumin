@@ -13,5 +13,8 @@ export interface ISchedulerRepository {
   findAllAppointments(
     professionalId: string,
   ): Promise<ProfessionalAppointments>;
-  getApptByFilter(professionalId: string, filter: AppointmentFilters);
+  getApptByFilter(
+    professionalId: string,
+    filter: AppointmentFilters,
+  ): Promise<ProfessionalAppointments>;
 }
