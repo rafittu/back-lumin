@@ -153,14 +153,18 @@ describe('SchedulerController', () => {
       expect(result).toEqual(mockUpdatedAppointment);
     });
 
-    // it('should throw an error', async () => {
-    //   jest
-    //     .spyOn(createAppointmentService, 'execute')
-    //     .mockRejectedValueOnce(new Error());
+    it('should throw an error', async () => {
+      jest
+        .spyOn(updateAppointmentService, 'execute')
+        .mockRejectedValueOnce(new Error());
 
-    //   await expect(
-    //     controller.create(mockCreateAppointment, mockProfessionalId),
-    //   ).rejects.toThrowError();
-    // });
+      await expect(
+        controller.update(
+          mockNewAppointment.id,
+          mockNewAppointment.professionalId,
+          mockUpdateAppointment,
+        ),
+      ).rejects.toThrowError();
+    });
   });
 });
