@@ -25,6 +25,7 @@ export interface ProfessionalAppointments {
 }
 
 export interface AppointmentFilters {
+  appointmentId?: string;
   clientName?: string;
   appointmentDate?: string;
   appointmentTime?: string;
