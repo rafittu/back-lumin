@@ -17,6 +17,7 @@ import { CreateAppointmentService } from './services/create-appt.service';
 import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from '../user/enum/user-role.enum';
 import {
+  Appointment,
   AppointmentFilters,
   NewAppointment,
   ProfessionalAppointments,
@@ -72,7 +73,7 @@ export class SchedulerController {
     @Param('appointmentId') appointmentId: string,
     @Query('professionalId') professionalId: string,
     @Body() updateAppointment: UpdateAppointmentDto,
-  ) {
+  ): Promise<Appointment> {
     return await this.updateApptService.execute(
       appointmentId,
       professionalId,
