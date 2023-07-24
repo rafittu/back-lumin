@@ -117,12 +117,15 @@ export class SchedulerRepository implements ISchedulerRepository {
     professionalId: string,
     filter: AppointmentFilters,
   ): Promise<ProfessionalAppointments> {
-    const { clientName, appointmentDate, appointmentTime } = filter;
+    const { appointmentId, clientName, appointmentDate, appointmentTime } =
+      filter;
 
     try {
       const appointmentQuery: Prisma.SchedulerWhereInput = {
         professional_id: professionalId,
       };
+
+      appointmentId ? (appointmentQuery.id = appointmentId) : appointmentQuery;
 
       clientName
         ? (appointmentQuery.client_name = clientName)
