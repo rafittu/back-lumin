@@ -4,16 +4,30 @@ import { AppError } from '../../../common/errors/Error';
 import { ISchedulerRepository } from '../interfaces/repository.interface';
 import { CreateAppointmentDto } from '../dto/create-scheduler.dto';
 import {
+  Appointment,
   AppointmentFilters,
   NewAppointment,
   ProfessionalAppointments,
 } from '../interfaces/scheduler.interface';
-import { Prisma } from '@prisma/client';
+import { Prisma, Scheduler } from '@prisma/client';
 import { UpdateAppointmentDto } from '../dto/update-schedule.dto';
 
 @Injectable()
 export class SchedulerRepository implements ISchedulerRepository {
   constructor(private prisma: PrismaService) {}
+
+  private formatAppointmentResponse(appointment: Scheduler): Appointment {
+    return {
+      id: appointment.id,
+      professionalId: appointment.professional_id,
+      clientName: appointment.client_name,
+      clientPhone: appointment.client_phone,
+      appointmentDate: appointment.appointment_date,
+      appointmentTime: appointment.appointment_time,
+      createdAt: appointment.created_at,
+      updatedAt: appointment.updated_at,
+    };
+  }
 
   async createAppointment(
     professionalId: string,
@@ -49,14 +63,7 @@ export class SchedulerRepository implements ISchedulerRepository {
         },
       });
 
-      const { id, created_at, updated_at } = appointment;
-      const apptResponse = {
-        id,
-        professionalId,
-        ...createAppointmentDto,
-        createdAt: created_at,
-        updatedAt: updated_at,
-      };
+      const apptResponse = this.formatAppointmentResponse(appointment);
 
       return apptResponse;
     } catch (error) {
@@ -91,16 +98,9 @@ export class SchedulerRepository implements ISchedulerRepository {
         },
       });
 
-      const apptsResponse = appointments.map((appointment) => ({
-        id: appointment.id,
-        professionalId: appointment.professional_id,
-        clientName: appointment.client_name,
-        clientPhone: appointment.client_phone,
-        appointmentDate: appointment.appointment_date,
-        appointmentTime: appointment.appointment_time,
-        createdAt: appointment.created_at,
-        updatedAt: appointment.updated_at,
-      }));
+      const apptsResponse = appointments.map((appointment) =>
+        this.formatAppointmentResponse(appointment),
+      );
 
       return {
         appointments: apptsResponse,
@@ -144,16 +144,9 @@ export class SchedulerRepository implements ISchedulerRepository {
         where: appointmentQuery,
       });
 
-      const apptsResponse = appointments.map((appointment) => ({
-        id: appointment.id,
-        professionalId: appointment.professional_id,
-        clientName: appointment.client_name,
-        clientPhone: appointment.client_phone,
-        appointmentDate: appointment.appointment_date,
-        appointmentTime: appointment.appointment_time,
-        createdAt: appointment.created_at,
-        updatedAt: appointment.updated_at,
-      }));
+      const apptsResponse = appointments.map((appointment) =>
+        this.formatAppointmentResponse(appointment),
+      );
 
       return {
         appointments: apptsResponse,
@@ -186,16 +179,7 @@ export class SchedulerRepository implements ISchedulerRepository {
         },
       });
 
-      const apptResponse = {
-        id: apptUpdated.id,
-        professionalId: apptUpdated.professional_id,
-        clientName: apptUpdated.client_name,
-        clientPhone: apptUpdated.client_phone,
-        appointmentDate: apptUpdated.appointment_date,
-        appointmentTime: apptUpdated.appointment_time,
-        createdAt: apptUpdated.created_at,
-        updatedAt: apptUpdated.updated_at,
-      };
+      const apptResponse = this.formatAppointmentResponse(apptUpdated);
 
       return apptResponse;
     } catch (error) {
