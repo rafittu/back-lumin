@@ -4,19 +4,23 @@ import { SchedulerRepository } from '../repository/scheduler.repository';
 import {
   mockNewAppointment,
   mockProfessionalAppointments,
+  mockUpdatedAppointment,
 } from './mocks/common.mock';
 import {
   mockCreateAppointment,
   mockProfessionalId,
+  mockUpdateAppointment,
 } from './mocks/controller.mock';
 import { AppError } from '../../../common/errors/Error';
 import { FindAllAppointmentService } from '../services/find-all-appts.service';
 import { GetAppointmentByFilterService } from '../services/appt-by-filter.service';
+import { UpdateAppointmentService } from '../services/update-appt.service';
 
 describe('SchedulerService', () => {
   let createAppointmentService: CreateAppointmentService;
   let findAllAppointmentsService: FindAllAppointmentService;
   let getAppointmentByFilterService: GetAppointmentByFilterService;
+  let updateAppointmentService: UpdateAppointmentService;
 
   let schedulerRepository: SchedulerRepository;
 
@@ -26,6 +30,7 @@ describe('SchedulerService', () => {
         CreateAppointmentService,
         FindAllAppointmentService,
         GetAppointmentByFilterService,
+        UpdateAppointmentService,
         {
           provide: SchedulerRepository,
           useValue: {
@@ -36,6 +41,9 @@ describe('SchedulerService', () => {
             getApptByFilter: jest
               .fn()
               .mockResolvedValue(mockProfessionalAppointments),
+            updateAppointment: jest
+              .fn()
+              .mockResolvedValue(mockUpdatedAppointment),
           },
         },
       ],
@@ -50,6 +58,9 @@ describe('SchedulerService', () => {
     getAppointmentByFilterService = module.get<GetAppointmentByFilterService>(
       GetAppointmentByFilterService,
     );
+    updateAppointmentService = module.get<UpdateAppointmentService>(
+      UpdateAppointmentService,
+    );
 
     schedulerRepository = module.get<SchedulerRepository>(SchedulerRepository);
   });
@@ -58,6 +69,7 @@ describe('SchedulerService', () => {
     expect(createAppointmentService).toBeDefined();
     expect(findAllAppointmentsService).toBeDefined();
     expect(getAppointmentByFilterService).toBeDefined();
+    expect(updateAppointmentService).toBeDefined();
   });
 
   describe('create appointment', () => {
@@ -105,6 +117,27 @@ describe('SchedulerService', () => {
 
       expect(schedulerRepository.getApptByFilter).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockProfessionalAppointments);
+    });
+  });
+
+  describe('update appointment', () => {
+    it('should update an appointment successfully', async () => {
+      jest
+        .spyOn(schedulerRepository, 'getApptByFilter')
+        .mockResolvedValueOnce({ appointments: [mockNewAppointment] });
+
+      jest
+        .spyOn(schedulerRepository, 'getApptByFilter')
+        .mockResolvedValueOnce({ appointments: [] });
+
+      const result = await updateAppointmentService.execute(
+        mockNewAppointment.id,
+        mockNewAppointment.professionalId,
+        mockUpdateAppointment,
+      );
+
+      expect(schedulerRepository.updateAppointment).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUpdatedAppointment);
     });
   });
 });
