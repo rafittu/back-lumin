@@ -173,7 +173,7 @@ describe('SchedulerService', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(409);
         expect(error.message).toBe(
-          'appointment time already booked for another client',
+          'an appointment already exists at this time',
         );
       }
     });
