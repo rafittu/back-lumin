@@ -46,7 +46,7 @@ export class UpdateAppointmentService {
       throw new AppError(
         'appt-module.updateAppointment',
         409,
-        'appointment time already booked for another client',
+        'an appointment already exists at this time',
       );
     }
 
