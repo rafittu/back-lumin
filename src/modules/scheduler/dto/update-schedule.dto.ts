@@ -5,7 +5,7 @@ import { CreateAppointmentDto } from './create-scheduler.dto';
 export class UpdateAppointmentDto extends PartialType(CreateAppointmentDto) {
   @IsOptional()
   @IsString()
-  clientPhone: string;
+  clientPhone?: string;
 
   @IsOptional()
   @IsString()
@@ -16,12 +16,12 @@ export class UpdateAppointmentDto extends PartialType(CreateAppointmentDto) {
       message: 'must be a valid date and formatted as yyyy-mm-dd',
     },
   )
-  appointmentDate: string;
+  appointmentDate?: string;
 
   @IsOptional()
   @IsString()
   @Matches(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, {
     message: 'must be a valid time (HH:mm) and formatted as 24-hours',
   })
-  appointmentTime: string;
+  appointmentTime?: string;
 }
