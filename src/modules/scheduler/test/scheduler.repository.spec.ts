@@ -22,7 +22,7 @@ describe('SchedulerRepository', () => {
   let schedulerRepository: SchedulerRepository;
   let prismaService: PrismaService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [SchedulerRepository, PrismaService],
     }).compile();
@@ -30,6 +30,10 @@ describe('SchedulerRepository', () => {
     schedulerRepository = module.get<SchedulerRepository>(SchedulerRepository);
 
     prismaService = module.get<PrismaService>(PrismaService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -215,6 +219,9 @@ describe('SchedulerRepository', () => {
       jest
         .spyOn(prismaService.scheduler, 'update')
         .mockRejectedValueOnce(new Error());
+
+      mockUpdateAppointment.appointmentDate = undefined;
+      mockUpdateAppointment.appointmentTime = undefined;
 
       try {
         await schedulerRepository.updateAppointment(
