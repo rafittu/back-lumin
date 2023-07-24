@@ -24,7 +24,7 @@ import {
 import { FindAllAppointmentService } from './services/find-all-appts.service';
 import { GetAppointmentByFilterService } from './services/appt-by-filter.service';
 import { UpdateAppointmentDto } from './dto/update-schedule.dto';
-import { UpdateAppointmentService } from './services/update-appt.service',
+import { UpdateAppointmentService } from './services/update-appt.service';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
