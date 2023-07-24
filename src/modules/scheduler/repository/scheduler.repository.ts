@@ -9,6 +9,7 @@ import {
   ProfessionalAppointments,
 } from '../interfaces/scheduler.interface';
 import { Prisma } from '@prisma/client';
+import { UpdateAppointmentDto } from '../dto/update-schedule.dto';
 
 @Injectable()
 export class SchedulerRepository implements ISchedulerRepository {
@@ -162,6 +163,46 @@ export class SchedulerRepository implements ISchedulerRepository {
         'scheduler-repository.getApptByFilter',
         500,
         'failed to get appointment',
+      );
+    }
+  }
+
+  async updateAppointment(
+    appointmentId: string,
+    professionalId: string,
+    updateAppointment: UpdateAppointmentDto,
+  ) {
+    const { clientPhone, appointmentDate, appointmentTime } = updateAppointment;
+
+    try {
+      const apptUpdated = await this.prisma.scheduler.update({
+        where: {
+          id: appointmentId,
+        },
+        data: {
+          client_phone: clientPhone ?? clientPhone,
+          appointment_date: appointmentDate ?? appointmentDate,
+          appointment_time: appointmentTime ?? appointmentTime,
+        },
+      });
+
+      const apptResponse = {
+        id: apptUpdated.id,
+        professionalId: apptUpdated.professional_id,
+        clientName: apptUpdated.client_name,
+        clientPhone: apptUpdated.client_phone,
+        appointmentDate: apptUpdated.appointment_date,
+        appointmentTime: apptUpdated.appointment_time,
+        createdAt: apptUpdated.created_at,
+        updatedAt: apptUpdated.updated_at,
+      };
+
+      return apptResponse;
+    } catch (error) {
+      throw new AppError(
+        'scheduler-repository.updateAppointment',
+        500,
+        'failed to update appointment',
       );
     }
   }
