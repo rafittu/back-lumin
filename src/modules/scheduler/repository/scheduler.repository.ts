@@ -163,7 +163,7 @@ export class SchedulerRepository implements ISchedulerRepository {
   async updateAppointment(
     appointmentId: string,
     updateAppointment: UpdateAppointmentDto,
-  ) {
+  ): Promise<Appointment> {
     const { clientPhone, appointmentDate, appointmentTime } = updateAppointment;
 
     try {

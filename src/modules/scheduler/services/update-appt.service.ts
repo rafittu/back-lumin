@@ -3,6 +3,7 @@ import { ISchedulerRepository } from '../interfaces/repository.interface';
 import { SchedulerRepository } from '../repository/scheduler.repository';
 import { AppError } from '../../../common/errors/Error';
 import { UpdateAppointmentDto } from '../dto/update-schedule.dto';
+import { Appointment } from '../interfaces/scheduler.interface';
 
 @Injectable()
 export class UpdateAppointmentService {
@@ -15,7 +16,7 @@ export class UpdateAppointmentService {
     appointmentId: string,
     professionalId: string,
     updateAppointment: UpdateAppointmentDto,
-  ) {
+  ): Promise<Appointment> {
     const { appointmentDate, appointmentTime } = updateAppointment;
 
     if (!professionalId) {
