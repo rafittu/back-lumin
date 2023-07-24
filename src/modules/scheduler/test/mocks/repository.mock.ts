@@ -1,6 +1,10 @@
 import { faker } from '@faker-js/faker';
 import { Scheduler } from '@prisma/client';
-import { mockCreateAppointment, mockProfessionalId } from './controller.mock';
+import {
+  mockCreateAppointment,
+  mockProfessionalId,
+  mockUpdateAppointment,
+} from './controller.mock';
 
 export const mockPrismaNewAppointment: Scheduler = {
   id: faker.string.uuid(),
@@ -18,3 +22,9 @@ export const mockPrismaProfessionalAppointments: Scheduler[] = [
     ...mockPrismaNewAppointment,
   },
 ];
+
+export const mockPrismaUpdateAppointment: Scheduler = {
+  ...mockPrismaNewAppointment,
+  appointment_date: mockUpdateAppointment.appointmentDate,
+  appointment_time: mockUpdateAppointment.appointmentTime,
+};
