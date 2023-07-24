@@ -4,14 +4,17 @@ import { SchedulerRepository } from '../repository/scheduler.repository';
 import {
   mockPrismaNewAppointment,
   mockPrismaProfessionalAppointments,
+  mockPrismaUpdateAppointment,
 } from './mocks/repository.mock';
 import {
   mockCreateAppointment,
   mockProfessionalId,
+  mockUpdateAppointment,
 } from './mocks/controller.mock';
 import {
   mockNewAppointment,
   mockProfessionalAppointments,
+  mockUpdatedAppointment,
 } from './mocks/common.mock';
 import { AppError } from '../../../common/errors/Error';
 
@@ -176,6 +179,22 @@ describe('SchedulerRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to get appointment');
       }
+    });
+  });
+
+  describe('update an appointment', () => {
+    it('should update an appointment successfully', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'update')
+        .mockResolvedValueOnce(mockPrismaUpdateAppointment);
+
+      const result = await schedulerRepository.updateAppointment(
+        mockNewAppointment.id,
+        mockUpdateAppointment,
+      );
+
+      expect(prismaService.scheduler.update).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUpdatedAppointment);
     });
   });
 });
