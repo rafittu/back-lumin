@@ -196,5 +196,22 @@ describe('SchedulerRepository', () => {
       expect(prismaService.scheduler.update).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockUpdatedAppointment);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'update')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await schedulerRepository.updateAppointment(
+          mockNewAppointment.id,
+          mockUpdateAppointment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to update appointment');
+      }
+    });
   });
 });
