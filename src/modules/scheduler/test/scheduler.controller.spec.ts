@@ -5,13 +5,16 @@ import { CreateAppointmentService } from '../services/create-appt.service';
 import {
   mockCreateAppointment,
   mockProfessionalId,
+  mockUpdateAppointment,
 } from './mocks/controller.mock';
 import {
   mockNewAppointment,
   mockProfessionalAppointments,
+  mockUpdatedAppointment,
 } from './mocks/common.mock';
 import { FindAllAppointmentService } from '../services/find-all-appts.service';
 import { GetAppointmentByFilterService } from '../services/appt-by-filter.service';
+import { UpdateAppointmentService } from '../services/update-appt.service';
 
 describe('SchedulerController', () => {
   let controller: SchedulerController;
@@ -19,6 +22,7 @@ describe('SchedulerController', () => {
   let createAppointmentService: CreateAppointmentService;
   let findAllAppointmentsService: FindAllAppointmentService;
   let getAppointmentByFilterService: GetAppointmentByFilterService;
+  let updateAppointmentService: UpdateAppointmentService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -43,6 +47,12 @@ describe('SchedulerController', () => {
             execute: jest.fn().mockResolvedValue(mockProfessionalAppointments),
           },
         },
+        {
+          provide: UpdateAppointmentService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(mockUpdatedAppointment),
+          },
+        },
       ],
     }).compile();
 
@@ -56,6 +66,9 @@ describe('SchedulerController', () => {
     );
     getAppointmentByFilterService = module.get<GetAppointmentByFilterService>(
       GetAppointmentByFilterService,
+    );
+    updateAppointmentService = module.get<UpdateAppointmentService>(
+      UpdateAppointmentService,
     );
   });
 
@@ -126,5 +139,28 @@ describe('SchedulerController', () => {
         }),
       ).rejects.toThrowError();
     });
+  });
+
+  describe('update an appointment', () => {
+    it('should update an appointment successfully', async () => {
+      const result = await controller.update(
+        mockNewAppointment.id,
+        mockNewAppointment.professionalId,
+        mockUpdateAppointment,
+      );
+
+      expect(updateAppointmentService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUpdatedAppointment);
+    });
+
+    // it('should throw an error', async () => {
+    //   jest
+    //     .spyOn(createAppointmentService, 'execute')
+    //     .mockRejectedValueOnce(new Error());
+
+    //   await expect(
+    //     controller.create(mockCreateAppointment, mockProfessionalId),
+    //   ).rejects.toThrowError();
+    // });
   });
 });
