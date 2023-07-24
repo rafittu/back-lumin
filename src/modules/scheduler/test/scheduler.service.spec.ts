@@ -139,5 +139,19 @@ describe('SchedulerService', () => {
       expect(schedulerRepository.updateAppointment).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockUpdatedAppointment);
     });
+
+    it('should throw an app error if missing params', async () => {
+      try {
+        await updateAppointmentService.execute(
+          mockNewAppointment.id,
+          undefined,
+          mockUpdateAppointment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('missing query parameter [professionalId]');
+      }
+    });
   });
 });
