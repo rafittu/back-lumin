@@ -162,7 +162,6 @@ export class SchedulerRepository implements ISchedulerRepository {
 
   async updateAppointment(
     appointmentId: string,
-    professionalId: string,
     updateAppointment: UpdateAppointmentDto,
   ) {
     const { clientPhone, appointmentDate, appointmentTime } = updateAppointment;

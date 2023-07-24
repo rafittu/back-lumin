@@ -51,7 +51,6 @@ export class UpdateAppointmentService {
 
     return await this.schedulerRepository.updateAppointment(
       appointmentId,
-      professionalId,
       updateAppointment,
     );
   }

@@ -20,7 +20,6 @@ export interface ISchedulerRepository {
   ): Promise<ProfessionalAppointments>;
   updateAppointment(
     appointmentId: string,
-    professionalId: string,
     updateAppointment: UpdateAppointmentDto,
   );
 }
