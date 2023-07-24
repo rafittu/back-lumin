@@ -153,5 +153,29 @@ describe('SchedulerService', () => {
         expect(error.message).toBe('missing query parameter [professionalId]');
       }
     });
+
+    it('should throw an app error if appointment time already booked for another client', async () => {
+      jest
+        .spyOn(schedulerRepository, 'getApptByFilter')
+        .mockResolvedValueOnce({ appointments: [mockNewAppointment] })
+        .mockResolvedValueOnce({ appointments: [mockNewAppointment] });
+
+      try {
+        mockUpdateAppointment.appointmentDate = undefined;
+        mockUpdateAppointment.appointmentTime = undefined;
+
+        await updateAppointmentService.execute(
+          mockNewAppointment.id,
+          mockNewAppointment.professionalId,
+          mockUpdateAppointment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(409);
+        expect(error.message).toBe(
+          'appointment time already booked for another client',
+        );
+      }
+    });
   });
 });
