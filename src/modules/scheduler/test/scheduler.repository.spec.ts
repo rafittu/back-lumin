@@ -137,6 +137,20 @@ describe('SchedulerRepository', () => {
       expect(result).toEqual(mockProfessionalAppointments);
     });
 
+    it('should get an appointment by id successfully', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'findMany')
+        .mockResolvedValueOnce(mockPrismaProfessionalAppointments);
+
+      const result = await schedulerRepository.getApptByFilter(
+        mockProfessionalId,
+        { appointmentId: mockNewAppointment.id },
+      );
+
+      expect(prismaService.scheduler.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalAppointments);
+    });
+
     it('should get an appointment by appointment date successfully', async () => {
       jest
         .spyOn(prismaService.scheduler, 'findMany')
