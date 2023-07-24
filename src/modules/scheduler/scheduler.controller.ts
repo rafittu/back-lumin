@@ -7,6 +7,7 @@ import {
   Query,
   Get,
   Param,
+  Patch,
 } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-scheduler.dto';
 import { RolesGuard } from '../auth/infra/guards/role.guard';
@@ -22,6 +23,8 @@ import {
 } from './interfaces/scheduler.interface';
 import { FindAllAppointmentService } from './services/find-all-appts.service';
 import { GetAppointmentByFilterService } from './services/appt-by-filter.service';
+import { UpdateAppointmentDto } from './dto/update-schedule.dto';
+import { UpdateAppointmentService } from './services/update-appt.service',
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -31,6 +34,7 @@ export class SchedulerController {
     private readonly createApptService: CreateAppointmentService,
     private readonly findAllApptsService: FindAllAppointmentService,
     private readonly getApptByFilterService: GetAppointmentByFilterService,
+    private readonly updateApptService: UpdateAppointmentService,
   ) {}
 
   @Post('/create')
@@ -60,5 +64,19 @@ export class SchedulerController {
     @Query() filter: AppointmentFilters,
   ): Promise<ProfessionalAppointments> {
     return await this.getApptByFilterService.execute(professionalId, filter);
+  }
+
+  @Patch('/update/:appointmentId')
+  @Roles(UserRole.ADMIN)
+  async update(
+    @Param('appointmentId') appointmentId: string,
+    @Query('professionalId') professionalId: string,
+    @Body() updateAppointment: UpdateAppointmentDto,
+  ) {
+    return await this.updateApptService.execute(
+      appointmentId,
+      professionalId,
+      updateAppointment,
+    );
   }
 }
