@@ -4,14 +4,17 @@ import { SchedulerRepository } from '../repository/scheduler.repository';
 import {
   mockPrismaNewAppointment,
   mockPrismaProfessionalAppointments,
+  mockPrismaUpdateAppointment,
 } from './mocks/repository.mock';
 import {
   mockCreateAppointment,
   mockProfessionalId,
+  mockUpdateAppointment,
 } from './mocks/controller.mock';
 import {
   mockNewAppointment,
   mockProfessionalAppointments,
+  mockUpdatedAppointment,
 } from './mocks/common.mock';
 import { AppError } from '../../../common/errors/Error';
 
@@ -19,7 +22,7 @@ describe('SchedulerRepository', () => {
   let schedulerRepository: SchedulerRepository;
   let prismaService: PrismaService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [SchedulerRepository, PrismaService],
     }).compile();
@@ -27,6 +30,10 @@ describe('SchedulerRepository', () => {
     schedulerRepository = module.get<SchedulerRepository>(SchedulerRepository);
 
     prismaService = module.get<PrismaService>(PrismaService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -134,6 +141,20 @@ describe('SchedulerRepository', () => {
       expect(result).toEqual(mockProfessionalAppointments);
     });
 
+    it('should get an appointment by id successfully', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'findMany')
+        .mockResolvedValueOnce(mockPrismaProfessionalAppointments);
+
+      const result = await schedulerRepository.getApptByFilter(
+        mockProfessionalId,
+        { appointmentId: mockNewAppointment.id },
+      );
+
+      expect(prismaService.scheduler.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalAppointments);
+    });
+
     it('should get an appointment by appointment date successfully', async () => {
       jest
         .spyOn(prismaService.scheduler, 'findMany')
@@ -175,6 +196,42 @@ describe('SchedulerRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to get appointment');
+      }
+    });
+  });
+
+  describe('update an appointment', () => {
+    it('should update an appointment successfully', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'update')
+        .mockResolvedValueOnce(mockPrismaUpdateAppointment);
+
+      const result = await schedulerRepository.updateAppointment(
+        mockNewAppointment.id,
+        mockUpdateAppointment,
+      );
+
+      expect(prismaService.scheduler.update).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUpdatedAppointment);
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'update')
+        .mockRejectedValueOnce(new Error());
+
+      mockUpdateAppointment.appointmentDate = undefined;
+      mockUpdateAppointment.appointmentTime = undefined;
+
+      try {
+        await schedulerRepository.updateAppointment(
+          mockNewAppointment.id,
+          mockUpdateAppointment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to update appointment');
       }
     });
   });

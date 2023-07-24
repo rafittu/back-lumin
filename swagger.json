@@ -1008,6 +1008,155 @@
           }
         }
       }
+    },
+    "/schedules/update/:appointmentId": {
+      "patch": {
+        "summary": "Update an appointment",
+        "description": "Route to update an appointment",
+        "tags": ["Scheduler"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentId",
+            "in": "path",
+            "description": "appointment id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "professionalId",
+            "in": "query",
+            "description": "professional id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAppointment"
+              },
+              "example": {
+                "clientPhone": "1234567811",
+                "appointmentDate": "2023-08-02",
+                "appointmentTime": "09:00"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Appointment updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewAppointment"
+                },
+                "example": {
+                  "id": "123456",
+                  "professionalId": "78910",
+                  "clientName": "Riley Doe",
+                  "clientPhone": "1234567811",
+                  "appointmentDate": "2023-08-02",
+                  "appointmentTime": "09:00",
+                  "createdAt": "2023-07-20T12:00:00Z",
+                  "updatedAt": "2023-07-22T12:00:00Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "missing query parameter [professionalId]",
+                    "code": "appt-module.updateAppointment",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "an appointment already exists at this time",
+                    "code": "appt-module.updateAppointment",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "failed to update appointment",
+                    "code": "scheduler-repository.updateAppointment",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1381,6 +1530,22 @@
                 }
               }
             }
+          }
+        }
+      },
+      "UpdateAppointment": {
+        "properties": {
+          "clientPhone": {
+            "type": "string",
+            "description": "Client phone number"
+          },
+          "appointmentDate": {
+            "type": "string",
+            "description": "Date to be scheduled"
+          },
+          "appointmentTime": {
+            "type": "string",
+            "description": "Time to be scheduled"
           }
         }
       },
