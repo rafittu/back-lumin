@@ -8,6 +8,7 @@ import {
   Get,
   Param,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { CreateAppointmentDto } from './dto/create-scheduler.dto';
 import { RolesGuard } from '../auth/infra/guards/role.guard';
@@ -26,6 +27,7 @@ import { FindAllAppointmentService } from './services/find-all-appts.service';
 import { GetAppointmentByFilterService } from './services/appt-by-filter.service';
 import { UpdateAppointmentDto } from './dto/update-schedule.dto';
 import { UpdateAppointmentService } from './services/update-appt.service';
+import { DeleteAppointmentService } from './services/delete-appt.service';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -36,6 +38,7 @@ export class SchedulerController {
     private readonly findAllApptsService: FindAllAppointmentService,
     private readonly getApptByFilterService: GetAppointmentByFilterService,
     private readonly updateApptService: UpdateAppointmentService,
+    private readonly deleteApptService: DeleteAppointmentService,
   ) {}
 
   @Post('/create')
@@ -79,5 +82,11 @@ export class SchedulerController {
       professionalId,
       updateAppointment,
     );
+  }
+
+  @Delete('/delete/:appointmentId')
+  @Roles(UserRole.ADMIN)
+  async delete(@Param('appointmentId') appointmentId: string) {
+    return await this.deleteApptService.execute(appointmentId);
   }
 }
