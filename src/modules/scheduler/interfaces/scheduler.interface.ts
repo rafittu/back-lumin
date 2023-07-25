@@ -30,3 +30,7 @@ export interface AppointmentFilters {
   appointmentDate?: string;
   appointmentTime?: string;
 }
+
+export interface DeletedAppointment {
+  'Appointment deleted': Appointment;
+}

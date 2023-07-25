@@ -3,6 +3,7 @@ import { UpdateAppointmentDto } from '../dto/update-schedule.dto';
 import {
   Appointment,
   AppointmentFilters,
+  DeletedAppointment,
   NewAppointment,
   ProfessionalAppointments,
 } from './scheduler.interface';
@@ -23,4 +24,5 @@ export interface ISchedulerRepository {
     appointmentId: string,
     updateAppointment: UpdateAppointmentDto,
   ): Promise<Appointment>;
+  deleteAppointment(appointmentId: string): Promise<DeletedAppointment>;
 }

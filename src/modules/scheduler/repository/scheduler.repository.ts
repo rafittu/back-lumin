@@ -6,6 +6,7 @@ import { CreateAppointmentDto } from '../dto/create-scheduler.dto';
 import {
   Appointment,
   AppointmentFilters,
+  DeletedAppointment,
   NewAppointment,
   ProfessionalAppointments,
 } from '../interfaces/scheduler.interface';
@@ -186,6 +187,26 @@ export class SchedulerRepository implements ISchedulerRepository {
         'scheduler-repository.updateAppointment',
         500,
         'failed to update appointment',
+      );
+    }
+  }
+
+  async deleteAppointment(appointmentId: string): Promise<DeletedAppointment> {
+    try {
+      const deletedAppt = await this.prisma.scheduler.delete({
+        where: {
+          id: appointmentId,
+        },
+      });
+
+      const apptResponse = this.formatAppointmentResponse(deletedAppt);
+
+      return { 'Appointment deleted': apptResponse };
+    } catch (error) {
+      throw new AppError(
+        'scheduler-repository.deleteAppt',
+        500,
+        'failed to delete appointment',
       );
     }
   }

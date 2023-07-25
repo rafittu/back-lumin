@@ -49,7 +49,7 @@ Este projeto utiliza as seguintes tecnologias:
    - [x] Buscar agentamento por filtro
    - [x] Buscar todos os agentamentos de um profissional
    - [x] Atualizar agendamento
-   - [ ] Cancelar agendamento
+   - [x] Cancelar agendamento
 
 4. Módulo de gerenciamento de sessões
 
