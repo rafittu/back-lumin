@@ -20,6 +20,7 @@ import { UserRole } from '../user/enum/user-role.enum';
 import {
   Appointment,
   AppointmentFilters,
+  DeletedAppointment,
   NewAppointment,
   ProfessionalAppointments,
 } from './interfaces/scheduler.interface';
@@ -86,7 +87,9 @@ export class SchedulerController {
 
   @Delete('/delete/:appointmentId')
   @Roles(UserRole.ADMIN)
-  async delete(@Param('appointmentId') appointmentId: string) {
+  async delete(
+    @Param('appointmentId') appointmentId: string,
+  ): Promise<DeletedAppointment> {
     return await this.deleteApptService.execute(appointmentId);
   }
 }

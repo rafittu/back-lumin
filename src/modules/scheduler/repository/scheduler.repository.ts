@@ -6,6 +6,7 @@ import { CreateAppointmentDto } from '../dto/create-scheduler.dto';
 import {
   Appointment,
   AppointmentFilters,
+  DeletedAppointment,
   NewAppointment,
   ProfessionalAppointments,
 } from '../interfaces/scheduler.interface';
@@ -190,7 +191,7 @@ export class SchedulerRepository implements ISchedulerRepository {
     }
   }
 
-  async deleteAppointment(appointmentId: string) {
+  async deleteAppointment(appointmentId: string): Promise<DeletedAppointment> {
     try {
       const deletedAppt = await this.prisma.scheduler.delete({
         where: {
