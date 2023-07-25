@@ -249,5 +249,19 @@ describe('SchedulerRepository', () => {
       expect(prismaService.scheduler.delete).toHaveBeenCalledTimes(1);
       expect(result).toEqual({ 'Appointment deleted': mockNewAppointment });
     });
+
+    it('should throw an AppError', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'delete')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await schedulerRepository.deleteAppointment(mockNewAppointment.id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to delete appointment');
+      }
+    });
   });
 });
