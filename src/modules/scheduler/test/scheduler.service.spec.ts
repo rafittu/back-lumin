@@ -15,12 +15,14 @@ import { AppError } from '../../../common/errors/Error';
 import { FindAllAppointmentService } from '../services/find-all-appts.service';
 import { GetAppointmentByFilterService } from '../services/appt-by-filter.service';
 import { UpdateAppointmentService } from '../services/update-appt.service';
+import { DeleteAppointmentService } from '../services/delete-appt.service';
 
 describe('SchedulerService', () => {
   let createAppointmentService: CreateAppointmentService;
   let findAllAppointmentsService: FindAllAppointmentService;
   let getAppointmentByFilterService: GetAppointmentByFilterService;
   let updateAppointmentService: UpdateAppointmentService;
+  let deleteAppointmentService: DeleteAppointmentService;
 
   let schedulerRepository: SchedulerRepository;
 
@@ -31,6 +33,7 @@ describe('SchedulerService', () => {
         FindAllAppointmentService,
         GetAppointmentByFilterService,
         UpdateAppointmentService,
+        DeleteAppointmentService,
         {
           provide: SchedulerRepository,
           useValue: {
@@ -44,6 +47,9 @@ describe('SchedulerService', () => {
             updateAppointment: jest
               .fn()
               .mockResolvedValue(mockUpdatedAppointment),
+            deleteAppointment: jest
+              .fn()
+              .mockResolvedValue({ 'Appointment deleted': mockNewAppointment }),
           },
         },
       ],
@@ -61,6 +67,9 @@ describe('SchedulerService', () => {
     updateAppointmentService = module.get<UpdateAppointmentService>(
       UpdateAppointmentService,
     );
+    deleteAppointmentService = module.get<DeleteAppointmentService>(
+      DeleteAppointmentService,
+    );
 
     schedulerRepository = module.get<SchedulerRepository>(SchedulerRepository);
   });
@@ -70,6 +79,7 @@ describe('SchedulerService', () => {
     expect(findAllAppointmentsService).toBeDefined();
     expect(getAppointmentByFilterService).toBeDefined();
     expect(updateAppointmentService).toBeDefined();
+    expect(deleteAppointmentService).toBeDefined();
   });
 
   describe('create appointment', () => {
@@ -176,6 +186,17 @@ describe('SchedulerService', () => {
           'an appointment already exists at this time',
         );
       }
+    });
+  });
+
+  describe('delete an appointment', () => {
+    it('should cancel an appointment successfully', async () => {
+      const result = await deleteAppointmentService.execute(
+        mockNewAppointment.id,
+      );
+
+      expect(schedulerRepository.deleteAppointment).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({ 'Appointment deleted': mockNewAppointment });
     });
   });
 });
