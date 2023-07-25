@@ -7,6 +7,7 @@ import { SchedulerRepository } from './repository/scheduler.repository';
 import { FindAllAppointmentService } from './services/find-all-appts.service';
 import { GetAppointmentByFilterService } from './services/appt-by-filter.service';
 import { UpdateAppointmentService } from './services/update-appt.service';
+import { DeleteAppointmentService } from './services/delete-appt.service';
 
 @Module({
   controllers: [SchedulerController],
@@ -18,6 +19,7 @@ import { UpdateAppointmentService } from './services/update-appt.service';
     FindAllAppointmentService,
     GetAppointmentByFilterService,
     UpdateAppointmentService,
+    DeleteAppointmentService,
   ],
 })
 export class SchedulerModule {}
