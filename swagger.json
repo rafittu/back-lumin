@@ -1278,7 +1278,7 @@
           },
           "bornDate": {
             "type": "string",
-            "formate": "date",
+            "format": "date",
             "description": "Date of birth of the user"
           },
           "motherName": {
@@ -1297,9 +1297,9 @@
           },
           "password": {
             "type": "string",
-            "minLength": "7",
-            "pattern": "at least one uppercase letter, one lowercase letter and one number or symbol",
-            "description": "Password of the user"
+            "minLength": 7,
+            "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d|\\W).+$",
+            "description": "Password of the user. It must have at least one uppercase letter, one lowercase letter, and one number or special character."
           },
           "passwordConfirmation": {
             "type": "string",
@@ -1336,11 +1336,11 @@
           },
           "email": {
             "type": "string",
-            "description": "email of the user"
+            "description": "Email of the user"
           },
           "role": {
             "type": "string",
-            "description": "role of the user"
+            "description": "Role of the user"
           },
           "createdAt": {
             "type": "string",
@@ -1348,7 +1348,7 @@
           },
           "updatedAt": {
             "type": "string",
-            "description": "Date and time of user creation"
+            "description": "Date and time of user update"
           }
         }
       },
@@ -1381,7 +1381,7 @@
           },
           "email": {
             "type": "string",
-            "description": "email of the user"
+            "description": "Email address of the user"
           },
           "phone": {
             "type": "string",
@@ -1397,7 +1397,7 @@
           },
           "updatedAt": {
             "type": "string",
-            "description": "Date and time of user updated"
+            "description": "Date and time of user update"
           }
         }
       },
@@ -1576,7 +1576,7 @@
           },
           "updatedAt": {
             "type": "string",
-            "description": "Date and time of appointment updated"
+            "description": "Date and time of appointment update"
           }
         }
       },
@@ -1618,7 +1618,7 @@
                 },
                 "updatedAt": {
                   "type": "string",
-                  "description": "Date and time of appointment updated"
+                  "description": "Date and time of appointment update"
                 }
               }
             }
@@ -1645,42 +1645,39 @@
         "type": "object",
         "properties": {
           "Appointment deleted": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Appointment ID"
-                },
-                "professionalId": {
-                  "type": "string",
-                  "description": "Professional ID"
-                },
-                "clientName": {
-                  "type": "string",
-                  "description": "Name of the client"
-                },
-                "clientPhone": {
-                  "type": "string",
-                  "description": "Client phone number"
-                },
-                "appointmentDate": {
-                  "type": "string",
-                  "description": "Date to be scheduled"
-                },
-                "appointmentTime": {
-                  "type": "string",
-                  "description": "Time to be scheduled"
-                },
-                "createdAt": {
-                  "type": "string",
-                  "description": "Date and time of appointment creation"
-                },
-                "updatedAt": {
-                  "type": "string",
-                  "description": "Date and time of appointment updated"
-                }
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Appointment ID"
+              },
+              "professionalId": {
+                "type": "string",
+                "description": "Professional ID"
+              },
+              "clientName": {
+                "type": "string",
+                "description": "Name of the client"
+              },
+              "clientPhone": {
+                "type": "string",
+                "description": "Client phone number"
+              },
+              "appointmentDate": {
+                "type": "string",
+                "description": "Date to be scheduled"
+              },
+              "appointmentTime": {
+                "type": "string",
+                "description": "Time to be scheduled"
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Date and time of appointment creation"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Date and time of appointment update"
               }
             }
           }
