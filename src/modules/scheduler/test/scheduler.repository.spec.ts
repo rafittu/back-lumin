@@ -235,4 +235,19 @@ describe('SchedulerRepository', () => {
       }
     });
   });
+
+  describe('delete an appointment', () => {
+    it('should cancel an appointment successfully', async () => {
+      jest
+        .spyOn(prismaService.scheduler, 'delete')
+        .mockResolvedValueOnce(mockPrismaNewAppointment);
+
+      const result = await schedulerRepository.deleteAppointment(
+        mockNewAppointment.id,
+      );
+
+      expect(prismaService.scheduler.delete).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({ 'Appointment deleted': mockNewAppointment });
+    });
+  });
 });
