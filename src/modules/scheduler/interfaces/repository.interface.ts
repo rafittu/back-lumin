@@ -23,4 +23,5 @@ export interface ISchedulerRepository {
     appointmentId: string,
     updateAppointment: UpdateAppointmentDto,
   ): Promise<Appointment>;
+  deleteAppointment(appointmentId: string);
 }

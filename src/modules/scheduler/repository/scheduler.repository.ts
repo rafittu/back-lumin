@@ -189,4 +189,24 @@ export class SchedulerRepository implements ISchedulerRepository {
       );
     }
   }
+
+  async deleteAppointment(appointmentId: string) {
+    try {
+      const deletedAppt = await this.prisma.scheduler.delete({
+        where: {
+          id: appointmentId,
+        },
+      });
+
+      const apptResponse = this.formatAppointmentResponse(deletedAppt);
+
+      return { 'Appointment deleted': apptResponse };
+    } catch (error) {
+      throw new AppError(
+        'scheduler-repository.deleteAppt',
+        500,
+        'failed to delete appointment',
+      );
+    }
+  }
 }
