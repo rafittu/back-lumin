@@ -188,5 +188,15 @@ describe('SchedulerController', () => {
       expect(deleteAppointmentService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual({ 'Appointment deleted': mockNewAppointment });
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(deleteAppointmentService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.delete(mockNewAppointment.id),
+      ).rejects.toThrowError();
+    });
   });
 });
