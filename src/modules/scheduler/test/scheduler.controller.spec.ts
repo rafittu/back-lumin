@@ -15,6 +15,7 @@ import {
 import { FindAllAppointmentService } from '../services/find-all-appts.service';
 import { GetAppointmentByFilterService } from '../services/appt-by-filter.service';
 import { UpdateAppointmentService } from '../services/update-appt.service';
+import { DeleteAppointmentService } from '../services/delete-appt.service';
 
 describe('SchedulerController', () => {
   let controller: SchedulerController;
@@ -23,6 +24,7 @@ describe('SchedulerController', () => {
   let findAllAppointmentsService: FindAllAppointmentService;
   let getAppointmentByFilterService: GetAppointmentByFilterService;
   let updateAppointmentService: UpdateAppointmentService;
+  let deleteAppointmentService: DeleteAppointmentService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -53,6 +55,14 @@ describe('SchedulerController', () => {
             execute: jest.fn().mockResolvedValue(mockUpdatedAppointment),
           },
         },
+        {
+          provide: DeleteAppointmentService,
+          useValue: {
+            execute: jest
+              .fn()
+              .mockResolvedValue({ 'Appointment deleted': mockNewAppointment }),
+          },
+        },
       ],
     }).compile();
 
@@ -69,6 +79,9 @@ describe('SchedulerController', () => {
     );
     updateAppointmentService = module.get<UpdateAppointmentService>(
       UpdateAppointmentService,
+    );
+    deleteAppointmentService = module.get<DeleteAppointmentService>(
+      DeleteAppointmentService,
     );
   });
 
@@ -164,6 +177,25 @@ describe('SchedulerController', () => {
           mockNewAppointment.professionalId,
           mockUpdateAppointment,
         ),
+      ).rejects.toThrowError();
+    });
+  });
+
+  describe('delete an appointment', () => {
+    it('should cancel an appointment successfully', async () => {
+      const result = await controller.delete(mockNewAppointment.id);
+
+      expect(deleteAppointmentService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({ 'Appointment deleted': mockNewAppointment });
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(deleteAppointmentService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.delete(mockNewAppointment.id),
       ).rejects.toThrowError();
     });
   });
