@@ -1157,6 +1157,98 @@
           }
         }
       }
+    },
+    "/schedules/delete/:appointmentId": {
+      "delete": {
+        "summary": "Delete an appointment",
+        "description": "Route to cancel an appointment",
+        "tags": ["Scheduler"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentId",
+            "in": "path",
+            "description": "appointment id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Appointment successfully cancelled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletedAppointment"
+                },
+                "example": {
+                  "Appointment deleted": {
+                    "id": "123456",
+                    "professionalId": "78910",
+                    "clientName": "Riley Doe",
+                    "clientPhone": "1234567811",
+                    "appointmentDate": "2023-08-02",
+                    "appointmentTime": "09:00",
+                    "createdAt": "2023-07-20T12:00:00Z",
+                    "updatedAt": "2023-07-22T12:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "failed to delete appointment",
+                    "code": "scheduler-repository.deleteAppt",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1546,6 +1638,51 @@
           "appointmentTime": {
             "type": "string",
             "description": "Time to be scheduled"
+          }
+        }
+      },
+      "DeletedAppointment": {
+        "type": "object",
+        "properties": {
+          "Appointment deleted": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Appointment ID"
+                },
+                "professionalId": {
+                  "type": "string",
+                  "description": "Professional ID"
+                },
+                "clientName": {
+                  "type": "string",
+                  "description": "Name of the client"
+                },
+                "clientPhone": {
+                  "type": "string",
+                  "description": "Client phone number"
+                },
+                "appointmentDate": {
+                  "type": "string",
+                  "description": "Date to be scheduled"
+                },
+                "appointmentTime": {
+                  "type": "string",
+                  "description": "Time to be scheduled"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "Date and time of appointment creation"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "description": "Date and time of appointment updated"
+                }
+              }
+            }
           }
         }
       },
