@@ -48,5 +48,19 @@ describe('RecordController', () => {
       expect(createRecordService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockNewRecord);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(createRecordService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.create(
+          mockProfessionalId,
+          mockAppointmentId,
+          mockCreateRecord,
+        ),
+      ).rejects.toThrowError();
+    });
   });
 });
