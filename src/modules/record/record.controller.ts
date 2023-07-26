@@ -29,12 +29,12 @@ export class RecordController {
   @Roles(UserRole.ADMIN)
   async create(
     @Query('professionalId') professionalId: string,
-    @Query('scheduleId') scheduleId: string,
+    @Query('appointmentId') appointmentId: string,
     @Body() record: CreateRecordDto,
   ) {
     return await this.createRecordService.execute(
       professionalId,
-      scheduleId,
+      appointmentId,
       record,
     );
   }

@@ -14,16 +14,16 @@ export class CreateRecordService {
 
   async execute(
     professionalId: string,
-    scheduleId: string,
+    appointmentId: string,
     createRecordDto: CreateRecordDto,
   ) {
     const { record } = createRecordDto;
 
-    if (!professionalId || !scheduleId) {
+    if (!professionalId || !appointmentId) {
       throw new AppError(
         'record-module.createRecordService',
         400,
-        'missing query parameter [professionalId, scheduleId]',
+        'missing query parameter [professionalId, appointmentId]',
       );
     }
 
@@ -47,7 +47,7 @@ export class CreateRecordService {
 
     return await this.recordRepository.createRecord(
       professionalId,
-      scheduleId,
+      appointmentId,
       createRecordDto,
     );
   }
