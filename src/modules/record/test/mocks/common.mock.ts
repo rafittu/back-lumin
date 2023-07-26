@@ -1,7 +1,10 @@
 import { faker } from '@faker-js/faker';
 import { NewRecord } from '../../interfaces/record.interface';
 import { mockRepositoryRecordResponse } from './repository.mock';
-import { NewAppointment } from 'src/modules/scheduler/interfaces/scheduler.interface';
+import {
+  Appointment,
+  ProfessionalAppointments,
+} from '../../../../modules/scheduler/interfaces/scheduler.interface';
 import { mockAppointmentId, mockProfessionalId } from './controller.mock';
 
 export const mockNewRecord: NewRecord = {
@@ -12,7 +15,7 @@ export const mockNewRecord: NewRecord = {
   createdAt: mockRepositoryRecordResponse.createdAt,
 };
 
-export const mockUserAppointment: NewAppointment = {
+export const mockUserAppointment: Appointment = {
   id: mockAppointmentId,
   professionalId: mockProfessionalId,
   clientName: mockNewRecord.clientName,
@@ -21,4 +24,8 @@ export const mockUserAppointment: NewAppointment = {
   appointmentTime: mockNewRecord.appointmentTime,
   createdAt: faker.date.recent(),
   updatedAt: faker.date.recent(),
+};
+
+export const mockProfessionalAppointments: ProfessionalAppointments = {
+  appointments: [mockUserAppointment],
 };
