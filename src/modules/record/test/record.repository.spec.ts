@@ -76,5 +76,23 @@ describe('RecordRepository', () => {
         );
       }
     });
+
+    it('should throw an error if record is not created', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'create')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await recordRepository.createRecord(
+          mockProfessionalId,
+          mockAppointmentId,
+          mockEncryptedRecord,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to create record');
+      }
+    });
   });
 });
