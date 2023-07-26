@@ -1,42 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateRecordService } from '../services/create-record.service';
-import { RecordRepository } from '../repository/record.repository';
-import { mockRepositoryRecordResponse } from './mocks/repository.mock';
-import { SchedulerRepository } from '../../../modules/scheduler/repository/scheduler.repository';
-import { mockUserAppointment } from './mocks/common.mock';
+import { RecordService } from '../record.service';
 
-describe('RecordServices', () => {
-  let createRecordService: CreateRecordService;
-
-  let recordRepository: RecordRepository;
+describe('RecordService', () => {
+  let service: RecordService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        CreateRecordService,
-        {
-          provide: SchedulerRepository,
-          useValue: {
-            getApptByFilter: jest.fn().mockResolvedValue(mockUserAppointment),
-          },
-        },
-        {
-          provide: RecordRepository,
-          useValue: {
-            createRecord: jest
-              .fn()
-              .mockResolvedValue(mockRepositoryRecordResponse),
-          },
-        },
-      ],
+      providers: [RecordService],
     }).compile();
 
-    createRecordService = module.get<CreateRecordService>(CreateRecordService);
-
-    recordRepository = module.get<RecordRepository>(RecordRepository);
+    service = module.get<RecordService>(RecordService);
   });
 
   it('should be defined', () => {
-    expect(createRecordService).toBeDefined();
+    expect(service).toBeDefined();
   });
 });
