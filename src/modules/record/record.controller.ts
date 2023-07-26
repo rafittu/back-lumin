@@ -18,6 +18,7 @@ import { UserRole } from '../user/enum/user-role.enum';
 import { CreateRecordDto } from './dto/create-record.dto';
 import { UpdateRecordDto } from './dto/update-record.dto';
 import { CreateRecordService } from './services/create-record.service';
+import { NewRecord } from './interfaces/record.interface';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -31,7 +32,7 @@ export class RecordController {
     @Query('professionalId') professionalId: string,
     @Query('appointmentId') appointmentId: string,
     @Body() record: CreateRecordDto,
-  ) {
+  ): Promise<NewRecord> {
     return await this.createRecordService.execute(
       professionalId,
       appointmentId,

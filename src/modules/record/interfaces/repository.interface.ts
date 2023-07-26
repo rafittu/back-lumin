@@ -11,5 +11,5 @@ export interface IRecordRepository {
     professionalId: string,
     appointmentId: string,
     createRecordDto: CreateRecordDto,
-  );
+  ): Promise<Record>;
 }
