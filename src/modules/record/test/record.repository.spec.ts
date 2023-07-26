@@ -7,6 +7,8 @@ import {
 } from './mocks/repository.mock';
 import { mockAppointmentId, mockProfessionalId } from './mocks/controller.mock';
 import { mockEncryptedRecord } from './mocks/service.mock';
+import { Prisma } from '@prisma/client';
+import { AppError } from '../../../common/errors/Error';
 
 describe('RecordRepository', () => {
   let recordRepository: RecordRepository;
@@ -45,6 +47,34 @@ describe('RecordRepository', () => {
 
       expect(prismaService.appointmentRecord.create).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockRepositoryRecordResponse);
+    });
+
+    it('should throw an AppError when a record already exists for an appointment', async () => {
+      const prismaError = new Prisma.PrismaClientKnownRequestError(
+        'error message',
+        {
+          code: 'error code',
+          clientVersion: '',
+        },
+      );
+
+      jest
+        .spyOn(prismaService.appointmentRecord, 'create')
+        .mockRejectedValueOnce(prismaError);
+
+      try {
+        await recordRepository.createRecord(
+          mockProfessionalId,
+          mockAppointmentId,
+          mockEncryptedRecord,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(409);
+        expect(error.message).toBe(
+          'a record for this appointment already exists',
+        );
+      }
     });
   });
 });
