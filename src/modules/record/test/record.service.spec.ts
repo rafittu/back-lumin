@@ -13,6 +13,7 @@ import {
   mockCreateRecord,
   mockProfessionalId,
 } from './mocks/controller.mock';
+import { AppError } from '../../../common/errors/Error';
 
 describe('RecordServices', () => {
   let createRecordService: CreateRecordService;
@@ -65,6 +66,22 @@ describe('RecordServices', () => {
 
       expect(recordRepository.createRecord).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockNewRecord);
+    });
+
+    it('should throw an AppError if missing params', async () => {
+      try {
+        await createRecordService.execute(
+          undefined,
+          mockAppointmentId,
+          mockCreateRecord,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'missing query parameter [professionalId, appointmentId]',
+        );
+      }
     });
   });
 });
