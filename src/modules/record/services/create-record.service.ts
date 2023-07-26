@@ -17,7 +17,7 @@ export class CreateRecordService {
     scheduleId: string,
     createRecordDto: CreateRecordDto,
   ) {
-    let encryptedRecord: string;
+    const { record } = createRecordDto;
 
     if (!professionalId || !scheduleId) {
       throw new AppError(
@@ -37,8 +37,10 @@ export class CreateRecordService {
         cipherIv,
       );
 
-      encryptedRecord = cipher.update(createRecordDto.record, 'utf8', 'hex');
+      let encryptedRecord = cipher.update(record, 'utf8', 'hex');
       encryptedRecord += cipher.final('hex');
+
+      createRecordDto.record = encryptedRecord;
     } catch (error) {
       throw new AppError('record-module.createRecordService', 500, error.code);
     }
@@ -46,7 +48,7 @@ export class CreateRecordService {
     return await this.recordRepository.createRecord(
       professionalId,
       scheduleId,
-      encryptedRecord,
+      createRecordDto,
     );
   }
 }
