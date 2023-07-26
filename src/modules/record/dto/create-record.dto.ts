@@ -1,1 +1,7 @@
-export class CreateRecordDto {}
+import { IsNotEmpty, IsString } from 'class-validator';
+
+export class CreateRecordDto {
+  @IsNotEmpty()
+  @IsString()
+  record: string;
+}
