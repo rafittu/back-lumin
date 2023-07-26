@@ -34,12 +34,13 @@ export class CreateRecordService {
       { appointmentId },
     );
 
-    const currentDate = new Date();
-    const appointmentDate = new Date(
-      appointmentResponse.appointments[0].appointmentDate,
-    );
+    const { clientName, appointmentDate, appointmentTime } =
+      appointmentResponse.appointments[0];
 
-    if (appointmentDate > currentDate) {
+    const currentDate = new Date();
+    const apptDate = new Date(appointmentDate);
+
+    if (apptDate > currentDate) {
       throw new AppError(
         'record-module.createRecordService',
         422,
@@ -65,10 +66,20 @@ export class CreateRecordService {
       throw new AppError('record-module.createRecordService', 500, error.code);
     }
 
-    return await this.recordRepository.createRecord(
+    const { id, createdAt } = await this.recordRepository.createRecord(
       professionalId,
       appointmentId,
       createRecordDto,
     );
+
+    const newRecord = {
+      recordId: id,
+      clientName,
+      scheduledDate: appointmentDate,
+      appointmentTime,
+      createdAt,
+    };
+
+    return newRecord;
   }
 }
