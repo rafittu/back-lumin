@@ -11,8 +11,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { RolesGuard } from '../auth/infra/guards/role.guard';
-import { HttpExceptionFilter } from 'src/common/filter/http-exception.filter';
-import { AppError } from 'src/common/errors/Error';
+import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
+import { AppError } from '../../common/errors/Error';
 import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from '../user/enum/user-role.enum';
 import { CreateRecordDto } from './dto/create-record.dto';

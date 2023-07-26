@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma.service';
 import { IRecordRepository, Record } from '../interfaces/repository.interface';
 import { CreateRecordDto } from '../dto/create-record.dto';
-import { AppError } from 'src/common/errors/Error';
+import { AppError } from '../../../common/errors/Error';
 import { Prisma } from '@prisma/client';
 
 @Injectable()

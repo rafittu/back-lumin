@@ -4,7 +4,7 @@ import { IRecordRepository } from '../interfaces/repository.interface';
 import { AppError } from '../../../common/errors/Error';
 import { CreateRecordDto } from '../dto/create-record.dto';
 import * as crypto from 'crypto';
-import { SchedulerRepository } from 'src/modules/scheduler/repository/scheduler.repository';
+import { SchedulerRepository } from '../../../modules/scheduler/repository/scheduler.repository';
 import { NewRecord } from '../interfaces/record.interface';
 
 @Injectable()
