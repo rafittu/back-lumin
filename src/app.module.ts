@@ -7,6 +7,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/infra/guards/jwt-auth-.guard';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
+import { RecordModule } from './modules/record/record.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { SchedulerModule } from './modules/scheduler/scheduler.module';
     UserModule,
     AuthModule,
     SchedulerModule,
+    RecordModule,
   ],
   controllers: [],
   providers: [
