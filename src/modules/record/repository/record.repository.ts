@@ -3,6 +3,7 @@ import { PrismaService } from '../../../prisma.service';
 import { IRecordRepository } from '../interfaces/repository.interface';
 import { CreateRecordDto } from '../dto/create-record.dto';
 import { AppError } from 'src/common/errors/Error';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class RecordRepository implements IRecordRepository {
@@ -31,6 +32,14 @@ export class RecordRepository implements IRecordRepository {
 
       return recordResponde;
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new AppError(
+          `record-repository.createRecord`,
+          409,
+          'a record for this appointment already exists',
+        );
+      }
+
       throw new AppError(
         'record-repository.createRecord',
         500,
