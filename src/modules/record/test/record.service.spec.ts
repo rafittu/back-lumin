@@ -59,6 +59,12 @@ describe('RecordServices', () => {
   describe('create record', () => {
     it('should encrypt and create a new record successfully', async () => {
       try {
+        process.env.RECORD_CIPHER_ALGORITHM = 'aes-256-cbc';
+
+        process.env.RECORD_CIPHER_KEY = crypto.randomBytes(32).toString('hex');
+
+        process.env.RECORD_CIPHER_IV = crypto.randomBytes(16).toString('hex');
+
         const mockCipher: crypto.Cipher = {
           update: jest.fn().mockReturnValue('encrypted-record'),
           final: jest.fn().mockReturnValue('final-encrypted-record'),
@@ -72,8 +78,13 @@ describe('RecordServices', () => {
           mockCreateRecord,
         );
 
+        delete process.env.RECORD_CIPHER_ALGORITHM;
+        delete process.env.RECORD_CIPHER_KEY;
+        delete process.env.RECORD_CIPHER_IV;
+
         expect(recordRepository.createRecord).toHaveBeenCalledTimes(1);
         expect(result).toEqual(mockNewRecord);
+        console.log('PASSOU!');
       } catch (error) {
         console.log('CATCH TEST ERROR:', error);
       }
