@@ -1,6 +1,13 @@
 import { faker } from '@faker-js/faker';
-import { NewRecord } from '../../interfaces/record.interface';
-import { mockRepositoryRecordResponse } from './repository.mock';
+import {
+  AllProfessionalRecords,
+  NewRecord,
+  ProfessionalRecord,
+} from '../../interfaces/record.interface';
+import {
+  mockPrismaNewRecord,
+  mockRepositoryRecordResponse,
+} from './repository.mock';
 import {
   Appointment,
   ProfessionalAppointments,
@@ -37,4 +44,18 @@ export const mockFutureAppointment: ProfessionalAppointments = {
       appointmentDate: faker.date.future().toLocaleDateString(),
     },
   ],
+};
+
+export const mockProfessionalRecord: ProfessionalRecord = {
+  recordId: mockRepositoryRecordResponse.id,
+  clientName: faker.person.fullName(),
+  scheduledDate: faker.date.recent().toLocaleDateString(),
+  appointmentTime: faker.date.recent().toISOString().slice(11, 16),
+  record: faker.string.sample(),
+  createdAt: mockRepositoryRecordResponse.createdAt,
+  updatedAt: mockPrismaNewRecord.updated_at,
+};
+
+export const mockAllProfessionalRecords: AllProfessionalRecords = {
+  records: [mockProfessionalRecord],
 };

@@ -7,12 +7,14 @@ import {
   mockCreateRecord,
   mockProfessionalId,
 } from './mocks/controller.mock';
-import { mockNewRecord } from './mocks/common.mock';
+import { mockAllProfessionalRecords, mockNewRecord } from './mocks/common.mock';
+import { GetAllRecordsService } from '../services/all-records.service';
 
 describe('RecordController', () => {
   let controller: RecordController;
 
   let createRecordService: CreateRecordService;
+  let getAllRecordsService: GetAllRecordsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -25,12 +27,20 @@ describe('RecordController', () => {
             execute: jest.fn().mockResolvedValue(mockNewRecord),
           },
         },
+        {
+          provide: GetAllRecordsService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(mockAllProfessionalRecords),
+          },
+        },
       ],
     }).compile();
 
     controller = module.get<RecordController>(RecordController);
 
     createRecordService = module.get<CreateRecordService>(CreateRecordService);
+    getAllRecordsService =
+      module.get<GetAllRecordsService>(GetAllRecordsService);
   });
 
   it('should be defined', () => {
@@ -61,6 +71,15 @@ describe('RecordController', () => {
           mockCreateRecord,
         ),
       ).rejects.toThrowError();
+    });
+  });
+
+  describe('get all records', () => {
+    it('should get all professional records successfully', async () => {
+      const result = await controller.findAll(mockProfessionalId);
+
+      expect(getAllRecordsService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockAllProfessionalRecords);
     });
   });
 });
