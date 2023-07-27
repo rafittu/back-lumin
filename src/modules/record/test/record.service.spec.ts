@@ -15,6 +15,7 @@ import {
   mockProfessionalId,
 } from './mocks/controller.mock';
 import { AppError } from '../../../common/errors/Error';
+import * as crypto from 'crypto';
 
 describe('RecordServices', () => {
   let createRecordService: CreateRecordService;
@@ -102,6 +103,27 @@ describe('RecordServices', () => {
         expect(error.message).toBe(
           'cannot create a record before the appointment date',
         );
+      }
+    });
+
+    it('should throw an AppError if record encryption fails', async () => {
+      jest
+        .spyOn(schedulerRepository, 'getApptByFilter')
+        .mockResolvedValueOnce(mockProfessionalAppointments);
+
+      jest.spyOn(crypto, 'createCipheriv').mockImplementation(() => {
+        throw new Error('Error encrypting data');
+      });
+
+      try {
+        await createRecordService.execute(
+          mockProfessionalId,
+          mockAppointmentId,
+          mockCreateRecord,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
       }
     });
   });
