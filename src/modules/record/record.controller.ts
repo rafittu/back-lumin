@@ -19,12 +19,16 @@ import { CreateRecordDto } from './dto/create-record.dto';
 import { UpdateRecordDto } from './dto/update-record.dto';
 import { CreateRecordService } from './services/create-record.service';
 import { NewRecord } from './interfaces/record.interface';
+import { GetAllRecordsService } from './services/all-records.service';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
 @Controller('record')
 export class RecordController {
-  constructor(private readonly createRecordService: CreateRecordService) {}
+  constructor(
+    private readonly createRecordService: CreateRecordService,
+    private readonly getAllRecordsService: GetAllRecordsService,
+  ) {}
 
   @Post('/create')
   @Roles(UserRole.ADMIN)
@@ -40,9 +44,12 @@ export class RecordController {
     );
   }
 
-  @Get()
-  findAll() {
-    return 'records';
+  @Get('/all')
+  @Roles(UserRole.ADMIN)
+  async findAll(
+    @Query('professionalId') professionalId: string,
+  ): Promise<NewRecord[]> {
+    return await this.getAllRecordsService.execute(professionalId);
   }
 
   @Get(':id')
