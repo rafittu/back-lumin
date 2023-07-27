@@ -4,6 +4,7 @@ import { RecordRepository } from '../repository/record.repository';
 import { mockRepositoryRecordResponse } from './mocks/repository.mock';
 import { SchedulerRepository } from '../../../modules/scheduler/repository/scheduler.repository';
 import {
+  mockFutureAppointment,
   mockNewRecord,
   mockProfessionalAppointments,
   mockUserAppointment,
@@ -80,6 +81,26 @@ describe('RecordServices', () => {
         expect(error.code).toBe(400);
         expect(error.message).toBe(
           'missing query parameter [professionalId, appointmentId]',
+        );
+      }
+    });
+
+    it('should throw an AppError if creating a record before the appointment date', async () => {
+      jest
+        .spyOn(schedulerRepository, 'getApptByFilter')
+        .mockResolvedValueOnce(mockFutureAppointment);
+
+      try {
+        await createRecordService.execute(
+          mockProfessionalId,
+          mockAppointmentId,
+          mockCreateRecord,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(422);
+        expect(error.message).toBe(
+          'cannot create a record before the appointment date',
         );
       }
     });
