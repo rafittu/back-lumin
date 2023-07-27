@@ -15,7 +15,6 @@ import {
 } from './mocks/controller.mock';
 import { AppError } from '../../../common/errors/Error';
 import * as crypto from 'crypto';
-import { mockEncryptedRecord } from './mocks/service.mock';
 
 describe('RecordServices', () => {
   let createRecordService: CreateRecordService;
@@ -83,56 +82,61 @@ describe('RecordServices', () => {
       expect(result).toEqual(mockNewRecord);
     });
 
-    // it('should throw an AppError if missing params', async () => {
-    //   try {
-    //     await createRecordService.execute(
-    //       undefined,
-    //       mockAppointmentId,
-    //       mockCreateRecord,
-    //     );
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(AppError);
-    //     expect(error.code).toBe(400);
-    //     expect(error.message).toBe(
-    //       'missing query parameter [professionalId, appointmentId]',
-    //     );
-    //   }
-    // });
-    // it('should throw an AppError if creating a record before the appointment date', async () => {
-    //   jest
-    //     .spyOn(schedulerRepository, 'getApptByFilter')
-    //     .mockResolvedValueOnce(mockFutureAppointment);
-    //   try {
-    //     await createRecordService.execute(
-    //       mockProfessionalId,
-    //       mockAppointmentId,
-    //       mockCreateRecord,
-    //     );
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(AppError);
-    //     expect(error.code).toBe(422);
-    //     expect(error.message).toBe(
-    //       'cannot create a record before the appointment date',
-    //     );
-    //   }
-    // });
-    // it('should throw an AppError if record encryption fails', async () => {
-    //   jest
-    //     .spyOn(schedulerRepository, 'getApptByFilter')
-    //     .mockResolvedValueOnce(mockProfessionalAppointments);
-    //   jest.spyOn(crypto, 'createCipheriv').mockImplementation(() => {
-    //     throw new Error('Error encrypting data');
-    //   });
-    //   try {
-    //     await createRecordService.execute(
-    //       mockProfessionalId,
-    //       mockAppointmentId,
-    //       mockCreateRecord,
-    //     );
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(AppError);
-    //     expect(error.code).toBe(500);
-    //   }
-    // });
+    it('should throw an AppError if missing params', async () => {
+      try {
+        await createRecordService.execute(
+          undefined,
+          mockAppointmentId,
+          mockCreateRecord,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'missing query parameter [professionalId, appointmentId]',
+        );
+      }
+    });
+
+    it('should throw an AppError if creating a record before the appointment date', async () => {
+      jest
+        .spyOn(schedulerRepository, 'getApptByFilter')
+        .mockResolvedValueOnce(mockFutureAppointment);
+
+      try {
+        await createRecordService.execute(
+          mockProfessionalId,
+          mockAppointmentId,
+          mockCreateRecord,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(422);
+        expect(error.message).toBe(
+          'cannot create a record before the appointment date',
+        );
+      }
+    });
+
+    it('should throw an AppError if record encryption fails', async () => {
+      jest
+        .spyOn(schedulerRepository, 'getApptByFilter')
+        .mockResolvedValueOnce(mockProfessionalAppointments);
+
+      jest.spyOn(crypto, 'createCipheriv').mockImplementation(() => {
+        throw new Error('Error encrypting data');
+      });
+
+      try {
+        await createRecordService.execute(
+          mockProfessionalId,
+          mockAppointmentId,
+          mockCreateRecord,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+      }
+    });
   });
 });
