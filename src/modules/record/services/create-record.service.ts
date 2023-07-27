@@ -64,7 +64,6 @@ export class CreateRecordService {
 
       createRecordDto.record = encryptedRecord;
     } catch (error) {
-      console.log('CATCH CODE ERROR:', error);
       throw new AppError('record-module.createRecordService', 500, error.code);
     }
 
