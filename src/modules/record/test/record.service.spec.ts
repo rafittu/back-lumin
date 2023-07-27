@@ -57,11 +57,16 @@ describe('RecordServices', () => {
   });
 
   describe('create record', () => {
-    it('should create a new record successfully', async () => {
-      jest.spyOn(crypto, 'createCipheriv').mockReturnValue({
-        update: jest.fn().mockReturnValue(mockEncryptedRecord),
-        final: jest.fn().mockReturnValue(''),
-      } as any);
+    it('should encrypt the record successfully', async () => {
+      // Mock do crypto.createCipheriv
+      const mockUpdate = jest.fn().mockReturnValue('encrypted-record');
+      const mockFinal = jest.fn().mockReturnValue('final-encrypted-record');
+      const mockCipher: crypto.Cipher = {
+        update: mockUpdate,
+        final: mockFinal,
+      } as any;
+
+      jest.spyOn(crypto, 'createCipheriv').mockReturnValue(mockCipher);
 
       const result = await createRecordService.execute(
         mockProfessionalId,
@@ -72,6 +77,22 @@ describe('RecordServices', () => {
       expect(recordRepository.createRecord).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockNewRecord);
     });
+
+    // it('should create a new record successfully', async () => {
+    //   jest.spyOn(crypto, 'createCipheriv').mockReturnValue({
+    //     update: jest.fn().mockReturnValue(mockEncryptedRecord),
+    //     final: jest.fn().mockReturnValue(''),
+    //   } as any);
+
+    //   const result = await createRecordService.execute(
+    //     mockProfessionalId,
+    //     mockAppointmentId,
+    //     mockCreateRecord,
+    //   );
+
+    //   expect(recordRepository.createRecord).toHaveBeenCalledTimes(1);
+    //   expect(result).toEqual(mockNewRecord);
+    // });
 
     it('should throw an AppError if missing params', async () => {
       try {
