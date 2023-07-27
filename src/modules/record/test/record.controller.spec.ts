@@ -81,5 +81,15 @@ describe('RecordController', () => {
       expect(getAllRecordsService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockAllProfessionalRecords);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(getAllRecordsService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.findAll(mockProfessionalId),
+      ).rejects.toThrowError();
+    });
   });
 });
