@@ -7,6 +7,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/infra/guards/jwt-auth-.guard';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
+import { RecordModule } from './modules/record/record.module';
 
 @Module({
   imports: [
@@ -28,11 +29,15 @@ import { SchedulerModule } from './modules/scheduler/scheduler.module';
         REDIS_CONFIG_HOST: Joi.string().required(),
         REDIS_CONFIG_PORT: Joi.number().required(),
         JWT_SECRET: Joi.string().required(),
+        RECORD_CIPHER_ALGORITHM: Joi.string().required(),
+        RECORD_CIPHER_KEY: Joi.string().required(),
+        RECORD_CIPHER_IV: Joi.string().required(),
       }),
     }),
     UserModule,
     AuthModule,
     SchedulerModule,
+    RecordModule,
   ],
   controllers: [],
   providers: [

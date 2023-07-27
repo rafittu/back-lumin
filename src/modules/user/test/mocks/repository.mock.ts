@@ -97,7 +97,6 @@ export const mockGetProfessionalClient: PrismaProfessionalClient[] = [
     id: faker.string.uuid(),
     professional_id: faker.string.uuid(),
     schedule_id: faker.string.uuid(),
-    actual_date: faker.date.recent(),
     record: faker.string.sample(),
     created_at: faker.date.recent(),
     updated_at: faker.date.recent(),
