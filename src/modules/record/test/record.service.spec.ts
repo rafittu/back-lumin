@@ -3,12 +3,7 @@ import { CreateRecordService } from '../services/create-record.service';
 import { RecordRepository } from '../repository/record.repository';
 import { mockRepositoryRecordResponse } from './mocks/repository.mock';
 import { SchedulerRepository } from '../../../modules/scheduler/repository/scheduler.repository';
-import {
-  mockAllProfessionalRecords,
-  mockFutureAppointment,
-  mockNewRecord,
-  mockProfessionalAppointments,
-} from './mocks/common.mock';
+import { mockAllProfessionalRecords, mockNewRecord } from './mocks/common.mock';
 import {
   mockAppointmentId,
   mockCreateRecord,
@@ -17,6 +12,10 @@ import {
 import { AppError } from '../../../common/errors/Error';
 import * as crypto from 'crypto';
 import { GetAllRecordsService } from '../services/all-records.service';
+import {
+  mockFutureAppointment,
+  mockProfessionalAppointments,
+} from './mocks/service.mock';
 
 describe('RecordServices', () => {
   let createRecordService: CreateRecordService;
