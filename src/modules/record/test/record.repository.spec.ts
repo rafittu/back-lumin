@@ -111,5 +111,19 @@ describe('RecordRepository', () => {
       expect(prismaService.appointmentRecord.findMany).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockAllProfessionalRecords);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findMany')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await recordRepository.getAllRecords(mockProfessionalId);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to get records');
+      }
+    });
   });
 });
