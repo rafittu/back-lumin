@@ -5,6 +5,7 @@ import { RecordRepository } from './repository/record.repository';
 import { CreateRecordService } from './services/create-record.service';
 import { RedisCacheService } from '../auth/infra/cache/redis-cache.service';
 import { SchedulerRepository } from '../scheduler/repository/scheduler.repository';
+import { GetAllRecordsService } from './services/all-records.service';
 
 @Module({
   controllers: [RecordController],
@@ -14,6 +15,7 @@ import { SchedulerRepository } from '../scheduler/repository/scheduler.repositor
     SchedulerRepository,
     RecordRepository,
     CreateRecordService,
+    GetAllRecordsService,
   ],
 })
 export class RecordModule {}
