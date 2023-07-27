@@ -7,7 +7,6 @@ import {
   mockFutureAppointment,
   mockNewRecord,
   mockProfessionalAppointments,
-  mockUserAppointment,
 } from './mocks/common.mock';
 import {
   mockAppointmentId,
@@ -30,7 +29,9 @@ describe('RecordServices', () => {
         {
           provide: SchedulerRepository,
           useValue: {
-            getApptByFilter: jest.fn().mockResolvedValue(mockUserAppointment),
+            getApptByFilter: jest
+              .fn()
+              .mockResolvedValue(mockProfessionalAppointments),
           },
         },
         {
@@ -56,10 +57,6 @@ describe('RecordServices', () => {
 
   describe('create record', () => {
     it('should create a new record successfully', async () => {
-      jest
-        .spyOn(schedulerRepository, 'getApptByFilter')
-        .mockResolvedValueOnce(mockProfessionalAppointments);
-
       const result = await createRecordService.execute(
         mockProfessionalId,
         mockAppointmentId,
