@@ -29,3 +29,12 @@ export const mockUserAppointment: Appointment = {
 export const mockProfessionalAppointments: ProfessionalAppointments = {
   appointments: [mockUserAppointment],
 };
+
+export const mockFutureAppointment: ProfessionalAppointments = {
+  appointments: [
+    {
+      ...mockUserAppointment,
+      appointmentDate: faker.date.future().toLocaleDateString(),
+    },
+  ],
+};
