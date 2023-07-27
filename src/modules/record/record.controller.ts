@@ -18,7 +18,10 @@ import { UserRole } from '../user/enum/user-role.enum';
 import { CreateRecordDto } from './dto/create-record.dto';
 import { UpdateRecordDto } from './dto/update-record.dto';
 import { CreateRecordService } from './services/create-record.service';
-import { NewRecord } from './interfaces/record.interface';
+import {
+  AllProfessionalRecords,
+  NewRecord,
+} from './interfaces/record.interface';
 import { GetAllRecordsService } from './services/all-records.service';
 
 @UseGuards(RolesGuard)
@@ -48,7 +51,7 @@ export class RecordController {
   @Roles(UserRole.ADMIN)
   async findAll(
     @Query('professionalId') professionalId: string,
-  ): Promise<NewRecord[]> {
+  ): Promise<AllProfessionalRecords> {
     return await this.getAllRecordsService.execute(professionalId);
   }
 

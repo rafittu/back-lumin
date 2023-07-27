@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { RecordRepository } from '../repository/record.repository';
 import { IRecordRepository } from '../interfaces/repository.interface';
 import { AppError } from '../../../common/errors/Error';
-import { NewRecord } from '../interfaces/record.interface';
+import { AllProfessionalRecords } from '../interfaces/record.interface';
 
 @Injectable()
 export class GetAllRecordsService {
@@ -11,7 +11,7 @@ export class GetAllRecordsService {
     private recordRepository: IRecordRepository,
   ) {}
 
-  async execute(professionalId: string): Promise<NewRecord[]> {
+  async execute(professionalId: string): Promise<AllProfessionalRecords> {
     if (!professionalId) {
       throw new AppError(
         'record-module.createRecordService',

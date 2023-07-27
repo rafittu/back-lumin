@@ -4,7 +4,7 @@ import { IRecordRepository, Record } from '../interfaces/repository.interface';
 import { CreateRecordDto } from '../dto/create-record.dto';
 import { AppError } from '../../../common/errors/Error';
 import { Prisma } from '@prisma/client';
-import { NewRecord } from '../interfaces/record.interface';
+import { AllProfessionalRecords } from '../interfaces/record.interface';
 
 @Injectable()
 export class RecordRepository implements IRecordRepository {
@@ -49,7 +49,7 @@ export class RecordRepository implements IRecordRepository {
     }
   }
 
-  async getAllRecords(professionalId: string) {
+  async getAllRecords(professionalId: string): Promise<AllProfessionalRecords> {
     try {
       const records = await this.prisma.appointmentRecord.findMany({
         where: {
@@ -80,7 +80,7 @@ export class RecordRepository implements IRecordRepository {
         };
       });
 
-      return formatedRecords;
+      return { records: formatedRecords };
     } catch (error) {
       throw new AppError(
         'record-repository.getAllRecords',
