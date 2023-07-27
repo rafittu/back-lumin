@@ -15,6 +15,7 @@ import {
 } from './mocks/controller.mock';
 import { AppError } from '../../../common/errors/Error';
 import * as crypto from 'crypto';
+import { mockEncryptedRecord } from './mocks/service.mock';
 
 describe('RecordServices', () => {
   let createRecordService: CreateRecordService;
@@ -57,6 +58,11 @@ describe('RecordServices', () => {
 
   describe('create record', () => {
     it('should create a new record successfully', async () => {
+      jest.spyOn(crypto, 'createCipheriv').mockReturnValue({
+        update: jest.fn().mockReturnValue(mockEncryptedRecord),
+        final: jest.fn().mockReturnValue(''),
+      } as any);
+
       const result = await createRecordService.execute(
         mockProfessionalId,
         mockAppointmentId,
