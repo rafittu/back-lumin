@@ -4,6 +4,7 @@ import { RecordRepository } from '../repository/record.repository';
 import { mockRepositoryRecordResponse } from './mocks/repository.mock';
 import { SchedulerRepository } from '../../../modules/scheduler/repository/scheduler.repository';
 import {
+  mockAllProfessionalRecords,
   mockFutureAppointment,
   mockNewRecord,
   mockProfessionalAppointments,
@@ -15,9 +16,11 @@ import {
 } from './mocks/controller.mock';
 import { AppError } from '../../../common/errors/Error';
 import * as crypto from 'crypto';
+import { GetAllRecordsService } from '../services/all-records.service';
 
 describe('RecordServices', () => {
   let createRecordService: CreateRecordService;
+  let getAllRecordsService: GetAllRecordsService;
 
   let recordRepository: RecordRepository;
   let schedulerRepository: SchedulerRepository;
@@ -26,6 +29,7 @@ describe('RecordServices', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CreateRecordService,
+        GetAllRecordsService,
         {
           provide: SchedulerRepository,
           useValue: {
@@ -40,12 +44,17 @@ describe('RecordServices', () => {
             createRecord: jest
               .fn()
               .mockResolvedValue(mockRepositoryRecordResponse),
+            getAllRecords: jest
+              .fn()
+              .mockResolvedValue(mockAllProfessionalRecords),
           },
         },
       ],
     }).compile();
 
     createRecordService = module.get<CreateRecordService>(CreateRecordService);
+    getAllRecordsService =
+      module.get<GetAllRecordsService>(GetAllRecordsService);
 
     recordRepository = module.get<RecordRepository>(RecordRepository);
     schedulerRepository = module.get<SchedulerRepository>(SchedulerRepository);
@@ -53,6 +62,7 @@ describe('RecordServices', () => {
 
   it('should be defined', () => {
     expect(createRecordService).toBeDefined();
+    expect(getAllRecordsService).toBeDefined();
   });
 
   describe('create record', () => {
@@ -137,6 +147,15 @@ describe('RecordServices', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
       }
+    });
+  });
+
+  describe('find all records', () => {
+    it('should get all professional records successfully', async () => {
+      const result = await getAllRecordsService.execute(mockProfessionalId);
+
+      expect(recordRepository.getAllRecords).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockAllProfessionalRecords);
     });
   });
 });
