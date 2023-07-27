@@ -1,4 +1,5 @@
 import { CreateRecordDto } from '../dto/create-record.dto';
+import { NewRecord } from './record.interface';
 
 export interface Record {
   id: string;
@@ -12,4 +13,5 @@ export interface IRecordRepository {
     appointmentId: string,
     createRecordDto: CreateRecordDto,
   ): Promise<Record>;
+  getAllRecords(professionalId: string);
 }
