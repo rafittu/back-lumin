@@ -1428,6 +1428,116 @@
           }
         }
       }
+    },
+    "/record/all": {
+      "get": {
+        "summary": "Get all records",
+        "description": "Route to professionals get all clients records",
+        "tags": ["Record"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "professionalId",
+            "in": "query",
+            "description": "Professional id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllRecords"
+                },
+                "example": {
+                  "records": [
+                    {
+                      "recordId": "25678210",
+                      "clientName": "Riley Doe",
+                      "scheduledDate": "2023-08-03",
+                      "appointmentTime": "09:00",
+                      "createdAt": "2023-07-20T12:00:00Z",
+                      "updatedAt": "2023-07-20T12:00:00Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "missing query parameter [professionalId]",
+                    "code": "record-module.createRecordService",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "failed to get records",
+                    "code": "record-repository.getAllRecords",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1893,6 +2003,43 @@
           "createdAt": {
             "type": "string",
             "description": "Date and time of record creation"
+          }
+        }
+      },
+      "AllRecords": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "recordId": {
+                  "type": "string",
+                  "description": "Record ID"
+                },
+                "clientName": {
+                  "type": "string",
+                  "description": "Name of the client"
+                },
+                "scheduledDate": {
+                  "type": "string",
+                  "description": "Scheduled appointment date"
+                },
+                "appointmentTime": {
+                  "type": "string",
+                  "description": "Time to be scheduled"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "Date and time of record creation"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "description": "Date and time of record update"
+                }
+              }
+            }
           }
         }
       },
