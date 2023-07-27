@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../../prisma.service';
 import { RecordRepository } from '../repository/record.repository';
 import {
+  mockPrismaGetProfessionalRecord,
   mockPrismaNewRecord,
   mockRepositoryRecordResponse,
 } from './mocks/repository.mock';
@@ -9,6 +10,7 @@ import { mockAppointmentId, mockProfessionalId } from './mocks/controller.mock';
 import { mockEncryptedRecord } from './mocks/service.mock';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../../../common/errors/Error';
+import { mockAllProfessionalRecords } from './mocks/common.mock';
 
 describe('RecordRepository', () => {
   let recordRepository: RecordRepository;
@@ -93,6 +95,21 @@ describe('RecordRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to create record');
       }
+    });
+  });
+
+  describe('find all records', () => {
+    it('should get all professional records successfully', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findMany')
+        .mockResolvedValueOnce(mockPrismaGetProfessionalRecord);
+
+      const result = await recordRepository.getAllRecords(mockProfessionalId);
+
+      delete mockAllProfessionalRecords.records[0].record;
+
+      expect(prismaService.appointmentRecord.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockAllProfessionalRecords);
     });
   });
 });
