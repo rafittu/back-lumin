@@ -5,3 +5,17 @@ export interface NewRecord {
   appointmentTime: string;
   createdAt: Date;
 }
+
+export interface ProfessionalRecord {
+  recordId: string;
+  clientName: string;
+  scheduledDate: string;
+  appointmentTime: string;
+  record?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AllProfessionalRecords {
+  records: ProfessionalRecord[];
+}
