@@ -114,6 +114,7 @@ export class RecordRepository implements IRecordRepository {
 
       const formatedRecord = {
         recordId: recordData.id,
+        professionalId: recordData.professional_id,
         clientName: recordData.appointment.client_name,
         scheduledDate: recordData.appointment.appointment_date,
         appointmentTime: recordData.appointment.appointment_time,
