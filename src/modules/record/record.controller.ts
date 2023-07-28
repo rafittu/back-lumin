@@ -23,7 +23,7 @@ import {
   NewRecord,
 } from './interfaces/record.interface';
 import { GetAllRecordsService } from './services/all-records.service';
-import { GetOneRecordService } from './service/get-one-record.service';
+import { GetOneRecordService } from './services/get-one-record.service';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
