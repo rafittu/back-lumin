@@ -23,6 +23,7 @@ import {
   NewRecord,
 } from './interfaces/record.interface';
 import { GetAllRecordsService } from './services/all-records.service';
+import { GetOneRecordService } from './service/get-one-record.service';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -31,6 +32,7 @@ export class RecordController {
   constructor(
     private readonly createRecordService: CreateRecordService,
     private readonly getAllRecordsService: GetAllRecordsService,
+    private readonly getOneRecordRecordService: GetOneRecordService,
   ) {}
 
   @Post('/create')
@@ -55,9 +57,16 @@ export class RecordController {
     return await this.getAllRecordsService.execute(professionalId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return 'record';
+  @Get('/:id')
+  @Roles(UserRole.ADMIN)
+  async findOne(
+    @Param('id') recordId: string,
+    @Query('professionalId') professionalId: string,
+  ) {
+    return await this.getOneRecordRecordService.execute(
+      recordId,
+      professionalId,
+    );
   }
 
   @Patch(':id')
