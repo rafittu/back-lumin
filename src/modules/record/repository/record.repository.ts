@@ -89,4 +89,47 @@ export class RecordRepository implements IRecordRepository {
       );
     }
   }
+
+  async getOneRecord(recordId: string) {
+    try {
+      const recordData = await this.prisma.appointmentRecord.findFirst({
+        where: {
+          id: recordId,
+        },
+        select: {
+          id: true,
+          professional_id: true,
+          record: true,
+          created_at: true,
+          updated_at: true,
+          appointment: {
+            select: {
+              client_name: true,
+              appointment_date: true,
+              appointment_time: true,
+            },
+          },
+        },
+      });
+
+      const formatedRecord = {
+        recordId: recordData.id,
+        professionalId: recordData.professional_id,
+        clientName: recordData.appointment.client_name,
+        scheduledDate: recordData.appointment.appointment_date,
+        appointmentTime: recordData.appointment.appointment_time,
+        record: recordData.record,
+        createdAt: recordData.created_at,
+        updatedAt: recordData.updated_at,
+      };
+
+      return formatedRecord;
+    } catch (error) {
+      throw new AppError(
+        'record-repository.getOneRecord',
+        500,
+        'failed to get record',
+      );
+    }
+  }
 }
