@@ -116,5 +116,15 @@ describe('RecordController', () => {
       expect(getOneRecordService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockProfessionalRecord);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(getOneRecordService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.findOne(mockProfessionalRecord.recordId, mockProfessionalId),
+      ).rejects.toThrowError();
+    });
   });
 });
