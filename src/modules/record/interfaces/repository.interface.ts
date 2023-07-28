@@ -1,5 +1,5 @@
 import { CreateRecordDto } from '../dto/create-record.dto';
-import { AllProfessionalRecords } from './record.interface';
+import { AllProfessionalRecords, ProfessionalRecord } from './record.interface';
 
 export interface Record {
   id: string;
@@ -14,5 +14,5 @@ export interface IRecordRepository {
     createRecordDto: CreateRecordDto,
   ): Promise<Record>;
   getAllRecords(professionalId: string): Promise<AllProfessionalRecords>;
-  getOneRecord(recordId: string);
+  getOneRecord(recordId: string): Promise<ProfessionalRecord>;
 }

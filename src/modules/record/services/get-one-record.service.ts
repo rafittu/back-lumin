@@ -3,6 +3,7 @@ import { RecordRepository } from '../repository/record.repository';
 import { IRecordRepository } from '../interfaces/repository.interface';
 import { AppError } from '../../../common/errors/Error';
 import * as crypto from 'crypto';
+import { ProfessionalRecord } from '../interfaces/record.interface';
 
 @Injectable()
 export class GetOneRecordService {
@@ -11,7 +12,10 @@ export class GetOneRecordService {
     private recordRepository: IRecordRepository,
   ) {}
 
-  async execute(recordId: string, professionalId: string) {
+  async execute(
+    recordId: string,
+    professionalId: string,
+  ): Promise<ProfessionalRecord> {
     if (!professionalId) {
       throw new AppError(
         'record-module.getRecordService',

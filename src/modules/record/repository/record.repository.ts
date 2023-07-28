@@ -4,7 +4,10 @@ import { IRecordRepository, Record } from '../interfaces/repository.interface';
 import { CreateRecordDto } from '../dto/create-record.dto';
 import { AppError } from '../../../common/errors/Error';
 import { Prisma } from '@prisma/client';
-import { AllProfessionalRecords } from '../interfaces/record.interface';
+import {
+  AllProfessionalRecords,
+  ProfessionalRecord,
+} from '../interfaces/record.interface';
 
 @Injectable()
 export class RecordRepository implements IRecordRepository {
@@ -90,7 +93,7 @@ export class RecordRepository implements IRecordRepository {
     }
   }
 
-  async getOneRecord(recordId: string) {
+  async getOneRecord(recordId: string): Promise<ProfessionalRecord> {
     try {
       const recordData = await this.prisma.appointmentRecord.findFirst({
         where: {

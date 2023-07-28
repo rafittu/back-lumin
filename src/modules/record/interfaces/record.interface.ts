@@ -8,6 +8,7 @@ export interface NewRecord {
 
 export interface ProfessionalRecord {
   recordId: string;
+  professionalId?: string;
   clientName: string;
   scheduledDate: string;
   appointmentTime: string;

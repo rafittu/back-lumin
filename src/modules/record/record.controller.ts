@@ -21,6 +21,7 @@ import { CreateRecordService } from './services/create-record.service';
 import {
   AllProfessionalRecords,
   NewRecord,
+  ProfessionalRecord,
 } from './interfaces/record.interface';
 import { GetAllRecordsService } from './services/all-records.service';
 import { GetOneRecordService } from './services/get-one-record.service';
@@ -62,7 +63,7 @@ export class RecordController {
   async findOne(
     @Param('id') recordId: string,
     @Query('professionalId') professionalId: string,
-  ) {
+  ): Promise<ProfessionalRecord> {
     return await this.getOneRecordRecordService.execute(
       recordId,
       professionalId,
