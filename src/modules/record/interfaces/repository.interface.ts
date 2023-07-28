@@ -14,4 +14,5 @@ export interface IRecordRepository {
     createRecordDto: CreateRecordDto,
   ): Promise<Record>;
   getAllRecords(professionalId: string): Promise<AllProfessionalRecords>;
+  getOneRecord(recordId: string);
 }
