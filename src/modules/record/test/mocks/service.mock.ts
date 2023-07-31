@@ -59,6 +59,7 @@ export const mockNewRecord: NewRecord = {
 
 export const mockProfessionalRecord: ProfessionalRecord = {
   recordId: mockNewRecord.recordId,
+  professionalId: mockRepositoryRecordResponse.professionalId,
   clientName: mockNewRecord.clientName,
   scheduledDate: mockNewRecord.scheduledDate,
   appointmentTime: mockNewRecord.appointmentTime,

@@ -13,12 +13,15 @@ import {
   mockNewRecord,
   mockProfessionalAppointments,
   mockProfessionalId,
+  mockProfessionalRecord,
   mockRepositoryRecordResponse,
 } from './mocks/service.mock';
+import { GetOneRecordService } from '../services/get-one-record.service';
 
 describe('RecordServices', () => {
   let createRecordService: CreateRecordService;
   let getAllRecordsService: GetAllRecordsService;
+  let getOneRecordService: GetOneRecordService;
 
   let recordRepository: RecordRepository;
   let schedulerRepository: SchedulerRepository;
@@ -28,6 +31,7 @@ describe('RecordServices', () => {
       providers: [
         CreateRecordService,
         GetAllRecordsService,
+        GetOneRecordService,
         {
           provide: SchedulerRepository,
           useValue: {
@@ -45,6 +49,7 @@ describe('RecordServices', () => {
             getAllRecords: jest
               .fn()
               .mockResolvedValue(mockAllProfessionalRecords),
+            getOneRecord: jest.fn().mockResolvedValue(mockProfessionalRecord),
           },
         },
       ],
@@ -53,6 +58,7 @@ describe('RecordServices', () => {
     createRecordService = module.get<CreateRecordService>(CreateRecordService);
     getAllRecordsService =
       module.get<GetAllRecordsService>(GetAllRecordsService);
+    getOneRecordService = module.get<GetOneRecordService>(GetOneRecordService);
 
     recordRepository = module.get<RecordRepository>(RecordRepository);
     schedulerRepository = module.get<SchedulerRepository>(SchedulerRepository);
@@ -154,6 +160,7 @@ describe('RecordServices', () => {
       expect(recordRepository.getAllRecords).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockAllProfessionalRecords);
     });
+
     it('should throw an AppError if missing params', async () => {
       try {
         await getAllRecordsService.execute(undefined);
@@ -162,6 +169,29 @@ describe('RecordServices', () => {
         expect(error.code).toBe(400);
         expect(error.message).toBe('missing query parameter [professionalId]');
       }
+    });
+  });
+
+  describe('find one record', () => {
+    it('should decrypt and get a record successfully', async () => {
+      process.env.RECORD_CIPHER_ALGORITHM = 'aes-256-cbc';
+      process.env.RECORD_CIPHER_KEY = crypto.randomBytes(32).toString('hex');
+      process.env.RECORD_CIPHER_IV = crypto.randomBytes(16).toString('hex');
+
+      const mockCipher: crypto.Cipher = {
+        update: jest.fn().mockReturnValue('encrypted-record'),
+        final: jest.fn().mockReturnValue('final-encrypted-record'),
+      } as any;
+
+      jest.spyOn(crypto, 'createDecipheriv').mockReturnValue(mockCipher);
+
+      const result = await getOneRecordService.execute(
+        mockNewRecord.recordId,
+        mockProfessionalId,
+      );
+
+      expect(recordRepository.getOneRecord).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalRecord);
     });
   });
 });
