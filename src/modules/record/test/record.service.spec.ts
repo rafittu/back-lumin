@@ -203,5 +203,24 @@ describe('RecordServices', () => {
         expect(error.message).toBe('missing query parameter [professionalId]');
       }
     });
+
+    it('should throw an AppError if record does not belong to professionalId', async () => {
+      jest
+        .spyOn(schedulerRepository, 'getApptByFilter')
+        .mockResolvedValueOnce(mockProfessionalAppointments);
+
+      try {
+        await getOneRecordService.execute(
+          mockProfessionalRecord.recordId,
+          mockProfessionalId,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(403);
+        expect(error.message).toBe(
+          `record does not belong to the specified 'professionalId'`,
+        );
+      }
+    });
   });
 });
