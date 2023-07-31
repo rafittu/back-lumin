@@ -3,18 +3,22 @@ import { RecordController } from '../record.controller';
 import { CreateRecordService } from '../services/create-record.service';
 import { RedisCacheService } from '../../../modules/auth/infra/cache/redis-cache.service';
 import {
+  mockAllProfessionalRecords,
   mockAppointmentId,
   mockCreateRecord,
+  mockNewRecord,
   mockProfessionalId,
+  mockProfessionalRecord,
 } from './mocks/controller.mock';
-import { mockAllProfessionalRecords, mockNewRecord } from './mocks/common.mock';
 import { GetAllRecordsService } from '../services/all-records.service';
+import { GetOneRecordService } from '../services/get-one-record.service';
 
 describe('RecordController', () => {
   let controller: RecordController;
 
   let createRecordService: CreateRecordService;
   let getAllRecordsService: GetAllRecordsService;
+  let getOneRecordService: GetOneRecordService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -33,6 +37,12 @@ describe('RecordController', () => {
             execute: jest.fn().mockResolvedValue(mockAllProfessionalRecords),
           },
         },
+        {
+          provide: GetOneRecordService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(mockProfessionalRecord),
+          },
+        },
       ],
     }).compile();
 
@@ -41,6 +51,7 @@ describe('RecordController', () => {
     createRecordService = module.get<CreateRecordService>(CreateRecordService);
     getAllRecordsService =
       module.get<GetAllRecordsService>(GetAllRecordsService);
+    getOneRecordService = module.get<GetOneRecordService>(GetOneRecordService);
   });
 
   it('should be defined', () => {
@@ -89,6 +100,28 @@ describe('RecordController', () => {
 
       await expect(
         controller.findAll(mockProfessionalId),
+      ).rejects.toThrowError();
+    });
+  });
+
+  describe('get one record', () => {
+    it('should get a record successfully', async () => {
+      const result = await controller.findOne(
+        mockProfessionalRecord.recordId,
+        mockProfessionalId,
+      );
+
+      expect(getOneRecordService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalRecord);
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(getOneRecordService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.findOne(mockProfessionalRecord.recordId, mockProfessionalId),
       ).rejects.toThrowError();
     });
   });

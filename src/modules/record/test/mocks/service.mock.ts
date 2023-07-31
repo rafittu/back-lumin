@@ -4,9 +4,18 @@ import {
   Appointment,
   ProfessionalAppointments,
 } from '../../../../modules/scheduler/interfaces/scheduler.interface';
-import { mockAppointmentId, mockProfessionalId } from './controller.mock';
+import {
+  AllProfessionalRecords,
+  NewRecord,
+  ProfessionalRecord,
+} from '../../interfaces/record.interface';
+import { Record } from '../../interfaces/repository.interface';
 
-export const mockEncryptedRecord: CreateRecordDto = {
+export const mockProfessionalId = faker.string.uuid();
+
+export const mockAppointmentId = faker.string.uuid();
+
+export const mockCreateRecord: CreateRecordDto = {
   record: faker.string.sample(),
 };
 
@@ -32,4 +41,33 @@ export const mockFutureAppointment: ProfessionalAppointments = {
       appointmentDate: faker.date.future().toLocaleDateString(),
     },
   ],
+};
+
+export const mockRepositoryRecordResponse: Record = {
+  id: faker.string.uuid(),
+  professionalId: mockUserAppointment.professionalId,
+  createdAt: faker.date.recent(),
+};
+
+export const mockNewRecord: NewRecord = {
+  recordId: mockRepositoryRecordResponse.id,
+  clientName: mockUserAppointment.clientName,
+  scheduledDate: mockUserAppointment.appointmentDate,
+  appointmentTime: mockUserAppointment.appointmentTime,
+  createdAt: mockRepositoryRecordResponse.createdAt,
+};
+
+export const mockProfessionalRecord: ProfessionalRecord = {
+  recordId: mockNewRecord.recordId,
+  professionalId: mockRepositoryRecordResponse.professionalId,
+  clientName: mockNewRecord.clientName,
+  scheduledDate: mockNewRecord.scheduledDate,
+  appointmentTime: mockNewRecord.appointmentTime,
+  record: mockCreateRecord.record,
+  createdAt: mockNewRecord.createdAt,
+  updatedAt: faker.date.recent(),
+};
+
+export const mockAllProfessionalRecords: AllProfessionalRecords = {
+  records: [mockProfessionalRecord],
 };
