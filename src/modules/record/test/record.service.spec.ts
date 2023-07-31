@@ -1,25 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateRecordService } from '../services/create-record.service';
 import { RecordRepository } from '../repository/record.repository';
-import { mockRepositoryRecordResponse } from './mocks/repository.mock';
 import { SchedulerRepository } from '../../../modules/scheduler/repository/scheduler.repository';
-import { mockAllProfessionalRecords, mockNewRecord } from './mocks/common.mock';
-import {
-  mockAppointmentId,
-  mockCreateRecord,
-  mockProfessionalId,
-} from './mocks/controller.mock';
 import { AppError } from '../../../common/errors/Error';
 import * as crypto from 'crypto';
 import { GetAllRecordsService } from '../services/all-records.service';
 import {
+  mockAllProfessionalRecords,
+  mockAppointmentId,
+  mockCreateRecord,
   mockFutureAppointment,
+  mockNewRecord,
   mockProfessionalAppointments,
+  mockProfessionalId,
+  mockProfessionalRecord,
+  mockRepositoryRecordResponse,
 } from './mocks/service.mock';
+import { GetOneRecordService } from '../services/get-one-record.service';
 
 describe('RecordServices', () => {
   let createRecordService: CreateRecordService;
   let getAllRecordsService: GetAllRecordsService;
+  let getOneRecordService: GetOneRecordService;
 
   let recordRepository: RecordRepository;
   let schedulerRepository: SchedulerRepository;
@@ -29,6 +31,7 @@ describe('RecordServices', () => {
       providers: [
         CreateRecordService,
         GetAllRecordsService,
+        GetOneRecordService,
         {
           provide: SchedulerRepository,
           useValue: {
@@ -46,6 +49,7 @@ describe('RecordServices', () => {
             getAllRecords: jest
               .fn()
               .mockResolvedValue(mockAllProfessionalRecords),
+            getOneRecord: jest.fn().mockResolvedValue(mockProfessionalRecord),
           },
         },
       ],
@@ -54,6 +58,7 @@ describe('RecordServices', () => {
     createRecordService = module.get<CreateRecordService>(CreateRecordService);
     getAllRecordsService =
       module.get<GetAllRecordsService>(GetAllRecordsService);
+    getOneRecordService = module.get<GetOneRecordService>(GetOneRecordService);
 
     recordRepository = module.get<RecordRepository>(RecordRepository);
     schedulerRepository = module.get<SchedulerRepository>(SchedulerRepository);
@@ -152,7 +157,6 @@ describe('RecordServices', () => {
   describe('find all records', () => {
     it('should get all professional records successfully', async () => {
       const result = await getAllRecordsService.execute(mockProfessionalId);
-
       expect(recordRepository.getAllRecords).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockAllProfessionalRecords);
     });
@@ -164,6 +168,79 @@ describe('RecordServices', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(400);
         expect(error.message).toBe('missing query parameter [professionalId]');
+      }
+    });
+  });
+
+  describe('find one record', () => {
+    it('should decrypt and get a record successfully', async () => {
+      process.env.RECORD_CIPHER_ALGORITHM = 'aes-256-cbc';
+      process.env.RECORD_CIPHER_KEY = crypto.randomBytes(32).toString('hex');
+      process.env.RECORD_CIPHER_IV = crypto.randomBytes(16).toString('hex');
+
+      const mockCipher: crypto.Cipher = {
+        update: jest.fn().mockReturnValue('encrypted-record'),
+        final: jest.fn().mockReturnValue('final-encrypted-record'),
+      } as any;
+
+      jest.spyOn(crypto, 'createDecipheriv').mockReturnValue(mockCipher);
+
+      const result = await getOneRecordService.execute(
+        mockNewRecord.recordId,
+        mockProfessionalId,
+      );
+
+      expect(recordRepository.getOneRecord).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalRecord);
+    });
+
+    it('should throw an AppError if missing params', async () => {
+      try {
+        await getOneRecordService.execute(mockNewRecord.recordId, undefined);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('missing query parameter [professionalId]');
+      }
+    });
+
+    it('should throw an AppError if record does not belong to professionalId', async () => {
+      jest
+        .spyOn(schedulerRepository, 'getApptByFilter')
+        .mockResolvedValueOnce(mockProfessionalAppointments);
+
+      try {
+        await getOneRecordService.execute(
+          mockProfessionalRecord.recordId,
+          mockProfessionalId,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(403);
+        expect(error.message).toBe(
+          `record does not belong to the specified 'professionalId'`,
+        );
+      }
+    });
+
+    it('should throw an AppError if record encryption fails', async () => {
+      jest
+        .spyOn(recordRepository, 'getOneRecord')
+        .mockResolvedValueOnce(mockProfessionalRecord);
+
+      jest.spyOn(crypto, 'createDecipheriv').mockImplementation(() => {
+        throw new Error('Error decrypting data');
+      });
+
+      try {
+        mockProfessionalRecord.professionalId = mockProfessionalId;
+        await getOneRecordService.execute(
+          mockProfessionalRecord.recordId,
+          mockProfessionalId,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
       }
     });
   });
