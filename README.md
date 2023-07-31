@@ -54,7 +54,7 @@ Este projeto utiliza as seguintes tecnologias:
 4. Módulo de gerenciamento de sessões
 
    - [x] Criar ficha de atendimento
-   - [ ] Buscar registros de cliente
+   - [x] Buscar registros de cliente
    - [ ] Atualizar um registro
 
 5. Módulo financeiro
