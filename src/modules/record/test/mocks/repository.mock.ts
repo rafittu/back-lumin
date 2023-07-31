@@ -2,7 +2,10 @@ import { faker } from '@faker-js/faker';
 import { AppointmentRecord, Scheduler } from '@prisma/client';
 import { Record } from '../../interfaces/repository.interface';
 import { CreateRecordDto } from '../../dto/create-record.dto';
-import { AllProfessionalRecords } from '../../interfaces/record.interface';
+import {
+  AllProfessionalRecords,
+  ProfessionalRecord,
+} from '../../interfaces/record.interface';
 
 export const mockProfessionalId = faker.string.uuid();
 
@@ -31,7 +34,7 @@ interface PrismaProfessionalRecords extends AppointmentRecord {
   appointment: Scheduler;
 }
 
-export const mockPrismaGetProfessionalRecord: PrismaProfessionalRecords[] = [
+export const mockPrismaGetAllProfessionalRecord: PrismaProfessionalRecords[] = [
   {
     id: mockPrismaNewRecord.id,
     professional_id: mockPrismaNewRecord.professional_id,
@@ -55,15 +58,47 @@ export const mockPrismaGetProfessionalRecord: PrismaProfessionalRecords[] = [
 export const mockAllProfessionalRecords: AllProfessionalRecords = {
   records: [
     {
-      recordId: mockPrismaGetProfessionalRecord[0].id,
-      clientName: mockPrismaGetProfessionalRecord[0].appointment.client_name,
+      recordId: mockPrismaGetAllProfessionalRecord[0].id,
+      clientName: mockPrismaGetAllProfessionalRecord[0].appointment.client_name,
       scheduledDate:
-        mockPrismaGetProfessionalRecord[0].appointment.appointment_date,
+        mockPrismaGetAllProfessionalRecord[0].appointment.appointment_date,
       appointmentTime:
-        mockPrismaGetProfessionalRecord[0].appointment.appointment_time,
-      record: mockPrismaGetProfessionalRecord[0].record,
-      createdAt: mockPrismaGetProfessionalRecord[0].created_at,
-      updatedAt: mockPrismaGetProfessionalRecord[0].updated_at,
+        mockPrismaGetAllProfessionalRecord[0].appointment.appointment_time,
+      record: mockPrismaGetAllProfessionalRecord[0].record,
+      createdAt: mockPrismaGetAllProfessionalRecord[0].created_at,
+      updatedAt: mockPrismaGetAllProfessionalRecord[0].updated_at,
     },
   ],
+};
+
+export const mockPrismaGetOneProfessionalRecord: PrismaProfessionalRecords = {
+  id: mockPrismaNewRecord.id,
+  professional_id: mockPrismaNewRecord.professional_id,
+  schedule_id: mockPrismaNewRecord.schedule_id,
+  record: mockPrismaNewRecord.record,
+  created_at: mockPrismaNewRecord.created_at,
+  updated_at: mockPrismaNewRecord.updated_at,
+  appointment: {
+    id: mockPrismaNewRecord.schedule_id,
+    client_name: faker.person.fullName(),
+    client_phone: faker.phone.number(),
+    appointment_date: faker.date.recent().toDateString(),
+    appointment_time: faker.date.recent().toISOString().slice(11, 16),
+    professional_id: mockPrismaNewRecord.professional_id,
+    created_at: faker.date.recent(),
+    updated_at: faker.date.recent(),
+  },
+};
+
+export const mockProfessionalRecord: ProfessionalRecord = {
+  recordId: mockPrismaGetOneProfessionalRecord.id,
+  clientName: mockPrismaGetOneProfessionalRecord.appointment.client_name,
+  scheduledDate:
+    mockPrismaGetOneProfessionalRecord.appointment.appointment_date,
+  appointmentTime:
+    mockPrismaGetOneProfessionalRecord.appointment.appointment_time,
+  record: mockPrismaGetOneProfessionalRecord.record,
+  professionalId: mockPrismaGetOneProfessionalRecord.professional_id,
+  createdAt: mockPrismaGetOneProfessionalRecord.created_at,
+  updatedAt: mockPrismaGetOneProfessionalRecord.updated_at,
 };

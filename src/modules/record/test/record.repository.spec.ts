@@ -5,9 +5,11 @@ import {
   mockAllProfessionalRecords,
   mockAppointmentId,
   mockEncryptedRecord,
-  mockPrismaGetProfessionalRecord,
+  mockPrismaGetOneProfessionalRecord,
+  mockPrismaGetAllProfessionalRecord,
   mockPrismaNewRecord,
   mockProfessionalId,
+  mockProfessionalRecord,
   mockRepositoryRecordResponse,
 } from './mocks/repository.mock';
 import { Prisma } from '@prisma/client';
@@ -103,7 +105,7 @@ describe('RecordRepository', () => {
     it('should get all professional records successfully', async () => {
       jest
         .spyOn(prismaService.appointmentRecord, 'findMany')
-        .mockResolvedValueOnce(mockPrismaGetProfessionalRecord);
+        .mockResolvedValueOnce(mockPrismaGetAllProfessionalRecord);
 
       const result = await recordRepository.getAllRecords(mockProfessionalId);
 
@@ -125,6 +127,21 @@ describe('RecordRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to get records');
       }
+    });
+  });
+
+  describe('get one record', () => {
+    it('should get a record successfully', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findFirst')
+        .mockResolvedValueOnce(mockPrismaGetOneProfessionalRecord);
+
+      const result = await recordRepository.getOneRecord(mockProfessionalId);
+
+      expect(prismaService.appointmentRecord.findFirst).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(result).toEqual(mockProfessionalRecord);
     });
   });
 });
