@@ -193,5 +193,15 @@ describe('RecordServices', () => {
       expect(recordRepository.getOneRecord).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockProfessionalRecord);
     });
+
+    it('should throw an AppError if missing params', async () => {
+      try {
+        await getOneRecordService.execute(mockNewRecord.recordId, undefined);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('missing query parameter [professionalId]');
+      }
+    });
   });
 });
