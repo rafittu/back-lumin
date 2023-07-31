@@ -2,15 +2,16 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../../prisma.service';
 import { RecordRepository } from '../repository/record.repository';
 import {
+  mockAllProfessionalRecords,
+  mockAppointmentId,
+  mockEncryptedRecord,
   mockPrismaGetProfessionalRecord,
   mockPrismaNewRecord,
+  mockProfessionalId,
   mockRepositoryRecordResponse,
 } from './mocks/repository.mock';
-import { mockAppointmentId, mockProfessionalId } from './mocks/controller.mock';
-import { mockEncryptedRecord } from './mocks/service.mock';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../../../common/errors/Error';
-import { mockAllProfessionalRecords } from './mocks/common.mock';
 
 describe('RecordRepository', () => {
   let recordRepository: RecordRepository;

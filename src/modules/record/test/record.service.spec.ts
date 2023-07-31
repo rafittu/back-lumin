@@ -1,20 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateRecordService } from '../services/create-record.service';
 import { RecordRepository } from '../repository/record.repository';
-import { mockRepositoryRecordResponse } from './mocks/repository.mock';
 import { SchedulerRepository } from '../../../modules/scheduler/repository/scheduler.repository';
-import { mockAllProfessionalRecords, mockNewRecord } from './mocks/common.mock';
-import {
-  mockAppointmentId,
-  mockCreateRecord,
-  mockProfessionalId,
-} from './mocks/controller.mock';
 import { AppError } from '../../../common/errors/Error';
 import * as crypto from 'crypto';
 import { GetAllRecordsService } from '../services/all-records.service';
 import {
+  mockAllProfessionalRecords,
+  mockAppointmentId,
+  mockCreateRecord,
   mockFutureAppointment,
+  mockNewRecord,
   mockProfessionalAppointments,
+  mockProfessionalId,
+  mockRepositoryRecordResponse,
 } from './mocks/service.mock';
 
 describe('RecordServices', () => {
@@ -152,11 +151,9 @@ describe('RecordServices', () => {
   describe('find all records', () => {
     it('should get all professional records successfully', async () => {
       const result = await getAllRecordsService.execute(mockProfessionalId);
-
       expect(recordRepository.getAllRecords).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockAllProfessionalRecords);
     });
-
     it('should throw an AppError if missing params', async () => {
       try {
         await getAllRecordsService.execute(undefined);
