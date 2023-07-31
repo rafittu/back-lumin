@@ -4,7 +4,10 @@ import { IRecordRepository, Record } from '../interfaces/repository.interface';
 import { CreateRecordDto } from '../dto/create-record.dto';
 import { AppError } from '../../../common/errors/Error';
 import { Prisma } from '@prisma/client';
-import { AllProfessionalRecords } from '../interfaces/record.interface';
+import {
+  AllProfessionalRecords,
+  ProfessionalRecord,
+} from '../interfaces/record.interface';
 
 @Injectable()
 export class RecordRepository implements IRecordRepository {
@@ -86,6 +89,49 @@ export class RecordRepository implements IRecordRepository {
         'record-repository.getAllRecords',
         500,
         'failed to get records',
+      );
+    }
+  }
+
+  async getOneRecord(recordId: string): Promise<ProfessionalRecord> {
+    try {
+      const recordData = await this.prisma.appointmentRecord.findFirst({
+        where: {
+          id: recordId,
+        },
+        select: {
+          id: true,
+          professional_id: true,
+          record: true,
+          created_at: true,
+          updated_at: true,
+          appointment: {
+            select: {
+              client_name: true,
+              appointment_date: true,
+              appointment_time: true,
+            },
+          },
+        },
+      });
+
+      const formatedRecord = {
+        recordId: recordData.id,
+        professionalId: recordData.professional_id,
+        clientName: recordData.appointment.client_name,
+        scheduledDate: recordData.appointment.appointment_date,
+        appointmentTime: recordData.appointment.appointment_time,
+        record: recordData.record,
+        createdAt: recordData.created_at,
+        updatedAt: recordData.updated_at,
+      };
+
+      return formatedRecord;
+    } catch (error) {
+      throw new AppError(
+        'record-repository.getOneRecord',
+        500,
+        'failed to get record',
       );
     }
   }
