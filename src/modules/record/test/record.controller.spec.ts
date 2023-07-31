@@ -3,15 +3,13 @@ import { RecordController } from '../record.controller';
 import { CreateRecordService } from '../services/create-record.service';
 import { RedisCacheService } from '../../../modules/auth/infra/cache/redis-cache.service';
 import {
+  mockAllProfessionalRecords,
   mockAppointmentId,
   mockCreateRecord,
-  mockProfessionalId,
-} from './mocks/controller.mock';
-import {
-  mockAllProfessionalRecords,
   mockNewRecord,
+  mockProfessionalId,
   mockProfessionalRecord,
-} from './mocks/common.mock';
+} from './mocks/controller.mock';
 import { GetAllRecordsService } from '../services/all-records.service';
 import { GetOneRecordService } from '../services/get-one-record.service';
 
