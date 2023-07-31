@@ -143,5 +143,19 @@ describe('RecordRepository', () => {
       );
       expect(result).toEqual(mockProfessionalRecord);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findFirst')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await recordRepository.getOneRecord(mockProfessionalId);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to get record');
+      }
+    });
   });
 });
