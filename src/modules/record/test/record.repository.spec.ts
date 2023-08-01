@@ -11,6 +11,8 @@ import {
   mockProfessionalId,
   mockProfessionalRecord,
   mockRepositoryRecordResponse,
+  mockPrismaUpdateRecord,
+  mockUpdatedRecordResponse,
 } from './mocks/repository.mock';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../../../common/errors/Error';
@@ -157,5 +159,67 @@ describe('RecordRepository', () => {
         expect(error.message).toBe('failed to get record');
       }
     });
+  });
+
+  describe('update record', () => {
+    it('should update a record successfully', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'update')
+        .mockResolvedValueOnce(mockPrismaUpdateRecord);
+
+      const result = await recordRepository.updateRecord(
+        mockPrismaUpdateRecord.id,
+        mockEncryptedRecord,
+      );
+
+      expect(prismaService.appointmentRecord.update).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUpdatedRecordResponse);
+    });
+
+    // it('should throw an AppError when a record already exists for an appointment', async () => {
+    //   const prismaError = new Prisma.PrismaClientKnownRequestError(
+    //     'error message',
+    //     {
+    //       code: 'error code',
+    //       clientVersion: '',
+    //     },
+    //   );
+
+    //   jest
+    //     .spyOn(prismaService.appointmentRecord, 'create')
+    //     .mockRejectedValueOnce(prismaError);
+
+    //   try {
+    //     await recordRepository.createRecord(
+    //       mockProfessionalId,
+    //       mockAppointmentId,
+    //       mockEncryptedRecord,
+    //     );
+    //   } catch (error) {
+    //     expect(error).toBeInstanceOf(AppError);
+    //     expect(error.code).toBe(409);
+    //     expect(error.message).toBe(
+    //       'a record for this appointment already exists',
+    //     );
+    //   }
+    // });
+
+    // it('should throw an error if record is not created', async () => {
+    //   jest
+    //     .spyOn(prismaService.appointmentRecord, 'create')
+    //     .mockRejectedValueOnce(new Error());
+
+    //   try {
+    //     await recordRepository.createRecord(
+    //       mockProfessionalId,
+    //       mockAppointmentId,
+    //       mockEncryptedRecord,
+    //     );
+    //   } catch (error) {
+    //     expect(error).toBeInstanceOf(AppError);
+    //     expect(error.code).toBe(500);
+    //     expect(error.message).toBe('failed to create record');
+    //   }
+    // });
   });
 });
