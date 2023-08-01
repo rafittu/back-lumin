@@ -4,7 +4,9 @@ import {
   AllProfessionalRecords,
   NewRecord,
   ProfessionalRecord,
+  UpdatedRecord,
 } from '../../interfaces/record.interface';
+import { UpdateRecordDto } from '../../dto/update-record.dto';
 
 export const mockProfessionalId = faker.string.uuid();
 
@@ -34,4 +36,15 @@ export const mockProfessionalRecord: ProfessionalRecord = {
 
 export const mockAllProfessionalRecords: AllProfessionalRecords = {
   records: [mockProfessionalRecord],
+};
+
+export const mockUpdateRecord: UpdateRecordDto = {
+  record: faker.string.sample(),
+};
+
+export const mockUpdatedRecord: UpdatedRecord = {
+  id: mockProfessionalRecord.recordId,
+  record: mockProfessionalRecord.record,
+  createdAt: mockProfessionalRecord.createdAt,
+  updatedAt: mockProfessionalRecord.updatedAt,
 };
