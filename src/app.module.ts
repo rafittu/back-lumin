@@ -8,6 +8,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/infra/guards/jwt-auth-.guard';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { RecordModule } from './modules/record/record.module';
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { RecordModule } from './modules/record/record.module';
     AuthModule,
     SchedulerModule,
     RecordModule,
+    PaymentsModule,
   ],
   controllers: [],
   providers: [
