@@ -9,9 +9,12 @@ import {
   mockNewRecord,
   mockProfessionalId,
   mockProfessionalRecord,
+  mockUpdateRecord,
+  mockUpdatedRecord,
 } from './mocks/controller.mock';
 import { GetAllRecordsService } from '../services/all-records.service';
 import { GetOneRecordService } from '../services/get-one-record.service';
+import { UpdateRecordService } from '../services/update-record.service';
 
 describe('RecordController', () => {
   let controller: RecordController;
@@ -19,6 +22,7 @@ describe('RecordController', () => {
   let createRecordService: CreateRecordService;
   let getAllRecordsService: GetAllRecordsService;
   let getOneRecordService: GetOneRecordService;
+  let updateRecordService: UpdateRecordService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -43,6 +47,12 @@ describe('RecordController', () => {
             execute: jest.fn().mockResolvedValue(mockProfessionalRecord),
           },
         },
+        {
+          provide: UpdateRecordService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(mockUpdatedRecord),
+          },
+        },
       ],
     }).compile();
 
@@ -52,6 +62,7 @@ describe('RecordController', () => {
     getAllRecordsService =
       module.get<GetAllRecordsService>(GetAllRecordsService);
     getOneRecordService = module.get<GetOneRecordService>(GetOneRecordService);
+    updateRecordService = module.get<UpdateRecordService>(UpdateRecordService);
   });
 
   it('should be defined', () => {
@@ -122,6 +133,28 @@ describe('RecordController', () => {
 
       await expect(
         controller.findOne(mockProfessionalRecord.recordId, mockProfessionalId),
+      ).rejects.toThrowError();
+    });
+  });
+
+  describe('update record', () => {
+    it('should update a record successfully', async () => {
+      const result = await controller.update(
+        mockProfessionalRecord.recordId,
+        mockUpdateRecord,
+      );
+
+      expect(updateRecordService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUpdatedRecord);
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(updateRecordService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.update(mockProfessionalRecord.recordId, mockUpdateRecord),
       ).rejects.toThrowError();
     });
   });

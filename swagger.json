@@ -1688,6 +1688,120 @@
           }
         }
       }
+    },
+    "/record/update/:id": {
+      "patch": {
+        "summary": "Update a record",
+        "description": "Route to update client record",
+        "tags": ["Record"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "record id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRecord"
+              },
+              "example": {
+                "record": "During the therapy sessions, Riley continued to show improvement in her communication and emotional expression. She became more comfortable discussing her emotions and exploring their underlying causes. Riley shared her recent experiences of managing work-related stress and handling conflicts with her colleagues. She demonstrated a growing awareness of her emotional triggers and coping strategies to deal with anxiety. The therapy sessions provided a supportive environment for Riley to explore and develop her emotional intelligence, and she actively engaged in the process of self-discovery and personal growth."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatedRecord"
+                },
+                "example": {
+                  "id": "25678210",
+                  "record": "During the therapy sessions, Riley continued to show improvement in her communication and emotional expression. She became more comfortable discussing her emotions and exploring their underlying causes. Riley shared her recent experiences of managing work-related stress and handling conflicts with her colleagues. She demonstrated a growing awareness of her emotional triggers and coping strategies to deal with anxiety. The therapy sessions provided a supportive environment for Riley to explore and develop her emotional intelligence, and she actively engaged in the process of self-discovery and personal growth.",
+                  "createdAt": "2023-07-20T12:00:00Z",
+                  "updatedAt": "2023-07-27T12:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "example1": {
+                    "summary": "Failed to encrypt record",
+                    "value": {
+                      "error": {
+                        "message": "generic error",
+                        "code": "record-module.UpdateRecordService",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  },
+                  "example2": {
+                    "summary": "Failed to update record",
+                    "value": {
+                      "error": {
+                        "message": "failed to update record",
+                        "code": "record-repository.updateRecord",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2211,6 +2325,27 @@
           "appointmentTime": {
             "type": "string",
             "description": "Time to be scheduled"
+          },
+          "record": {
+            "type": "string",
+            "description": "Comprehensive and essential information about a patient's health and medical history"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time of record creation"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Date and time of record update"
+          }
+        }
+      },
+      "UpdatedRecord": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Record ID"
           },
           "record": {
             "type": "string",

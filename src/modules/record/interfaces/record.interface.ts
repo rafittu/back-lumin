@@ -20,3 +20,10 @@ export interface ProfessionalRecord {
 export interface AllProfessionalRecords {
   records: ProfessionalRecord[];
 }
+
+export interface UpdatedRecord {
+  id: string;
+  record: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

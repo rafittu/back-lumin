@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma.service';
-import { IRecordRepository, Record } from '../interfaces/repository.interface';
+import {
+  IRecordRepository,
+  Record,
+  UpdatedRecordResponse,
+} from '../interfaces/repository.interface';
 import { CreateRecordDto } from '../dto/create-record.dto';
 import { AppError } from '../../../common/errors/Error';
 import { Prisma } from '@prisma/client';
@@ -8,6 +12,7 @@ import {
   AllProfessionalRecords,
   ProfessionalRecord,
 } from '../interfaces/record.interface';
+import { UpdateRecordDto } from '../dto/update-record.dto';
 
 @Injectable()
 export class RecordRepository implements IRecordRepository {
@@ -132,6 +137,39 @@ export class RecordRepository implements IRecordRepository {
         'record-repository.getOneRecord',
         500,
         'failed to get record',
+      );
+    }
+  }
+
+  async updateRecord(
+    recordId: string,
+    updateRecordDto: UpdateRecordDto,
+  ): Promise<UpdatedRecordResponse> {
+    try {
+      const updatedRecord = await this.prisma.appointmentRecord.update({
+        where: { id: recordId },
+        data: {
+          record: updateRecordDto.record,
+        },
+      });
+
+      const { id, professional_id, schedule_id, created_at, updated_at } =
+        updatedRecord;
+
+      const recordResponse = {
+        id,
+        professionalId: professional_id,
+        appointmentId: schedule_id,
+        createdAt: created_at,
+        updatedAt: updated_at,
+      };
+
+      return recordResponse;
+    } catch (error) {
+      throw new AppError(
+        'record-repository.updateRecord',
+        500,
+        'failed to update record',
       );
     }
   }

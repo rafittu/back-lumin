@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UseGuards,
   UseFilters,
   Query,
@@ -22,9 +21,11 @@ import {
   AllProfessionalRecords,
   NewRecord,
   ProfessionalRecord,
+  UpdatedRecord,
 } from './interfaces/record.interface';
 import { GetAllRecordsService } from './services/all-records.service';
 import { GetOneRecordService } from './services/get-one-record.service';
+import { UpdateRecordService } from './services/update-record.service';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -34,6 +35,7 @@ export class RecordController {
     private readonly createRecordService: CreateRecordService,
     private readonly getAllRecordsService: GetAllRecordsService,
     private readonly getOneRecordRecordService: GetOneRecordService,
+    private readonly updateRecordService: UpdateRecordService,
   ) {}
 
   @Post('/create')
@@ -70,13 +72,11 @@ export class RecordController {
     );
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRecordDto: UpdateRecordDto) {
-    return 'record updated';
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return 'record deleted';
+  @Patch('/update/:id')
+  async update(
+    @Param('id') recordId: string,
+    @Body() updateRecordDto: UpdateRecordDto,
+  ): Promise<UpdatedRecord> {
+    return await this.updateRecordService.execute(recordId, updateRecordDto);
   }
 }
