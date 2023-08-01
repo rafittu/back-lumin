@@ -21,6 +21,7 @@ import {
   AllProfessionalRecords,
   NewRecord,
   ProfessionalRecord,
+  UpdatedRecord,
 } from './interfaces/record.interface';
 import { GetAllRecordsService } from './services/all-records.service';
 import { GetOneRecordService } from './services/get-one-record.service';
@@ -76,7 +77,7 @@ export class RecordController {
     @Param('id') recordId: string,
     @Query('professionalId') professionalId: string,
     @Body() updateRecordDto: UpdateRecordDto,
-  ) {
+  ): Promise<UpdatedRecord> {
     return await this.updateRecordService.execute(
       recordId,
       professionalId,

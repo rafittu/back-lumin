@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma.service';
-import { IRecordRepository, Record } from '../interfaces/repository.interface';
+import {
+  IRecordRepository,
+  Record,
+  UpdatedRecordResponse,
+} from '../interfaces/repository.interface';
 import { CreateRecordDto } from '../dto/create-record.dto';
 import { AppError } from '../../../common/errors/Error';
 import { Prisma } from '@prisma/client';
@@ -137,7 +141,10 @@ export class RecordRepository implements IRecordRepository {
     }
   }
 
-  async updateRecord(recordId: string, updateRecordDto: UpdateRecordDto) {
+  async updateRecord(
+    recordId: string,
+    updateRecordDto: UpdateRecordDto,
+  ): Promise<UpdatedRecordResponse> {
     try {
       const updatedRecord = await this.prisma.appointmentRecord.update({
         where: { id: recordId },

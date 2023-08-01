@@ -8,6 +8,14 @@ export interface Record {
   createdAt: Date;
 }
 
+export interface UpdatedRecordResponse {
+  id: string;
+  professionalId: string;
+  appointmentId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface IRecordRepository {
   createRecord(
     professionalId: string,
@@ -16,5 +24,8 @@ export interface IRecordRepository {
   ): Promise<Record>;
   getAllRecords(professionalId: string): Promise<AllProfessionalRecords>;
   getOneRecord(recordId: string): Promise<ProfessionalRecord>;
-  updateRecord(recordId: string, updateRecordDto: UpdateRecordDto);
+  updateRecord(
+    recordId: string,
+    updateRecordDto: UpdateRecordDto,
+  ): Promise<UpdatedRecordResponse>;
 }

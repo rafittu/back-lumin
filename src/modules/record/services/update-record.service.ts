@@ -5,6 +5,7 @@ import { AppError } from '../../../common/errors/Error';
 import * as crypto from 'crypto';
 import { SchedulerRepository } from '../../../modules/scheduler/repository/scheduler.repository';
 import { UpdateRecordDto } from '../dto/update-record.dto';
+import { UpdatedRecord } from '../interfaces/record.interface';
 
 @Injectable()
 export class UpdateRecordService {
@@ -18,7 +19,7 @@ export class UpdateRecordService {
     recordId: string,
     professionalId: string,
     updateRecordDto: UpdateRecordDto,
-  ) {
+  ): Promise<UpdatedRecord> {
     const { record } = updateRecordDto;
     let encryptedRecord: string;
 
@@ -46,7 +47,7 @@ export class UpdateRecordService {
       throw new AppError('record-module.updateRecordService', 500, error.code);
     }
 
-    const { created_at, updated_at } = await this.recordRepository.updateRecord(
+    const { createdAt, updatedAt } = await this.recordRepository.updateRecord(
       recordId,
       {
         record: encryptedRecord,
@@ -56,8 +57,8 @@ export class UpdateRecordService {
     const updatedRecord = {
       id: recordId,
       record: updateRecordDto.record,
-      createdAt: created_at,
-      updatedAt: updated_at,
+      createdAt,
+      updatedAt,
     };
 
     return updatedRecord;
