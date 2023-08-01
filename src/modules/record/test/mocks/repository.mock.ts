@@ -102,3 +102,20 @@ export const mockProfessionalRecord: ProfessionalRecord = {
   createdAt: mockPrismaGetOneProfessionalRecord.created_at,
   updatedAt: mockPrismaGetOneProfessionalRecord.updated_at,
 };
+
+export const mockPrismaUpdateRecord: AppointmentRecord = {
+  id: mockProfessionalRecord.recordId,
+  professional_id: mockProfessionalRecord.professionalId,
+  schedule_id: mockPrismaGetOneProfessionalRecord.appointment.id,
+  record: mockProfessionalRecord.record,
+  created_at: mockProfessionalRecord.createdAt,
+  updated_at: mockProfessionalRecord.updatedAt,
+};
+
+export const mockUpdatedRecordResponse = {
+  id: mockPrismaUpdateRecord.id,
+  professionalId: mockPrismaUpdateRecord.professional_id,
+  appointmentId: mockPrismaUpdateRecord.schedule_id,
+  createdAt: mockPrismaUpdateRecord.created_at,
+  updatedAt: mockPrismaUpdateRecord.updated_at,
+};

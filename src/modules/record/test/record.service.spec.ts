@@ -15,13 +15,17 @@ import {
   mockProfessionalId,
   mockProfessionalRecord,
   mockRepositoryRecordResponse,
+  mockUpdatedRecord,
+  mockUpdatedRecordRepositoryResponse,
 } from './mocks/service.mock';
 import { GetOneRecordService } from '../services/get-one-record.service';
+import { UpdateRecordService } from '../services/update-record.service';
 
 describe('RecordServices', () => {
   let createRecordService: CreateRecordService;
   let getAllRecordsService: GetAllRecordsService;
   let getOneRecordService: GetOneRecordService;
+  let updateRecordService: UpdateRecordService;
 
   let recordRepository: RecordRepository;
   let schedulerRepository: SchedulerRepository;
@@ -32,6 +36,7 @@ describe('RecordServices', () => {
         CreateRecordService,
         GetAllRecordsService,
         GetOneRecordService,
+        UpdateRecordService,
         {
           provide: SchedulerRepository,
           useValue: {
@@ -50,6 +55,9 @@ describe('RecordServices', () => {
               .fn()
               .mockResolvedValue(mockAllProfessionalRecords),
             getOneRecord: jest.fn().mockResolvedValue(mockProfessionalRecord),
+            updateRecord: jest
+              .fn()
+              .mockResolvedValue(mockUpdatedRecordRepositoryResponse),
           },
         },
       ],
@@ -59,6 +67,7 @@ describe('RecordServices', () => {
     getAllRecordsService =
       module.get<GetAllRecordsService>(GetAllRecordsService);
     getOneRecordService = module.get<GetOneRecordService>(GetOneRecordService);
+    updateRecordService = module.get<UpdateRecordService>(UpdateRecordService);
 
     recordRepository = module.get<RecordRepository>(RecordRepository);
     schedulerRepository = module.get<SchedulerRepository>(SchedulerRepository);
@@ -67,6 +76,8 @@ describe('RecordServices', () => {
   it('should be defined', () => {
     expect(createRecordService).toBeDefined();
     expect(getAllRecordsService).toBeDefined();
+    expect(getOneRecordService).toBeDefined();
+    expect(updateRecordService).toBeDefined();
   });
 
   describe('create record', () => {
@@ -237,6 +248,49 @@ describe('RecordServices', () => {
         await getOneRecordService.execute(
           mockProfessionalRecord.recordId,
           mockProfessionalId,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+      }
+    });
+  });
+
+  describe('update record', () => {
+    it('should encrypt and update a record successfully', async () => {
+      process.env.RECORD_CIPHER_ALGORITHM = 'aes-256-cbc';
+      process.env.RECORD_CIPHER_KEY = crypto.randomBytes(32).toString('hex');
+      process.env.RECORD_CIPHER_IV = crypto.randomBytes(16).toString('hex');
+
+      const mockCipher: crypto.Cipher = {
+        update: jest.fn().mockReturnValue('encrypted-record'),
+        final: jest.fn().mockReturnValue('final-encrypted-record'),
+      } as any;
+
+      jest.spyOn(crypto, 'createCipheriv').mockReturnValue(mockCipher);
+
+      const result = await updateRecordService.execute(
+        mockProfessionalRecord.recordId,
+        mockUpdatedRecord,
+      );
+
+      delete process.env.RECORD_CIPHER_ALGORITHM;
+      delete process.env.RECORD_CIPHER_KEY;
+      delete process.env.RECORD_CIPHER_IV;
+
+      expect(recordRepository.updateRecord).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUpdatedRecord);
+    });
+
+    it('should throw an AppError if record encryption fails', async () => {
+      jest.spyOn(crypto, 'createCipheriv').mockImplementation(() => {
+        throw new Error('Error encrypting data');
+      });
+
+      try {
+        await updateRecordService.execute(
+          mockProfessionalRecord.recordId,
+          mockUpdatedRecord,
         );
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);

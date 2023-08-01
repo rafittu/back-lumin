@@ -11,6 +11,8 @@ import {
   mockProfessionalId,
   mockProfessionalRecord,
   mockRepositoryRecordResponse,
+  mockPrismaUpdateRecord,
+  mockUpdatedRecordResponse,
 } from './mocks/repository.mock';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../../../common/errors/Error';
@@ -155,6 +157,39 @@ describe('RecordRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to get record');
+      }
+    });
+  });
+
+  describe('update record', () => {
+    it('should update a record successfully', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'update')
+        .mockResolvedValueOnce(mockPrismaUpdateRecord);
+
+      const result = await recordRepository.updateRecord(
+        mockPrismaUpdateRecord.id,
+        mockEncryptedRecord,
+      );
+
+      expect(prismaService.appointmentRecord.update).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUpdatedRecordResponse);
+    });
+
+    it('should throw an error if record is not updated', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'update')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await recordRepository.updateRecord(
+          mockPrismaUpdateRecord.id,
+          mockEncryptedRecord,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to update record');
       }
     });
   });

@@ -75,13 +75,8 @@ export class RecordController {
   @Patch('/update/:id')
   async update(
     @Param('id') recordId: string,
-    @Query('professionalId') professionalId: string,
     @Body() updateRecordDto: UpdateRecordDto,
   ): Promise<UpdatedRecord> {
-    return await this.updateRecordService.execute(
-      recordId,
-      professionalId,
-      updateRecordDto,
-    );
+    return await this.updateRecordService.execute(recordId, updateRecordDto);
   }
 }
