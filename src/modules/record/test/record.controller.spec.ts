@@ -147,5 +147,15 @@ describe('RecordController', () => {
       expect(updateRecordService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockUpdatedRecord);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(updateRecordService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.update(mockProfessionalRecord.recordId, mockUpdateRecord),
+      ).rejects.toThrowError();
+    });
   });
 });
