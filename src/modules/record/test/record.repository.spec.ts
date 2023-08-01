@@ -176,50 +176,21 @@ describe('RecordRepository', () => {
       expect(result).toEqual(mockUpdatedRecordResponse);
     });
 
-    // it('should throw an AppError when a record already exists for an appointment', async () => {
-    //   const prismaError = new Prisma.PrismaClientKnownRequestError(
-    //     'error message',
-    //     {
-    //       code: 'error code',
-    //       clientVersion: '',
-    //     },
-    //   );
+    it('should throw an error if record is not updated', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'update')
+        .mockRejectedValueOnce(new Error());
 
-    //   jest
-    //     .spyOn(prismaService.appointmentRecord, 'create')
-    //     .mockRejectedValueOnce(prismaError);
-
-    //   try {
-    //     await recordRepository.createRecord(
-    //       mockProfessionalId,
-    //       mockAppointmentId,
-    //       mockEncryptedRecord,
-    //     );
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(AppError);
-    //     expect(error.code).toBe(409);
-    //     expect(error.message).toBe(
-    //       'a record for this appointment already exists',
-    //     );
-    //   }
-    // });
-
-    // it('should throw an error if record is not created', async () => {
-    //   jest
-    //     .spyOn(prismaService.appointmentRecord, 'create')
-    //     .mockRejectedValueOnce(new Error());
-
-    //   try {
-    //     await recordRepository.createRecord(
-    //       mockProfessionalId,
-    //       mockAppointmentId,
-    //       mockEncryptedRecord,
-    //     );
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(AppError);
-    //     expect(error.code).toBe(500);
-    //     expect(error.message).toBe('failed to create record');
-    //   }
-    // });
+      try {
+        await recordRepository.updateRecord(
+          mockPrismaUpdateRecord.id,
+          mockEncryptedRecord,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to update record');
+      }
+    });
   });
 });
