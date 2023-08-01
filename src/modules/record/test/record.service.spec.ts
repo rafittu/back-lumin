@@ -281,5 +281,21 @@ describe('RecordServices', () => {
       expect(recordRepository.updateRecord).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockUpdatedRecord);
     });
+
+    it('should throw an AppError if record encryption fails', async () => {
+      jest.spyOn(crypto, 'createCipheriv').mockImplementation(() => {
+        throw new Error('Error encrypting data');
+      });
+
+      try {
+        await updateRecordService.execute(
+          mockProfessionalRecord.recordId,
+          mockUpdatedRecord,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+      }
+    });
   });
 });
