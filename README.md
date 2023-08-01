@@ -55,7 +55,7 @@ Este projeto utiliza as seguintes tecnologias:
 
    - [x] Criar ficha de atendimento
    - [x] Buscar registros de cliente
-   - [ ] Atualizar um registro
+   - [x] Atualizar um registro
 
 5. Módulo financeiro
    - [ ] Registrar pagamento de sessões
