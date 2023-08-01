@@ -3,7 +3,6 @@ import { RecordRepository } from '../repository/record.repository';
 import { IRecordRepository } from '../interfaces/repository.interface';
 import { AppError } from '../../../common/errors/Error';
 import * as crypto from 'crypto';
-import { SchedulerRepository } from '../../../modules/scheduler/repository/scheduler.repository';
 import { UpdateRecordDto } from '../dto/update-record.dto';
 import { UpdatedRecord } from '../interfaces/record.interface';
 
@@ -12,24 +11,14 @@ export class UpdateRecordService {
   constructor(
     @Inject(RecordRepository)
     private recordRepository: IRecordRepository,
-    private schedulerRepository: SchedulerRepository,
   ) {}
 
   async execute(
     recordId: string,
-    professionalId: string,
     updateRecordDto: UpdateRecordDto,
   ): Promise<UpdatedRecord> {
     const { record } = updateRecordDto;
     let encryptedRecord: string;
-
-    if (!professionalId) {
-      throw new AppError(
-        'record-module.updateRecordService',
-        400,
-        'missing query parameter [professionalId]',
-      );
-    }
 
     try {
       const cipherKey = Buffer.from(process.env.RECORD_CIPHER_KEY, 'hex');
