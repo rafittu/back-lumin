@@ -8,6 +8,7 @@ import {
   AllProfessionalRecords,
   ProfessionalRecord,
 } from '../interfaces/record.interface';
+import { UpdateRecordDto } from '../dto/update-record.dto';
 
 @Injectable()
 export class RecordRepository implements IRecordRepository {
@@ -132,6 +133,36 @@ export class RecordRepository implements IRecordRepository {
         'record-repository.getOneRecord',
         500,
         'failed to get record',
+      );
+    }
+  }
+
+  async updateRecord(recordId: string, updateRecordDto: UpdateRecordDto) {
+    try {
+      const updatedRecord = await this.prisma.appointmentRecord.update({
+        where: { id: recordId },
+        data: {
+          record: updateRecordDto.record,
+        },
+      });
+
+      const { id, professional_id, schedule_id, created_at, updated_at } =
+        updatedRecord;
+
+      const recordResponde = {
+        id,
+        professionalId: professional_id,
+        appointmentId: schedule_id,
+        createdAt: created_at,
+        updatedAt: updated_at,
+      };
+
+      return recordResponde;
+    } catch (error) {
+      throw new AppError(
+        'record-repository.updateRecord',
+        500,
+        'failed to update record',
       );
     }
   }
