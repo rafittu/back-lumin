@@ -156,7 +156,7 @@ export class RecordRepository implements IRecordRepository {
       const { id, professional_id, schedule_id, created_at, updated_at } =
         updatedRecord;
 
-      const recordResponde = {
+      const recordResponse = {
         id,
         professionalId: professional_id,
         appointmentId: schedule_id,
@@ -164,7 +164,7 @@ export class RecordRepository implements IRecordRepository {
         updatedAt: updated_at,
       };
 
-      return recordResponde;
+      return recordResponse;
     } catch (error) {
       throw new AppError(
         'record-repository.updateRecord',
