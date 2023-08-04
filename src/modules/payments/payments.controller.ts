@@ -7,6 +7,7 @@ import {
   Param,
   UseGuards,
   UseFilters,
+  Query,
 } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
@@ -17,10 +18,12 @@ import { UpdatePaymentService } from './services/update-payment.service';
 import { RolesGuard } from '../auth/infra/guards/role.guard';
 import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
 import { AppError } from '../../common/errors/Error';
+import { Roles } from '../auth/infra/decorators/role.decorator';
+import { UserRole } from '../user/enum/user-role.enum';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
-@Controller('payments')
+@Controller('payment')
 export class PaymentsController {
   constructor(
     private readonly createPaymentService: CreatePaymentService,
@@ -29,9 +32,18 @@ export class PaymentsController {
     private readonly updatePaymentService: UpdatePaymentService,
   ) {}
 
-  @Post()
-  create(@Body() createPaymentDto: CreatePaymentDto) {
-    return this.createPaymentService.execute(createPaymentDto);
+  @Post('/create')
+  @Roles(UserRole.ADMIN)
+  create(
+    @Query('professionalId') professionalId: string,
+    @Query('appointmentId') appointmentId: string,
+    @Body() createPaymentDto: CreatePaymentDto,
+  ) {
+    return this.createPaymentService.execute(
+      professionalId,
+      appointmentId,
+      createPaymentDto,
+    );
   }
 
   @Get()
