@@ -20,6 +20,7 @@ import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
 import { AppError } from '../../common/errors/Error';
 import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from '../user/enum/user-role.enum';
+import { PaymentResponse } from './interfaces/payment.interface';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -38,7 +39,7 @@ export class PaymentsController {
     @Query('professionalId') professionalId: string,
     @Query('appointmentId') appointmentId: string,
     @Body() createPaymentDto: CreatePaymentDto,
-  ) {
+  ): Promise<PaymentResponse> {
     return this.createPaymentService.execute(
       professionalId,
       appointmentId,

@@ -4,6 +4,7 @@ import { AppError } from '../../../common/errors/Error';
 import { IPaymentRepository } from '../interfaces/repository.interface';
 import { CreatePaymentDto } from '../dto/create-payment.dto';
 import { UpdatePaymentDto } from '../dto/update-payment.dto';
+import { PaymentResponse } from '../interfaces/payment.interface';
 
 @Injectable()
 export class PaymentRepository implements IPaymentRepository {
@@ -13,7 +14,7 @@ export class PaymentRepository implements IPaymentRepository {
     professionalId: string,
     appointmentId: string,
     createPaymentDto: CreatePaymentDto,
-  ) {
+  ): Promise<PaymentResponse> {
     const { paymentDate, paymentMethod, status, totalPaid } = createPaymentDto;
 
     try {
