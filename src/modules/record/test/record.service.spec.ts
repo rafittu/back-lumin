@@ -123,6 +123,24 @@ describe('RecordServices', () => {
       }
     });
 
+    it('should throw an AppError if an appointment is not found', async () => {
+      jest
+        .spyOn(schedulerRepository, 'getApptByFilter')
+        .mockResolvedValueOnce({ appointments: [] });
+
+      try {
+        await createRecordService.execute(
+          mockProfessionalId,
+          mockAppointmentId,
+          mockCreateRecord,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(`invalid 'appointmentId'`);
+      }
+    });
+
     it('should throw an AppError if creating a record before the appointment date', async () => {
       jest
         .spyOn(schedulerRepository, 'getApptByFilter')

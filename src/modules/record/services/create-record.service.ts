@@ -35,6 +35,14 @@ export class CreateRecordService {
       { appointmentId },
     );
 
+    if (!appointmentResponse.appointments.length) {
+      throw new AppError(
+        'record-module.createRecordService',
+        400,
+        `invalid 'appointmentId'`,
+      );
+    }
+
     const { clientName, appointmentDate, appointmentTime } =
       appointmentResponse.appointments[0];
 

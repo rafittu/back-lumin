@@ -1344,13 +1344,30 @@
                 "schema": {
                   "$ref": "#/components/schemas/Error"
                 },
-                "example": {
-                  "error": {
-                    "message": "missing query parameter [professionalId, appointmentId]",
-                    "code": "record-module.createRecordService",
-                    "status": true
+
+                "examples": {
+                  "example1": {
+                    "summary": "Missing parameter",
+                    "value": {
+                      "error": {
+                        "message": "missing query parameter [professionalId, appointmentId]",
+                        "code": "record-module.createRecordService",
+                        "status": true
+                      },
+                      "data": {}
+                    }
                   },
-                  "data": {}
+                  "example2": {
+                    "summary": "Invalid parameter",
+                    "value": {
+                      "error": {
+                        "message": "invalid 'appointmentId'",
+                        "code": "record-module.createRecordService",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  }
                 }
               }
             }
