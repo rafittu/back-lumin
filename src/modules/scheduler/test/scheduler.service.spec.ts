@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CreateAppointmentService } from '../services/create-appt.service';
 import { SchedulerRepository } from '../repository/scheduler.repository';
 import {
+  mockInvalidDateTime,
   mockNewAppointment,
   mockProfessionalAppointments,
   mockUpdatedAppointment,
@@ -84,6 +85,7 @@ describe('SchedulerService', () => {
 
   describe('create appointment', () => {
     it('should create a new one successfully', async () => {
+      console.log(mockCreateAppointment);
       const result = await createAppointmentService.execute(
         mockProfessionalId,
         mockCreateAppointment,
@@ -103,6 +105,23 @@ describe('SchedulerService', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(400);
         expect(error.message).toBe('missing query parameter [professionalId]');
+      }
+    });
+
+    it('should throw an app error if appointment date or time is invalid', async () => {
+      mockCreateAppointment.appointmentDate = mockInvalidDateTime;
+
+      try {
+        await createAppointmentService.execute(
+          mockProfessionalId,
+          mockCreateAppointment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'appointment date and time must be after the current date and time',
+        );
       }
     });
   });
