@@ -85,7 +85,6 @@ describe('SchedulerService', () => {
 
   describe('create appointment', () => {
     it('should create a new one successfully', async () => {
-      console.log(mockCreateAppointment);
       const result = await createAppointmentService.execute(
         mockProfessionalId,
         mockCreateAppointment,
