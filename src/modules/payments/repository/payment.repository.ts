@@ -4,7 +4,10 @@ import { AppError } from '../../../common/errors/Error';
 import { IPaymentRepository } from '../interfaces/repository.interface';
 import { CreatePaymentDto } from '../dto/create-payment.dto';
 import { UpdatePaymentDto } from '../dto/update-payment.dto';
-import { PaymentResponse } from '../interfaces/payment.interface';
+import {
+  ManyPaymentsResponse,
+  PaymentResponse,
+} from '../interfaces/payment.interface';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
@@ -61,7 +64,7 @@ export class PaymentRepository implements IPaymentRepository {
     professionalId: string,
     appointmentsIds: string[],
     createPaymentDto: CreatePaymentDto,
-  ) {
+  ): Promise<ManyPaymentsResponse> {
     const { paymentDate, paymentMethod, status, totalPaid } = createPaymentDto;
 
     const paymentsData = appointmentsIds.map((appointmentId) => ({

@@ -6,3 +6,7 @@ export interface PaymentResponse {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ManyPaymentsResponse {
+  payments: PaymentResponse[];
+}

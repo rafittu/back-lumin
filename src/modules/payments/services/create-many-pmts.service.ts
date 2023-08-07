@@ -4,6 +4,7 @@ import { IPaymentRepository } from '../interfaces/repository.interface';
 import { CreatePaymentDto } from '../dto/create-payment.dto';
 import { AppError } from '../../../common/errors/Error';
 import { PaymentStatus } from '../enum/payment-status.enum';
+import { ManyPaymentsResponse } from '../interfaces/payment.interface';
 
 @Injectable()
 export class CreateManyPaymentsService {
@@ -16,7 +17,7 @@ export class CreateManyPaymentsService {
     professionalId: string,
     appointmentsIds: string[],
     createPaymentDto: CreatePaymentDto,
-  ) {
+  ): Promise<ManyPaymentsResponse> {
     if (
       !professionalId ||
       typeof professionalId !== 'string' ||
