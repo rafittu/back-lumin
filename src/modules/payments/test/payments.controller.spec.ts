@@ -80,5 +80,19 @@ describe('PaymentsController', () => {
       expect(createPaymentService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockPaymentResponse);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(createPaymentService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.create(
+          mockProfessionalId,
+          mockAppointmentId,
+          mockCreatePayment,
+        ),
+      ).rejects.toThrowError();
+    });
   });
 });
