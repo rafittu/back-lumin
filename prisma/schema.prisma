@@ -70,15 +70,15 @@ model AppointmentRecord {
 }
 
 model Payment {
-  id              String        @id @unique @default(uuid()) @db.Uuid
-  professional_id String        @db.Uuid
-  appointment_id  String        @unique @db.Uuid
-  payment_date    String        @db.VarChar(10)
-  payment_method  PaymentMethod
-  total_paid      String
+  id              String         @id @unique @default(uuid()) @db.Uuid
+  professional_id String         @db.Uuid
+  appointment_id  String         @unique @db.Uuid
+  payment_date    String?        @db.VarChar(10)
+  payment_method  PaymentMethod?
+  total_paid      String?
   status          PaymentStatus
-  created_at      DateTime      @default(now())
-  updated_at      DateTime      @updatedAt()
+  created_at      DateTime       @default(now())
+  updated_at      DateTime       @updatedAt()
 
   professional User              @relation("PaymentProfessional", fields: [professional_id], references: [id])
   appointment  AppointmentRecord @relation("AppointmentPayment", fields: [appointment_id], references: [id])
