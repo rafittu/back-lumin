@@ -8,6 +8,11 @@ export interface IPaymentRepository {
     appointmentId: string,
     createPaymentDto: CreatePaymentDto,
   ): Promise<PaymentResponse>;
+  createManyPayments(
+    professionalId: string,
+    appointmentsIds: string[],
+    createPaymentDto: CreatePaymentDto,
+  );
   findPaymentByFilter(filter);
   getOnePayment(id);
   updatePayment(paymentId: string, updatePaymentDto: UpdatePaymentDto);

@@ -57,6 +57,74 @@ export class PaymentRepository implements IPaymentRepository {
     }
   }
 
+  async createManyPayments(
+    professionalId: string,
+    appointmentsIds: string[],
+    createPaymentDto: CreatePaymentDto,
+  ) {
+    const { paymentDate, paymentMethod, status, totalPaid } = createPaymentDto;
+
+    const paymentsData = appointmentsIds.map((appointmentId) => ({
+      professional_id: professionalId,
+      appointment_id: appointmentId,
+      payment_date: paymentDate,
+      payment_method: paymentMethod,
+      status,
+      total_paid: totalPaid,
+    }));
+
+    try {
+      await this.prisma.$transaction(async (prisma) => {
+        const existingPayments = await prisma.payment.findMany({
+          where: {
+            appointment_id: { in: appointmentsIds },
+          },
+        });
+
+        if (existingPayments.length > 0) {
+          throw new AppError(
+            'payment-repository.createManyPayments',
+            400,
+            `payment already exists for appointmentId: ${existingPayments[0].appointment_id}`,
+          );
+        }
+
+        await prisma.payment.createMany({
+          data: paymentsData,
+        });
+      });
+
+      const createdPayments = await this.prisma.payment.findMany({
+        where: {
+          appointment_id: { in: appointmentsIds },
+        },
+      });
+
+      const paymentsResponse = createdPayments.map((payment) => {
+        return {
+          id: payment.id,
+          totalPaid: payment.total_paid,
+          paymentDate: payment.payment_date,
+          status: payment.status,
+          createdAt: payment.created_at,
+          updatedAt: payment.updated_at,
+        };
+      });
+
+      return { payments: paymentsResponse };
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw new AppError(error.internalCode, error.code, error.message);
+      }
+
+      throw new AppError(
+        'payment-repository.createPayment',
+        500,
+        'payment not created',
+      );
+    }
+  }
+
   async findPaymentByFilter(filter) {
     try {
       return 'payment data';
