@@ -2605,7 +2605,8 @@
             "type": "string",
             "description": "Total paid for the appointment"
           }
-        }
+        },
+        "required": ["status"]
       },
       "NewPaymentResponse": {
         "type": "object",
