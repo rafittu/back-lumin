@@ -75,7 +75,7 @@ model Payment {
   appointment_id  String        @unique @db.Uuid
   payment_date    String        @db.VarChar(10)
   payment_method  PaymentMethod
-  total_paid      Decimal
+  total_paid      String
   status          PaymentStatus
   created_at      DateTime      @default(now())
   updated_at      DateTime      @updatedAt()
