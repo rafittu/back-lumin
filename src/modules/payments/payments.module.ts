@@ -7,6 +7,7 @@ import { CreatePaymentService } from './services/create-payment.service';
 import { GetOnePaymentService } from './services/get-one-payment.service';
 import { FindPaymentByFilterService } from './services/find-by-filter.service';
 import { UpdatePaymentService } from './services/update-payment.service';
+import { CreateManyPaymentsService } from './services/create-many-pmts.service';
 
 @Module({
   controllers: [PaymentsController],
@@ -15,6 +16,7 @@ import { UpdatePaymentService } from './services/update-payment.service';
     RedisCacheService,
     PaymentRepository,
     CreatePaymentService,
+    CreateManyPaymentsService,
     GetOnePaymentService,
     FindPaymentByFilterService,
     UpdatePaymentService,
