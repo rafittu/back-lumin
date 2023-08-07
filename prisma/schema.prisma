@@ -34,7 +34,6 @@ model User {
   schedulers         Scheduler[]         @relation("SchedulerProfessional")
   appointmentRecords AppointmentRecord[] @relation("AppointmentRecordProfessional")
   payments           Payment[]           @relation("PaymentProfessional")
-  userPayments       Payment[]           @relation("PaymentClient")
 
   @@map("users")
 }
@@ -49,9 +48,8 @@ model Scheduler {
   created_at       DateTime @default(now())
   updated_at       DateTime @updatedAt()
 
-  professional        User                @relation("SchedulerProfessional", fields: [professional_id], references: [id])
-  appointmentRecords  AppointmentRecord[] @relation("AppointmentRecordScheduler")
-  appointmentPayments Payment[]           @relation("AppointmentPayment")
+  professional       User                @relation("SchedulerProfessional", fields: [professional_id], references: [id])
+  appointmentRecords AppointmentRecord[] @relation("AppointmentRecordScheduler")
 
   @@map("schedules")
 }
@@ -64,8 +62,9 @@ model AppointmentRecord {
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt()
 
-  professional User      @relation("AppointmentRecordProfessional", fields: [professional_id], references: [id])
-  appointment  Scheduler @relation("AppointmentRecordScheduler", fields: [schedule_id], references: [id])
+  professional        User      @relation("AppointmentRecordProfessional", fields: [professional_id], references: [id])
+  appointment         Scheduler @relation("AppointmentRecordScheduler", fields: [schedule_id], references: [id])
+  appointmentPayments Payment[] @relation("AppointmentPayment")
 
   @@map("appointment_records")
 }
@@ -73,18 +72,16 @@ model AppointmentRecord {
 model Payment {
   id              String        @id @unique @default(uuid()) @db.Uuid
   professional_id String        @db.Uuid
-  user_id         String        @db.Uuid
   appointment_id  String        @unique @db.Uuid
-  payment_date    DateTime
+  payment_date    String        @db.VarChar(10)
   payment_method  PaymentMethod
   total_paid      Decimal
   status          PaymentStatus
   created_at      DateTime      @default(now())
   updated_at      DateTime      @updatedAt()
 
-  professional User      @relation("PaymentProfessional", fields: [professional_id], references: [id])
-  user         User      @relation("PaymentClient", fields: [user_id], references: [id])
-  appointment  Scheduler @relation("AppointmentPayment", fields: [appointment_id], references: [id])
+  professional User              @relation("PaymentProfessional", fields: [professional_id], references: [id])
+  appointment  AppointmentRecord @relation("AppointmentPayment", fields: [appointment_id], references: [id])
 
   @@map("payments")
 }

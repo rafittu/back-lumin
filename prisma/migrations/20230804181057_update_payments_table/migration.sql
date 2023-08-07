@@ -2,6 +2,7 @@
   Warnings:
 
   - You are about to drop the column `appointment_date` on the `payments` table. All the data in the column will be lost.
+  - You are about to drop the column `user_id` on the `payments` table. All the data in the column will be lost.
   - A unique constraint covering the columns `[appointment_id]` on the table `payments` will be added. If there are existing duplicate values, this will fail.
   - Added the required column `appointment_id` to the `payments` table without a default value. This is not possible if the table is not empty.
   - Added the required column `status` to the `payments` table without a default value. This is not possible if the table is not empty.
@@ -11,10 +12,15 @@
 -- CreateEnum
 CREATE TYPE "PaymentStatus" AS ENUM ('OPEN', 'PAID');
 
+-- DropForeignKey
+ALTER TABLE "payments" DROP CONSTRAINT "payments_user_id_fkey";
+
 -- AlterTable
 ALTER TABLE "payments" DROP COLUMN "appointment_date",
+DROP COLUMN "user_id",
 ADD COLUMN     "appointment_id" UUID NOT NULL,
 ADD COLUMN     "status" "PaymentStatus" NOT NULL,
+ALTER COLUMN "payment_date" SET DEFAULT CURRENT_TIMESTAMP,
 DROP COLUMN "total_paid",
 ADD COLUMN     "total_paid" DECIMAL(65,30) NOT NULL;
 
@@ -22,4 +28,4 @@ ADD COLUMN     "total_paid" DECIMAL(65,30) NOT NULL;
 CREATE UNIQUE INDEX "payments_appointment_id_key" ON "payments"("appointment_id");
 
 -- AddForeignKey
-ALTER TABLE "payments" ADD CONSTRAINT "payments_appointment_id_fkey" FOREIGN KEY ("appointment_id") REFERENCES "schedules"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "payments" ADD CONSTRAINT "payments_appointment_id_fkey" FOREIGN KEY ("appointment_id") REFERENCES "appointment_records"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
