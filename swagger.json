@@ -2609,6 +2609,35 @@
           }
         }
       },
+      "NewPaymentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Payment ID"
+          },
+          "paymentDate": {
+            "type": "string",
+            "description": "Appointment payment date"
+          },
+          "status": {
+            "type": "string",
+            "description": "Payment status, OPEN or PAID"
+          },
+          "totalPaid": {
+            "type": "string",
+            "description": "Total paid for the appointment"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time of payment creation"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Date and time of payment update"
+          }
+        }
+      },
       "Error": {
         "type": "object",
         "properties": {
