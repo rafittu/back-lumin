@@ -8,6 +8,8 @@ import {
   mockPaymentResponse,
   mockProfessionalId,
 } from './mocks/repository.mock';
+import { Prisma } from '@prisma/client';
+import { AppError } from '../../../common/errors/Error';
 
 describe('PaymentRepository', () => {
   let paymentRepository: PaymentRepository;
@@ -48,33 +50,33 @@ describe('PaymentRepository', () => {
       expect(result).toEqual(mockPaymentResponse);
     });
 
-    // it('should throw an AppError when a record already exists for an appointment', async () => {
-    //   const prismaError = new Prisma.PrismaClientKnownRequestError(
-    //     'error message',
-    //     {
-    //       code: 'error code',
-    //       clientVersion: '',
-    //     },
-    //   );
+    it('should throw an AppError if a payment already exists for an appointment', async () => {
+      const prismaError = new Prisma.PrismaClientKnownRequestError(
+        'error message',
+        {
+          code: 'error code',
+          clientVersion: '',
+        },
+      );
 
-    //   jest
-    //     .spyOn(prismaService.appointmentRecord, 'create')
-    //     .mockRejectedValueOnce(prismaError);
+      jest
+        .spyOn(prismaService.payment, 'create')
+        .mockRejectedValueOnce(prismaError);
 
-    //   try {
-    //     await recordRepository.createRecord(
-    //       mockProfessionalId,
-    //       mockAppointmentId,
-    //       mockEncryptedRecord,
-    //     );
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(AppError);
-    //     expect(error.code).toBe(409);
-    //     expect(error.message).toBe(
-    //       'a record for this appointment already exists',
-    //     );
-    //   }
-    // });
+      try {
+        await paymentRepository.createPayment(
+          mockProfessionalId,
+          mockAppointmentId,
+          mockCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(409);
+        expect(error.message).toBe(
+          'a payment for this appointment already exists',
+        );
+      }
+    });
 
     // it('should throw an error if record is not created', async () => {
     //   jest

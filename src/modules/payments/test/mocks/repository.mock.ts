@@ -4,7 +4,6 @@ import { CreatePaymentDto } from '../../dto/create-payment.dto';
 import { PaymentMethod } from '../../enum/payment-method.enum';
 import { PaymentStatus } from '../../enum/payment-status.enum';
 import { Payment } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
 
 export const mockProfessionalId = faker.string.uuid();
 
