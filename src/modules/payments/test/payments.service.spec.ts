@@ -10,6 +10,7 @@ import {
   mockPaymentResponse,
   mockProfessionalId,
 } from './mocks/service.mock';
+import { AppError } from '../../../common/errors/Error';
 
 describe('PaymentsService', () => {
   let createPaymentService: CreatePaymentService;
@@ -62,6 +63,22 @@ describe('PaymentsService', () => {
 
       expect(paymentRepository.createPayment).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockPaymentResponse);
+    });
+
+    it('should throw an AppError if missing params', async () => {
+      try {
+        await createPaymentService.execute(
+          undefined,
+          mockAppointmentId,
+          mockCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'missing query parameter [professionalId, appointmentId]',
+        );
+      }
     });
   });
 });
