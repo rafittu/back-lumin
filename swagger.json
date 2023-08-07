@@ -1836,6 +1836,199 @@
           }
         }
       }
+    },
+
+    "/payment/create": {
+      "post": {
+        "summary": "Create a new payment",
+        "description": "Route to professionals create new payments for appointments",
+        "tags": ["Payment"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "professionalId",
+            "in": "query",
+            "description": "Professional id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentId",
+            "in": "query",
+            "description": "Appointment id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePayment"
+              },
+              "examples": {
+                "example1": {
+                  "summary": "create new payment",
+                  "value": {
+                    "paymentDate": "2023-08-06",
+                    "paymentMethod": "PIX",
+                    "status": "PAID",
+                    "totalPaid": "100.00"
+                  }
+                },
+                "example2": {
+                  "summary": "open a payment",
+                  "value": {
+                    "status": "OPEN"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Payment created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewPaymentResponse"
+                },
+                "examples": {
+                  "example1": {
+                    "summary": "payment created",
+                    "value": {
+                      "id": "27409ea2-ca57-445e-9666-bfd98c8f2519",
+                      "totalPaid": "100.00",
+                      "paymentDate": "2023-08-06",
+                      "status": "PAID",
+                      "createdAt": "2023-08-07T14:28:24.047Z",
+                      "updatedAt": "2023-08-07T14:28:24.047Z"
+                    }
+                  },
+                  "example2": {
+                    "summary": "opened payment",
+                    "value": {
+                      "id": "27409ea2-ca57-445e-9666-bfd98c8f2519",
+                      "totalPaid": null,
+                      "paymentDate": null,
+                      "status": "OPEN",
+                      "createdAt": "2023-08-07T14:28:24.047Z",
+                      "updatedAt": "2023-08-07T14:28:24.047Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+
+                "examples": {
+                  "example1": {
+                    "summary": "Missing parameter",
+                    "value": {
+                      "error": {
+                        "message": "missing query parameter [professionalId, appointmentId]",
+                        "code": "payment-service.createPayment",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  },
+                  "example2": {
+                    "summary": "Invalid request body",
+                    "value": {
+                      "error": {
+                        "message": "missing values for fields: 'totalPaid'",
+                        "code": "payment-service.createPayment",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "a payment for this appointment already exists",
+                    "code": "payment-repository.createPayment",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "payment not created",
+                    "code": "payment-repository.createPayment'",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2392,6 +2585,27 @@
           "updatedAt": {
             "type": "string",
             "description": "Date and time of record update"
+          }
+        }
+      },
+      "CreatePayment": {
+        "type": "object",
+        "properties": {
+          "paymentDate": {
+            "type": "string",
+            "description": "Appointment payment date"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "description": "Payment method, PIX or CASH"
+          },
+          "status": {
+            "type": "string",
+            "description": "Payment status, OPEN or PAID"
+          },
+          "totalPaid": {
+            "type": "string",
+            "description": "Total paid for the appointment"
           }
         }
       },
