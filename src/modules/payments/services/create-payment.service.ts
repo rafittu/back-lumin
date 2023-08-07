@@ -19,7 +19,7 @@ export class CreatePaymentService {
   ): Promise<PaymentResponse> {
     if (!professionalId || !appointmentId) {
       throw new AppError(
-        'payment-module.createPayment',
+        'payment-service.createPayment',
         400,
         'missing query parameter [professionalId, appointmentId]',
       );

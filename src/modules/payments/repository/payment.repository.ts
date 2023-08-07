@@ -41,7 +41,7 @@ export class PaymentRepository implements IPaymentRepository {
       return paymentResponse;
     } catch (error) {
       throw new AppError(
-        'payment-module.createPayment',
+        'payment-repository.createPayment',
         500,
         'payment not created',
       );
