@@ -8,7 +8,6 @@ import {
 } from 'class-validator';
 import { PaymentStatus } from '../enum/payment-status.enum';
 import { PaymentMethod } from '../enum/payment-method.enum';
-import { Decimal } from '@prisma/client/runtime';
 
 export class CreatePaymentDto {
   @IsOptional()
@@ -25,6 +24,6 @@ export class CreatePaymentDto {
   status: PaymentStatus;
 
   @IsOptional()
-  @IsDecimal()
-  totalPaid?: Decimal;
+  @IsDecimal({ decimal_digits: '2' })
+  totalPaid?: string;
 }
