@@ -80,5 +80,21 @@ describe('PaymentsService', () => {
         );
       }
     });
+
+    it('should throw an AppError if request body is invalid', async () => {
+      delete mockCreatePayment.totalPaid;
+
+      try {
+        await createPaymentService.execute(
+          mockProfessionalId,
+          mockAppointmentId,
+          mockCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('missing values for fields: totalPaid');
+      }
+    });
   });
 });
