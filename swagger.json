@@ -715,13 +715,30 @@
                 "schema": {
                   "$ref": "#/components/schemas/Error"
                 },
-                "example": {
-                  "error": {
-                    "message": "missing query parameter [professionalId]",
-                    "code": "appt-module.createAppointment",
-                    "status": true
+
+                "examples": {
+                  "example1": {
+                    "summary": "Missing parameter",
+                    "value": {
+                      "error": {
+                        "message": "missing query parameter [professionalId]",
+                        "code": "appt-module.createAppointment",
+                        "status": true
+                      },
+                      "data": {}
+                    }
                   },
-                  "data": {}
+                  "example2": {
+                    "summary": "Invalid date or time",
+                    "value": {
+                      "error": {
+                        "message": "appointment date and time must be after the current date and time",
+                        "code": "appt-module.createAppointment",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  }
                 }
               }
             }
@@ -1327,13 +1344,30 @@
                 "schema": {
                   "$ref": "#/components/schemas/Error"
                 },
-                "example": {
-                  "error": {
-                    "message": "missing query parameter [professionalId, appointmentId]",
-                    "code": "record-module.createRecordService",
-                    "status": true
+
+                "examples": {
+                  "example1": {
+                    "summary": "Missing parameter",
+                    "value": {
+                      "error": {
+                        "message": "missing query parameter [professionalId, appointmentId]",
+                        "code": "record-module.createRecordService",
+                        "status": true
+                      },
+                      "data": {}
+                    }
                   },
-                  "data": {}
+                  "example2": {
+                    "summary": "Invalid parameter",
+                    "value": {
+                      "error": {
+                        "message": "invalid 'appointmentId'",
+                        "code": "record-module.createRecordService",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  }
                 }
               }
             }

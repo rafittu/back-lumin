@@ -16,6 +16,8 @@ export class CreateAppointmentService {
     professionalId: string,
     createAppointmentDto: CreateAppointmentDto,
   ): Promise<NewAppointment> {
+    const { appointmentDate, appointmentTime } = createAppointmentDto;
+
     if (!professionalId) {
       throw new AppError(
         'appt-module.createAppointment',
@@ -23,6 +25,20 @@ export class CreateAppointmentService {
         'missing query parameter [professionalId]',
       );
     }
+
+    const currentTime = new Date().toISOString();
+    const appointmentDateTime = new Date(
+      appointmentDate + 'T' + appointmentTime,
+    ).toISOString();
+
+    if (appointmentDateTime < currentTime) {
+      throw new AppError(
+        'appt-module.createAppointment',
+        400,
+        'appointment date and time must be after the current date and time',
+      );
+    }
+
     return await this.schedulerRepository.createAppointment(
       professionalId,
       createAppointmentDto,
