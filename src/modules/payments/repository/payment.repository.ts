@@ -5,6 +5,7 @@ import { IPaymentRepository } from '../interfaces/repository.interface';
 import { CreatePaymentDto } from '../dto/create-payment.dto';
 import { UpdatePaymentDto } from '../dto/update-payment.dto';
 import { PaymentResponse } from '../interfaces/payment.interface';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PaymentRepository implements IPaymentRepository {
@@ -40,6 +41,14 @@ export class PaymentRepository implements IPaymentRepository {
 
       return paymentResponse;
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new AppError(
+          `payment-repository.createPayment'`,
+          409,
+          'a payment for this appointment already exists',
+        );
+      }
+
       throw new AppError(
         'payment-repository.createPayment',
         500,
