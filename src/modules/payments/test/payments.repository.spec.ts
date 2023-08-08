@@ -3,8 +3,10 @@ import { PrismaService } from '../../../prisma.service';
 import { PaymentRepository } from '../repository/payment.repository';
 import {
   mockAppointmentId,
+  mockAppointmentsIds,
   mockCreatePayment,
   mockCreatePaymentPrismaResponse,
+  mockManyPaymentsResponse,
   mockPaymentResponse,
   mockProfessionalId,
 } from './mocks/repository.mock';
@@ -94,6 +96,36 @@ describe('PaymentRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('payment not created');
       }
+    });
+  });
+
+  describe('create many payments', () => {
+    it('should create new payments successfully', async () => {
+      jest
+        .spyOn(prismaService, '$transaction')
+        .mockImplementation(async (callback) => {
+          await callback(prismaService);
+        });
+
+      jest.spyOn(prismaService.payment, 'findMany').mockResolvedValueOnce([]);
+
+      jest
+        .spyOn(prismaService.payment, 'createMany')
+        .mockResolvedValueOnce({ count: 2 });
+
+      jest
+        .spyOn(prismaService.payment, 'findMany')
+        .mockResolvedValueOnce([mockCreatePaymentPrismaResponse]);
+
+      const result = await paymentRepository.createManyPayments(
+        mockProfessionalId,
+        mockAppointmentsIds,
+        mockCreatePayment,
+      );
+
+      expect(prismaService.payment.createMany).toHaveBeenCalledTimes(1);
+      expect(prismaService.payment.findMany).toHaveBeenCalledTimes(2);
+      expect(result).toEqual(mockManyPaymentsResponse);
     });
   });
 });
