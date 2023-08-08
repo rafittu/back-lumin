@@ -66,9 +66,13 @@ export class PaymentsController {
     );
   }
 
-  @Get()
-  findByFilter(filter) {
-    return this.findByFilterService.execute(filter);
+  @Get('/payments/filter/:id')
+  @Roles(UserRole.ADMIN)
+  findByFilter(
+    @Param('id') professionalId: string,
+    @Query() filter: PaymentFilter,
+  ) {
+    return this.findByFilterService.execute(professionalId, filter);
   }
 
   @Get(':id')
