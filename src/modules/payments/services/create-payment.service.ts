@@ -18,11 +18,27 @@ export class CreatePaymentService {
     appointmentId: string,
     createPaymentDto: CreatePaymentDto,
   ): Promise<PaymentResponse> {
-    if (!professionalId || !appointmentId) {
+    if (
+      !professionalId ||
+      typeof professionalId !== 'string' ||
+      professionalId.trim() === ''
+    ) {
       throw new AppError(
         'payment-service.createPayment',
         400,
-        'missing query parameter [professionalId, appointmentId]',
+        'Missing or invalid query parameter: professionalId',
+      );
+    }
+
+    if (
+      !appointmentId ||
+      typeof appointmentId !== 'string' ||
+      appointmentId.trim() === ''
+    ) {
+      throw new AppError(
+        'payment-service.createPayment',
+        400,
+        'Missing or invalid query parameter: appointmentId',
       );
     }
 
