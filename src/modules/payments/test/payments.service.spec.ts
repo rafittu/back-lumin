@@ -96,7 +96,44 @@ describe('PaymentsService', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(400);
         expect(error.message).toBe(
-          'missing query parameter [professionalId, appointmentId]',
+          'Missing or invalid query parameter: professionalId',
+        );
+      }
+
+      try {
+        await createPaymentService.execute(
+          mockProfessionalId,
+          undefined,
+          mockCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'Missing or invalid query parameter: appointmentId',
+        );
+      }
+    });
+
+    it('should throw an AppError oppening an invalid payment', async () => {
+      const modifiedCreatePayment = {
+        ...mockCreatePayment,
+        status: PaymentStatus.OPEN,
+      };
+      delete modifiedCreatePayment.totalPaid;
+      delete modifiedCreatePayment.paymentDate;
+
+      try {
+        await createPaymentService.execute(
+          mockProfessionalId,
+          mockAppointmentId,
+          modifiedCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'The properties totalPaid, paymentDate, and paymentMethod are not allowed when the status is OPEN',
         );
       }
     });
