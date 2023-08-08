@@ -121,9 +121,9 @@ export class PaymentRepository implements IPaymentRepository {
       }
 
       throw new AppError(
-        'payment-repository.createPayment',
+        'payment-repository.createManyPayments',
         500,
-        'payment not created',
+        'payments not created',
       );
     }
   }
