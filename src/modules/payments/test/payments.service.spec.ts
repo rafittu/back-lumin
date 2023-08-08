@@ -162,8 +162,12 @@ describe('PaymentsService', () => {
     });
 
     it('should throw an AppError oppening an invalid payment', async () => {
-      const modifiedCreatePayment = { ...mockCreatePayment };
-      modifiedCreatePayment.status = PaymentStatus.OPEN;
+      const modifiedCreatePayment = {
+        ...mockCreatePayment,
+        status: PaymentStatus.OPEN,
+      };
+      delete modifiedCreatePayment.totalPaid;
+      delete modifiedCreatePayment.paymentDate;
 
       try {
         await createManyPaymentsService.execute(
@@ -180,20 +184,23 @@ describe('PaymentsService', () => {
       }
     });
 
-    // it('should throw an AppError if request body is invalid', async () => {
-    //   delete mockCreatePayment.totalPaid;
+    it('should throw an AppError if request body is invalid', async () => {
+      const invalidCreatePayment = {
+        ...mockCreatePayment,
+      };
+      delete invalidCreatePayment.totalPaid;
 
-    //   try {
-    //     await createPaymentService.execute(
-    //       mockProfessionalId,
-    //       mockAppointmentId,
-    //       mockCreatePayment,
-    //     );
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(AppError);
-    //     expect(error.code).toBe(400);
-    //     expect(error.message).toBe('missing values for fields: totalPaid');
-    //   }
-    // });
+      try {
+        await createManyPaymentsService.execute(
+          mockProfessionalId,
+          mockAppointmentsIds,
+          invalidCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('missing values for fields: totalPaid');
+      }
+    });
   });
 });
