@@ -14,6 +14,7 @@ import {
 import { AppError } from '../../../common/errors/Error';
 import { CreateManyPaymentsService } from '../services/create-many-pmts.service';
 import { mockAppointmentsIds } from './mocks/controller.mock';
+import { PaymentStatus } from '../enum/payment-status.enum';
 
 describe('PaymentsService', () => {
   let createPaymentService: CreatePaymentService;
@@ -156,6 +157,25 @@ describe('PaymentsService', () => {
         expect(error.code).toBe(400);
         expect(error.message).toBe(
           'Missing or invalid query parameter: appointmentsIds',
+        );
+      }
+    });
+
+    it('should throw an AppError oppening an invalid payment', async () => {
+      const modifiedCreatePayment = { ...mockCreatePayment };
+      modifiedCreatePayment.status = PaymentStatus.OPEN;
+
+      try {
+        await createManyPaymentsService.execute(
+          mockProfessionalId,
+          mockAppointmentsIds,
+          modifiedCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'The properties totalPaid, paymentDate, and paymentMethod are not allowed when the status is OPEN',
         );
       }
     });
