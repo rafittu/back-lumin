@@ -23,6 +23,7 @@ import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from '../user/enum/user-role.enum';
 import {
   ManyPaymentsResponse,
+  PaymentFilter,
   PaymentResponse,
 } from './interfaces/payment.interface';
 
