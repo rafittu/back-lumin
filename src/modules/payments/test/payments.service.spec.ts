@@ -120,34 +120,45 @@ describe('PaymentsService', () => {
 
   describe('create many payments', () => {
     it('should create new payments successfully', async () => {
-      console.log(mockAppointmentsIds, mockCreatePayment);
       const result = await createManyPaymentsService.execute(
         mockProfessionalId,
         mockAppointmentsIds,
         mockCreatePayment,
       );
 
-      console.log(result);
-
       expect(paymentRepository.createManyPayments).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockManyPaymentsResponse);
     });
 
-    // it('should throw an AppError if missing params', async () => {
-    //   try {
-    //     await createPaymentService.execute(
-    //       undefined,
-    //       mockAppointmentId,
-    //       mockCreatePayment,
-    //     );
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(AppError);
-    //     expect(error.code).toBe(400);
-    //     expect(error.message).toBe(
-    //       'missing query parameter [professionalId, appointmentId]',
-    //     );
-    //   }
-    // });
+    it('should throw an AppError if missing params', async () => {
+      try {
+        await createManyPaymentsService.execute(
+          undefined,
+          mockAppointmentsIds,
+          mockCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'Missing or invalid query parameter: professionalId',
+        );
+      }
+
+      try {
+        await createManyPaymentsService.execute(
+          mockProfessionalId,
+          undefined,
+          mockCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'Missing or invalid query parameter: appointmentsIds',
+        );
+      }
+    });
 
     // it('should throw an AppError if request body is invalid', async () => {
     //   delete mockCreatePayment.totalPaid;
