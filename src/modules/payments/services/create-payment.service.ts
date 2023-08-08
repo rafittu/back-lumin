@@ -42,6 +42,20 @@ export class CreatePaymentService {
       );
     }
 
+    if (createPaymentDto.status === PaymentStatus.OPEN) {
+      if (
+        'totalPaid' in createPaymentDto ||
+        'paymentDate' in createPaymentDto ||
+        'paymentMethod' in createPaymentDto
+      ) {
+        throw new AppError(
+          'payment-service.createPayment',
+          400,
+          'The properties totalPaid, paymentDate, and paymentMethod are not allowed when the status is OPEN',
+        );
+      }
+    }
+
     if (createPaymentDto.status === PaymentStatus.PAID) {
       const requiredFields = ['totalPaid', 'paymentDate', 'paymentMethod'];
       const missingFields = requiredFields.filter(
