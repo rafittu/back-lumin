@@ -24,6 +24,6 @@ export class FindPaymentByFilterService {
       );
     }
 
-    return this.paymentRepository.findPaymentByFilter(filter);
+    return this.paymentRepository.findPaymentByFilter(professionalId, filter);
   }
 }
