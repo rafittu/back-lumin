@@ -7,13 +7,18 @@ import { PaymentRepository } from '../repository/payment.repository';
 import {
   mockAppointmentId,
   mockCreatePayment,
+  mockManyPaymentsResponse,
   mockPaymentResponse,
   mockProfessionalId,
 } from './mocks/service.mock';
 import { AppError } from '../../../common/errors/Error';
+import { CreateManyPaymentsService } from '../services/create-many-pmts.service';
+import { mockAppointmentsIds } from './mocks/controller.mock';
+import { PaymentStatus } from '../enum/payment-status.enum';
 
 describe('PaymentsService', () => {
   let createPaymentService: CreatePaymentService;
+  let createManyPaymentsService: CreateManyPaymentsService;
   let findPaymentByFilterService: FindPaymentByFilterService;
   let findOnePaymentService: GetOnePaymentService;
   let updatePaymentService: UpdatePaymentService;
@@ -24,6 +29,7 @@ describe('PaymentsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CreatePaymentService,
+        CreateManyPaymentsService,
         FindPaymentByFilterService,
         GetOnePaymentService,
         UpdatePaymentService,
@@ -31,6 +37,9 @@ describe('PaymentsService', () => {
           provide: PaymentRepository,
           useValue: {
             createPayment: jest.fn().mockResolvedValue(mockPaymentResponse),
+            createManyPayments: jest
+              .fn()
+              .mockResolvedValue(mockManyPaymentsResponse),
           },
         },
       ],
@@ -38,6 +47,9 @@ describe('PaymentsService', () => {
 
     createPaymentService =
       module.get<CreatePaymentService>(CreatePaymentService);
+    createManyPaymentsService = module.get<CreateManyPaymentsService>(
+      CreateManyPaymentsService,
+    );
     findPaymentByFilterService = module.get<FindPaymentByFilterService>(
       FindPaymentByFilterService,
     );
@@ -49,8 +61,16 @@ describe('PaymentsService', () => {
     paymentRepository = module.get<PaymentRepository>(PaymentRepository);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be defined', () => {
     expect(createPaymentService).toBeDefined();
+    expect(createManyPaymentsService).toBeDefined();
+    expect(findPaymentByFilterService).toBeDefined();
+    expect(findOnePaymentService).toBeDefined();
+    expect(updatePaymentService).toBeDefined();
   });
 
   describe('create payment', () => {
@@ -82,13 +102,99 @@ describe('PaymentsService', () => {
     });
 
     it('should throw an AppError if request body is invalid', async () => {
-      delete mockCreatePayment.totalPaid;
+      const modifiedCreatePayment = { ...mockCreatePayment };
+      delete modifiedCreatePayment.totalPaid;
 
       try {
         await createPaymentService.execute(
           mockProfessionalId,
           mockAppointmentId,
+          modifiedCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('missing values for fields: totalPaid');
+      }
+    });
+  });
+
+  describe('create many payments', () => {
+    it('should create new payments successfully', async () => {
+      const result = await createManyPaymentsService.execute(
+        mockProfessionalId,
+        mockAppointmentsIds,
+        mockCreatePayment,
+      );
+
+      expect(paymentRepository.createManyPayments).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockManyPaymentsResponse);
+    });
+
+    it('should throw an AppError if missing params', async () => {
+      try {
+        await createManyPaymentsService.execute(
+          undefined,
+          mockAppointmentsIds,
           mockCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'Missing or invalid query parameter: professionalId',
+        );
+      }
+
+      try {
+        await createManyPaymentsService.execute(
+          mockProfessionalId,
+          undefined,
+          mockCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'Missing or invalid query parameter: appointmentsIds',
+        );
+      }
+    });
+
+    it('should throw an AppError oppening an invalid payment', async () => {
+      const modifiedCreatePayment = {
+        ...mockCreatePayment,
+        status: PaymentStatus.OPEN,
+      };
+      delete modifiedCreatePayment.totalPaid;
+      delete modifiedCreatePayment.paymentDate;
+
+      try {
+        await createManyPaymentsService.execute(
+          mockProfessionalId,
+          mockAppointmentsIds,
+          modifiedCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'The properties totalPaid, paymentDate, and paymentMethod are not allowed when the status is OPEN',
+        );
+      }
+    });
+
+    it('should throw an AppError if request body is invalid', async () => {
+      const invalidCreatePayment = {
+        ...mockCreatePayment,
+      };
+      delete invalidCreatePayment.totalPaid;
+
+      try {
+        await createManyPaymentsService.execute(
+          mockProfessionalId,
+          mockAppointmentsIds,
+          invalidCreatePayment,
         );
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);

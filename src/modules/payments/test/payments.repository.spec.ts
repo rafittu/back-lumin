@@ -3,8 +3,10 @@ import { PrismaService } from '../../../prisma.service';
 import { PaymentRepository } from '../repository/payment.repository';
 import {
   mockAppointmentId,
+  mockAppointmentsIds,
   mockCreatePayment,
   mockCreatePaymentPrismaResponse,
+  mockManyPaymentsResponse,
   mockPaymentResponse,
   mockProfessionalId,
 } from './mocks/repository.mock';
@@ -87,6 +89,88 @@ describe('PaymentRepository', () => {
         await paymentRepository.createPayment(
           mockProfessionalId,
           mockAppointmentId,
+          mockCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('payment not created');
+      }
+    });
+  });
+
+  describe('create many payments', () => {
+    it('should create new payments successfully', async () => {
+      jest
+        .spyOn(prismaService, '$transaction')
+        .mockImplementation(async (callback) => {
+          await callback(prismaService);
+        });
+
+      jest.spyOn(prismaService.payment, 'findMany').mockResolvedValueOnce([]);
+
+      jest
+        .spyOn(prismaService.payment, 'createMany')
+        .mockResolvedValueOnce({ count: 2 });
+
+      jest
+        .spyOn(prismaService.payment, 'findMany')
+        .mockResolvedValueOnce([mockCreatePaymentPrismaResponse]);
+
+      const result = await paymentRepository.createManyPayments(
+        mockProfessionalId,
+        mockAppointmentsIds,
+        mockCreatePayment,
+      );
+
+      expect(prismaService.payment.createMany).toHaveBeenCalledTimes(1);
+      expect(prismaService.payment.findMany).toHaveBeenCalledTimes(2);
+      expect(result).toEqual(mockManyPaymentsResponse);
+    });
+
+    it('should thrown an AppError if a payment already exists for an appointment id', async () => {
+      jest
+        .spyOn(prismaService, '$transaction')
+        .mockImplementation(async (callback) => {
+          await callback(prismaService);
+        });
+
+      jest
+        .spyOn(prismaService.payment, 'findMany')
+        .mockResolvedValueOnce([mockCreatePaymentPrismaResponse]);
+
+      try {
+        await paymentRepository.createManyPayments(
+          mockProfessionalId,
+          mockAppointmentsIds,
+          mockCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          `payment already exists for appointmentId: ${mockCreatePaymentPrismaResponse.appointment_id}`,
+        );
+      }
+    });
+
+    it('should thrown an AppError if payments not created', async () => {
+      jest
+        .spyOn(prismaService, '$transaction')
+        .mockImplementation(async (callback) => {
+          await callback(prismaService);
+        });
+
+      jest.spyOn(prismaService.payment, 'findMany').mockResolvedValueOnce([]);
+
+      jest
+        .spyOn(prismaService.payment, 'createMany')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await paymentRepository.createManyPayments(
+          mockProfessionalId,
+          mockAppointmentsIds,
           mockCreatePayment,
         );
       } catch (error) {

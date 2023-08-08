@@ -3,7 +3,9 @@ import { PaymentsController } from '../payments.controller';
 import { CreatePaymentService } from '../services/create-payment.service';
 import {
   mockAppointmentId,
+  mockAppointmentsIds,
   mockCreatePayment,
+  mockManyPaymentsResponse,
   mockPaymentResponse,
   mockProfessionalId,
 } from './mocks/controller.mock';
@@ -11,11 +13,13 @@ import { RedisCacheService } from '../../../modules/auth/infra/cache/redis-cache
 import { FindPaymentByFilterService } from '../services/find-by-filter.service';
 import { GetOnePaymentService } from '../services/get-one-payment.service';
 import { UpdatePaymentService } from '../services/update-payment.service';
+import { CreateManyPaymentsService } from '../services/create-many-pmts.service';
 
 describe('PaymentsController', () => {
   let controller: PaymentsController;
 
   let createPaymentService: CreatePaymentService;
+  let createManyPaymentsService: CreateManyPaymentsService;
   let findPaymentByFilterService: FindPaymentByFilterService;
   let findOnePaymentService: GetOnePaymentService;
   let updatePaymentService: UpdatePaymentService;
@@ -29,6 +33,12 @@ describe('PaymentsController', () => {
           provide: CreatePaymentService,
           useValue: {
             execute: jest.fn().mockResolvedValue(mockPaymentResponse),
+          },
+        },
+        {
+          provide: CreateManyPaymentsService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(mockManyPaymentsResponse),
           },
         },
         {
@@ -56,6 +66,9 @@ describe('PaymentsController', () => {
 
     createPaymentService =
       module.get<CreatePaymentService>(CreatePaymentService);
+    createManyPaymentsService = module.get<CreateManyPaymentsService>(
+      CreateManyPaymentsService,
+    );
     findPaymentByFilterService = module.get<FindPaymentByFilterService>(
       FindPaymentByFilterService,
     );
@@ -90,6 +103,33 @@ describe('PaymentsController', () => {
         controller.create(
           mockProfessionalId,
           mockAppointmentId,
+          mockCreatePayment,
+        ),
+      ).rejects.toThrowError();
+    });
+  });
+
+  describe('create many payments', () => {
+    it('should create new payments successfully', async () => {
+      const result = await controller.createMany(
+        mockProfessionalId,
+        mockAppointmentsIds,
+        mockCreatePayment,
+      );
+
+      expect(createManyPaymentsService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockManyPaymentsResponse);
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(createManyPaymentsService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.createMany(
+          mockProfessionalId,
+          mockAppointmentsIds,
           mockCreatePayment,
         ),
       ).rejects.toThrowError();

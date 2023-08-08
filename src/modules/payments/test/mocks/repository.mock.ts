@@ -1,5 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { PaymentResponse } from '../../interfaces/payment.interface';
+import {
+  ManyPaymentsResponse,
+  PaymentResponse,
+} from '../../interfaces/payment.interface';
 import { CreatePaymentDto } from '../../dto/create-payment.dto';
 import { PaymentMethod } from '../../enum/payment-method.enum';
 import { PaymentStatus } from '../../enum/payment-status.enum';
@@ -8,6 +11,8 @@ import { Payment } from '@prisma/client';
 export const mockProfessionalId = faker.string.uuid();
 
 export const mockAppointmentId = faker.string.uuid();
+
+export const mockAppointmentsIds = [faker.string.uuid(), faker.string.uuid()];
 
 export const mockCreatePayment: CreatePaymentDto = {
   paymentDate: faker.date.recent().toISOString().slice(0, 10),
@@ -35,4 +40,8 @@ export const mockPaymentResponse: PaymentResponse = {
   totalPaid: mockCreatePaymentPrismaResponse.total_paid,
   createdAt: mockCreatePaymentPrismaResponse.created_at,
   updatedAt: mockCreatePaymentPrismaResponse.updated_at,
+};
+
+export const mockManyPaymentsResponse: ManyPaymentsResponse = {
+  payments: [mockPaymentResponse],
 };
