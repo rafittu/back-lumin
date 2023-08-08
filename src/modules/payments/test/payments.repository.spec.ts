@@ -127,5 +127,31 @@ describe('PaymentRepository', () => {
       expect(prismaService.payment.findMany).toHaveBeenCalledTimes(2);
       expect(result).toEqual(mockManyPaymentsResponse);
     });
+
+    it('should thrown an AppError if a payment already exists for an appointment', async () => {
+      jest
+        .spyOn(prismaService, '$transaction')
+        .mockImplementation(async (callback) => {
+          await callback(prismaService);
+        });
+
+      jest
+        .spyOn(prismaService.payment, 'findMany')
+        .mockResolvedValueOnce([mockCreatePaymentPrismaResponse]);
+
+      try {
+        await paymentRepository.createManyPayments(
+          mockProfessionalId,
+          mockAppointmentsIds,
+          mockCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          `payment already exists for appointmentId: ${mockCreatePaymentPrismaResponse.appointment_id}`,
+        );
+      }
+    });
   });
 });
