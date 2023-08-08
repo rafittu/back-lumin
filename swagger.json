@@ -1946,10 +1946,10 @@
 
                 "examples": {
                   "example1": {
-                    "summary": "Missing parameter",
+                    "summary": "Invalid parameter professionalId",
                     "value": {
                       "error": {
-                        "message": "missing query parameter [professionalId, appointmentId]",
+                        "message": "Missing or invalid query parameter: professionalId'",
                         "code": "payment-service.createPayment",
                         "status": true
                       },
@@ -1957,10 +1957,32 @@
                     }
                   },
                   "example2": {
-                    "summary": "Invalid request body",
+                    "summary": "Invalid parameter appointmentId",
                     "value": {
                       "error": {
-                        "message": "missing values for fields: 'totalPaid'",
+                        "message": "Missing or invalid query parameter: appointmentsIds",
+                        "code": "payment-service.createPayment",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  },
+                  "example3": {
+                    "summary": "Open payment invalid body request",
+                    "value": {
+                      "error": {
+                        "message": "The properties totalPaid, paymentDate, and paymentMethod are not allowed when the status is OPEN",
+                        "code": "payment-service.createPayment",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  },
+                  "example4": {
+                    "summary": "Create payment invalid body request",
+                    "value": {
+                      "error": {
+                        "message": "missing values for fields: ['totalPaid', 'paymentDate', 'paymentMethod']",
                         "code": "payment-service.createPayment",
                         "status": true
                       },

@@ -176,7 +176,7 @@ describe('PaymentRepository', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
-        expect(error.message).toBe('payment not created');
+        expect(error.message).toBe('payments not created');
       }
     });
   });
