@@ -2027,6 +2027,242 @@
           }
         }
       }
+    },
+    "/payment/create-many": {
+      "post": {
+        "summary": "Create new payments",
+        "description": "Route to professionals create many payments for appointments at once",
+        "tags": ["Payment"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "professionalId",
+            "in": "query",
+            "description": "Professional id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentsIds",
+            "in": "query",
+            "description": "Appointments ids",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentsIds",
+            "in": "query",
+            "description": "Appointments ids",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePayment"
+              },
+              "examples": {
+                "example1": {
+                  "summary": "create new payment",
+                  "value": {
+                    "paymentDate": "2023-08-06",
+                    "paymentMethod": "PIX",
+                    "status": "PAID",
+                    "totalPaid": "300.00"
+                  }
+                },
+                "example2": {
+                  "summary": "open a payment",
+                  "value": {
+                    "status": "OPEN"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Payments created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManyPaymentsResponse"
+                },
+                "examples": {
+                  "example1": {
+                    "summary": "payments created",
+                    "value": {
+                      "payments": [
+                        {
+                          "id": "27409ea2-ca57-445e-9666-bfd98c8f2519",
+                          "totalPaid": "150.00",
+                          "paymentDate": "2023-08-06",
+                          "status": "PAID",
+                          "createdAt": "2023-08-07T14:28:24.047Z",
+                          "updatedAt": "2023-08-07T14:28:24.047Z"
+                        },
+                        {
+                          "id": "27409ea2-ca57-445e-ca45e-579669ea68",
+                          "totalPaid": "150.00",
+                          "paymentDate": "2023-08-06",
+                          "status": "PAID",
+                          "createdAt": "2023-08-07T14:28:24.047Z",
+                          "updatedAt": "2023-08-07T14:28:24.047Z"
+                        }
+                      ]
+                    }
+                  },
+                  "example2": {
+                    "summary": "opened payment",
+                    "value": {
+                      "payments": [
+                        {
+                          "id": "27409ea2-ca57-445e-9666-bfd98c8f2519",
+                          "status": "OPEN",
+                          "createdAt": "2023-08-07T14:28:24.047Z",
+                          "updatedAt": "2023-08-07T14:28:24.047Z"
+                        },
+                        {
+                          "id": "27409ea2-ca57-445e-ca45e-579669ea68b",
+                          "status": "OPEN",
+                          "createdAt": "2023-08-07T14:28:24.047Z",
+                          "updatedAt": "2023-08-07T14:28:24.047Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+
+                "examples": {
+                  "example1": {
+                    "summary": "Invalid parameter professionalId",
+                    "value": {
+                      "error": {
+                        "message": "Missing or invalid query parameter: professionalId'",
+                        "code": "payment-service.createManyPayments",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  },
+                  "example2": {
+                    "summary": "Invalid parameter appointmentId",
+                    "value": {
+                      "error": {
+                        "message": "Missing or invalid query parameter: appointmentsIds",
+                        "code": "payment-service.createManyPayments",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  },
+                  "example3": {
+                    "summary": "Open payment invalid body request",
+                    "value": {
+                      "error": {
+                        "message": "The properties totalPaid, paymentDate, and paymentMethod are not allowed when the status is OPEN",
+                        "code": "payment-service.createManyPayments",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  },
+                  "example4": {
+                    "summary": "Create payment invalid body request",
+                    "value": {
+                      "error": {
+                        "message": "missing values for fields: ['totalPaid', 'paymentDate', 'paymentMethod']",
+                        "code": "payment-service.createManyPayments",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  },
+                  "example5": {
+                    "summary": "Open payment invalid body request",
+                    "value": {
+                      "error": {
+                        "message": "payment already exists for appointmentId: `appointmenId`",
+                        "code": "payment-repository.createManyPayments",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "payments not created",
+                    "code": "payment-repository.createManyPayments'",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2634,6 +2870,43 @@
           "updatedAt": {
             "type": "string",
             "description": "Date and time of payment update"
+          }
+        }
+      },
+      "ManyPaymentsResponse": {
+        "type": "object",
+        "properties": {
+          "payments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Payment ID"
+                },
+                "paymentDate": {
+                  "type": "string",
+                  "description": "Appointment payment date"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Payment status, OPEN or PAID"
+                },
+                "totalPaid": {
+                  "type": "string",
+                  "description": "Total paid for the appointment"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "Date and time of payment creation"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "description": "Date and time of payment update"
+                }
+              }
+            }
           }
         }
       },
