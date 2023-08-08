@@ -121,18 +121,18 @@ describe('PaymentsController', () => {
       expect(result).toEqual(mockManyPaymentsResponse);
     });
 
-    // it('should throw an error', async () => {
-    //   jest
-    //     .spyOn(createPaymentService, 'execute')
-    //     .mockRejectedValueOnce(new Error());
+    it('should throw an error', async () => {
+      jest
+        .spyOn(createManyPaymentsService, 'execute')
+        .mockRejectedValueOnce(new Error());
 
-    //   await expect(
-    //     controller.create(
-    //       mockProfessionalId,
-    //       mockAppointmentId,
-    //       mockCreatePayment,
-    //     ),
-    //   ).rejects.toThrowError();
-    // });
+      await expect(
+        controller.createMany(
+          mockProfessionalId,
+          mockAppointmentsIds,
+          mockCreatePayment,
+        ),
+      ).rejects.toThrowError();
+    });
   });
 });
