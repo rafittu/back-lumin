@@ -144,11 +144,13 @@ export class PaymentRepository implements IPaymentRepository {
 
       status ? (paymentQuery.status = status as PaymentStatus) : paymentQuery;
 
-      // if (clientName) {
-      //   paymentQuery.appointment.professional.name = {
-      //     contains: clientName,
-      //   };
-      // }
+      if (clientName) {
+        paymentQuery.appointment = {
+          appointment: {
+            client_name: clientName,
+          },
+        };
+      }
 
       // if (appointmentDate) {
       //   paymentQuery.appointment.appointment.appointment_date = {
