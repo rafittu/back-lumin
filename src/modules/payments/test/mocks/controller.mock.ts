@@ -1,7 +1,10 @@
 import { faker } from '@faker-js/faker';
 import {
   ManyPaymentsResponse,
+  PaymentByFilter,
+  PaymentFilter,
   PaymentResponse,
+  PaymentsByFilterResponse,
 } from '../../interfaces/payment.interface';
 import { CreatePaymentDto } from '../../dto/create-payment.dto';
 import { PaymentMethod } from '../../enum/payment-method.enum';
@@ -31,4 +34,27 @@ export const mockPaymentResponse: PaymentResponse = {
 
 export const mockManyPaymentsResponse: ManyPaymentsResponse = {
   payments: [mockPaymentResponse],
+};
+
+export const mockPaymentByFilter: PaymentByFilter = {
+  id: mockPaymentResponse.id,
+  appointmentId: mockAppointmentId,
+  appointmentDate: faker.date.recent().toISOString().slice(0, 10),
+  clientName: faker.person.fullName(),
+  paymentDate: mockPaymentResponse.paymentDate,
+  paymentMethod: mockCreatePayment.paymentMethod,
+  totalPaid: mockPaymentResponse.totalPaid,
+  status: mockPaymentResponse.status,
+  createdAt: mockPaymentResponse.createdAt,
+  updatedAt: mockPaymentResponse.updatedAt,
+};
+
+export const mockPaymentsByFilter: PaymentsByFilterResponse = {
+  payments: [mockPaymentByFilter],
+};
+
+export const mockGetPaymentFilter: PaymentFilter = {
+  appointmentId: mockPaymentByFilter.appointmentId,
+  clientName: mockPaymentByFilter.clientName,
+  status: mockPaymentByFilter.status,
 };

@@ -5,8 +5,10 @@ import {
   mockAppointmentId,
   mockAppointmentsIds,
   mockCreatePayment,
+  mockGetPaymentFilter,
   mockManyPaymentsResponse,
   mockPaymentResponse,
+  mockPaymentsByFilter,
   mockProfessionalId,
 } from './mocks/controller.mock';
 import { RedisCacheService } from '../../../modules/auth/infra/cache/redis-cache.service';
@@ -44,7 +46,7 @@ describe('PaymentsController', () => {
         {
           provide: FindPaymentByFilterService,
           useValue: {
-            execute: jest.fn(),
+            execute: jest.fn().mockResolvedValue(mockPaymentsByFilter),
           },
         },
         {
@@ -133,6 +135,18 @@ describe('PaymentsController', () => {
           mockCreatePayment,
         ),
       ).rejects.toThrowError();
+    });
+  });
+
+  describe('find payments by filter', () => {
+    it('should get payments successfully', async () => {
+      const result = await controller.findByFilter(
+        mockProfessionalId,
+        mockGetPaymentFilter,
+      );
+
+      expect(findPaymentByFilterService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockPaymentsByFilter);
     });
   });
 });
