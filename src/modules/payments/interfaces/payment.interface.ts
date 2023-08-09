@@ -11,14 +11,10 @@ export interface ManyPaymentsResponse {
   payments: PaymentResponse[];
 }
 
-export interface DateFilter {
-  from?: string;
-  until?: string;
-}
-
 export interface PaymentFilter {
   appointmentId?: string;
   clientName?: string;
-  appointmentDate?: DateFilter;
+  appointmentDateFrom?: string;
+  appointmentDateUntil?: string;
   status?: string;
 }
