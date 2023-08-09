@@ -2285,6 +2285,187 @@
           }
         }
       }
+    },
+    "/payment//get/filter/:id": {
+      "get": {
+        "summary": "Find payments by filter",
+        "description": "Route to find payments by filter",
+        "tags": ["Payment"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Professional id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentId",
+            "in": "query",
+            "description": "appointment id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientName",
+            "in": "query",
+            "description": "name of the client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "payment status: OPEN or PAID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentDateFrom",
+            "in": "query",
+            "description": "payments made from a date till now",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentDateUntil",
+            "in": "query",
+            "description": "payments made until a date",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentsByFilterResponse"
+                },
+                "examples": {
+                  "example1": {
+                    "summary": "payments created",
+                    "value": {
+                      "payments": [
+                        {
+                          "id": "48a325a6-736c-4248-b931-14e5891082fa",
+                          "appointmentId": "154d71e2-49e0-4ed6-bb7d-885d98d4ce5c",
+                          "appointmentDate": "2023-08-06",
+                          "clientName": "Riley Doe",
+                          "paymentDate": "2023-08-07",
+                          "paymentMethod": "CASH",
+                          "totalPaid": "314.00",
+                          "status": "PAID",
+                          "createdAt": "2023-08-07T22:36:35.447Z",
+                          "updatedAt": "2023-08-07T22:36:35.447Z"
+                        }
+                      ]
+                    }
+                  },
+                  "example2": {
+                    "summary": "opened payment",
+                    "value": {
+                      "payments": [
+                        {
+                          "id": "48a325a6-736c-4248-b931-14e5891082fa",
+                          "appointmentId": "154d71e2-49e0-4ed6-bb7d-885d98d4ce5c",
+                          "appointmentDate": "2023-08-06",
+                          "clientName": "Riley Doe",
+                          "status": "OPEN",
+                          "createdAt": "2023-08-07T22:36:35.447Z",
+                          "updatedAt": "2023-08-07T22:36:35.447Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+
+                "examples": {
+                  "example1": {
+                    "summary": "Invalid parameter professionalId",
+                    "value": {
+                      "error": {
+                        "message": "Missing or invalid query parameter: professionalId",
+                        "code": "payment-service.createManyPayments",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "failed to get payment",
+                    "code": "payment-repository.getPaymentByFilter'",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2910,6 +3091,59 @@
                 "paymentDate": {
                   "type": "string",
                   "description": "Appointment payment date"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Payment status, OPEN or PAID"
+                },
+                "totalPaid": {
+                  "type": "string",
+                  "description": "Total paid for the appointment"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "Date and time of payment creation"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "description": "Date and time of payment update"
+                }
+              }
+            }
+          }
+        }
+      },
+      "PaymentsByFilterResponse": {
+        "type": "object",
+        "properties": {
+          "payments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Payment ID"
+                },
+                "appointmentId": {
+                  "type": "string",
+                  "description": "Appointment ID"
+                },
+                "appointmentDate": {
+                  "type": "string",
+                  "description": "Date of the appointment"
+                },
+                "clientName": {
+                  "type": "string",
+                  "description": "Name of the client"
+                },
+                "paymentDate": {
+                  "type": "string",
+                  "description": "Appointment payment date"
+                },
+                "paymentMethod": {
+                  "type": "string",
+                  "description": "Payment method PIX or CASH"
                 },
                 "status": {
                   "type": "string",
