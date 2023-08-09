@@ -23,7 +23,9 @@ import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from '../user/enum/user-role.enum';
 import {
   ManyPaymentsResponse,
+  PaymentFilter,
   PaymentResponse,
+  PaymentsByFilterResponse,
 } from './interfaces/payment.interface';
 
 @UseGuards(RolesGuard)
@@ -66,9 +68,13 @@ export class PaymentsController {
     );
   }
 
-  @Get()
-  findByFilter(filter) {
-    return this.findByFilterService.execute(filter);
+  @Get('/get/filter/:id')
+  @Roles(UserRole.ADMIN)
+  findByFilter(
+    @Param('id') professionalId: string,
+    @Query() filter: PaymentFilter,
+  ): Promise<PaymentsByFilterResponse> {
+    return this.findByFilterService.execute(professionalId, filter);
   }
 
   @Get(':id')

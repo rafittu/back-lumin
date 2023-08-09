@@ -1,6 +1,11 @@
 import { CreatePaymentDto } from '../dto/create-payment.dto';
 import { UpdatePaymentDto } from '../dto/update-payment.dto';
-import { ManyPaymentsResponse, PaymentResponse } from './payment.interface';
+import {
+  ManyPaymentsResponse,
+  PaymentFilter,
+  PaymentResponse,
+  PaymentsByFilterResponse,
+} from './payment.interface';
 
 export interface IPaymentRepository {
   createPayment(
@@ -13,7 +18,10 @@ export interface IPaymentRepository {
     appointmentsIds: string[],
     createPaymentDto: CreatePaymentDto,
   ): Promise<ManyPaymentsResponse>;
-  findPaymentByFilter(filter);
+  findPaymentByFilter(
+    professionalId: string,
+    filter: PaymentFilter,
+  ): Promise<PaymentsByFilterResponse>;
   getOnePayment(id);
   updatePayment(paymentId: string, updatePaymentDto: UpdatePaymentDto);
 }

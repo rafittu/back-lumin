@@ -6,9 +6,12 @@ import { CreatePaymentDto } from '../dto/create-payment.dto';
 import { UpdatePaymentDto } from '../dto/update-payment.dto';
 import {
   ManyPaymentsResponse,
+  PaymentFilter,
   PaymentResponse,
+  PaymentsByFilterResponse,
 } from '../interfaces/payment.interface';
 import { Prisma } from '@prisma/client';
+import { PaymentStatus } from '../enum/payment-status.enum';
 
 @Injectable()
 export class PaymentRepository implements IPaymentRepository {
@@ -128,11 +131,96 @@ export class PaymentRepository implements IPaymentRepository {
     }
   }
 
-  async findPaymentByFilter(filter) {
+  async findPaymentByFilter(
+    professionalId: string,
+    filter: PaymentFilter,
+  ): Promise<PaymentsByFilterResponse> {
+    const {
+      appointmentId,
+      clientName,
+      appointmentDateFrom,
+      appointmentDateUntil,
+      status,
+    } = filter;
+
     try {
-      return 'payment data';
+      const paymentQuery: Prisma.PaymentWhereInput = {
+        professional_id: professionalId,
+      };
+
+      appointmentId
+        ? (paymentQuery.appointment_id = appointmentId)
+        : paymentQuery;
+
+      status ? (paymentQuery.status = status as PaymentStatus) : paymentQuery;
+
+      if (clientName) {
+        paymentQuery.appointment = {
+          appointment: {
+            client_name: clientName,
+          },
+        };
+      }
+
+      if (appointmentDateFrom || appointmentDateUntil) {
+        paymentQuery.appointment = {
+          appointment: {
+            appointment_date: {
+              gte: appointmentDateFrom,
+              lte: appointmentDateUntil,
+            },
+          },
+        };
+      }
+
+      const payments = await this.prisma.payment.findMany({
+        where: paymentQuery,
+        select: {
+          id: true,
+          appointment_id: true,
+          payment_date: true,
+          payment_method: true,
+          total_paid: true,
+          status: true,
+          created_at: true,
+          updated_at: true,
+          appointment: {
+            select: {
+              appointment: {
+                select: {
+                  appointment_date: true,
+                  client_name: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const paymentsResponse = payments.map((payment) => ({
+        id: payment.id,
+        appointmentId: payment.appointment_id,
+        appointmentDate: payment.appointment.appointment.appointment_date,
+        clientName: payment.appointment.appointment.client_name,
+        paymentDate: payment.payment_date,
+        paymentMethod: payment.payment_method,
+        totalPaid: payment.total_paid,
+        status: payment.status,
+        createdAt: payment.created_at,
+        updatedAt: payment.updated_at,
+      }));
+
+      return {
+        payments: paymentsResponse,
+      };
     } catch (error) {
-      throw new AppError('Not Implemented', 501, 'message');
+      console.log(error);
+
+      throw new AppError(
+        'payment-repository.getPaymentByFilter',
+        500,
+        'failed to get payment',
+      );
     }
   }
 
