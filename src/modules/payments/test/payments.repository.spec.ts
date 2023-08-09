@@ -226,5 +226,21 @@ describe('PaymentRepository', () => {
       expect(prismaService.payment.findMany).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockPaymentsByFilter);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(prismaService.payment, 'findMany')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await paymentRepository.findPaymentByFilter(mockProfessionalId, {
+          appointmentDateFrom: mockGetPaymentFilter.appointmentDateFrom,
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to get payment');
+      }
+    });
   });
 });
