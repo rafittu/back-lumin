@@ -256,5 +256,20 @@ describe('PaymentsService', () => {
       expect(paymentRepository.findPaymentByFilter).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockPaymentsByFilter);
     });
+
+    it('should throw an AppError if missing params', async () => {
+      try {
+        await findPaymentByFilterService.execute(
+          undefined,
+          mockGetPaymentFilter,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'Missing or invalid query parameter: professionalId',
+        );
+      }
+    });
   });
 });
