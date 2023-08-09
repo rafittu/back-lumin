@@ -148,5 +148,15 @@ describe('PaymentsController', () => {
       expect(findPaymentByFilterService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockPaymentsByFilter);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(findPaymentByFilterService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.findByFilter(mockProfessionalId, mockGetPaymentFilter),
+      ).rejects.toThrowError();
+    });
   });
 });
