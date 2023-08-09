@@ -67,7 +67,7 @@ export class PaymentsController {
     );
   }
 
-  @Get('/payments/filter/:id')
+  @Get('/get/filter/:id')
   @Roles(UserRole.ADMIN)
   findByFilter(
     @Param('id') professionalId: string,
