@@ -8,6 +8,7 @@ import {
   ManyPaymentsResponse,
   PaymentFilter,
   PaymentResponse,
+  PaymentsByFilterResponse,
 } from '../interfaces/payment.interface';
 import { Prisma } from '@prisma/client';
 import { PaymentStatus } from '../enum/payment-status.enum';
@@ -130,7 +131,10 @@ export class PaymentRepository implements IPaymentRepository {
     }
   }
 
-  async findPaymentByFilter(professionalId: string, filter: PaymentFilter) {
+  async findPaymentByFilter(
+    professionalId: string,
+    filter: PaymentFilter,
+  ): Promise<PaymentsByFilterResponse> {
     const {
       appointmentId,
       clientName,

@@ -4,6 +4,7 @@ import {
   ManyPaymentsResponse,
   PaymentFilter,
   PaymentResponse,
+  PaymentsByFilterResponse,
 } from './payment.interface';
 
 export interface IPaymentRepository {
@@ -17,7 +18,10 @@ export interface IPaymentRepository {
     appointmentsIds: string[],
     createPaymentDto: CreatePaymentDto,
   ): Promise<ManyPaymentsResponse>;
-  findPaymentByFilter(professionalId: string, filter: PaymentFilter);
+  findPaymentByFilter(
+    professionalId: string,
+    filter: PaymentFilter,
+  ): Promise<PaymentsByFilterResponse>;
   getOnePayment(id);
   updatePayment(paymentId: string, updatePaymentDto: UpdatePaymentDto);
 }

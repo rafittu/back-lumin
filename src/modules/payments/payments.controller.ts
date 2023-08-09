@@ -25,6 +25,7 @@ import {
   ManyPaymentsResponse,
   PaymentFilter,
   PaymentResponse,
+  PaymentsByFilterResponse,
 } from './interfaces/payment.interface';
 
 @UseGuards(RolesGuard)
@@ -72,7 +73,7 @@ export class PaymentsController {
   findByFilter(
     @Param('id') professionalId: string,
     @Query() filter: PaymentFilter,
-  ) {
+  ): Promise<PaymentsByFilterResponse> {
     return this.findByFilterService.execute(professionalId, filter);
   }
 

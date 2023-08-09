@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PaymentRepository } from '../repository/payment.repository';
 import { IPaymentRepository } from '../interfaces/repository.interface';
-import { PaymentFilter } from '../interfaces/payment.interface';
+import {
+  PaymentFilter,
+  PaymentsByFilterResponse,
+} from '../interfaces/payment.interface';
 import { AppError } from '../../../common/errors/Error';
 
 @Injectable()
@@ -11,7 +14,10 @@ export class FindPaymentByFilterService {
     private paymentRepository: IPaymentRepository,
   ) {}
 
-  execute(professionalId: string, filter: PaymentFilter) {
+  execute(
+    professionalId: string,
+    filter: PaymentFilter,
+  ): Promise<PaymentsByFilterResponse> {
     if (
       !professionalId ||
       typeof professionalId !== 'string' ||

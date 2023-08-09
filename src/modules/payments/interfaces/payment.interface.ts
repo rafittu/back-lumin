@@ -18,3 +18,19 @@ export interface PaymentFilter {
   appointmentDateUntil?: string;
   status?: string;
 }
+
+export interface PaymentByFilter {
+  id: string;
+  appointmentId: string;
+  appointmentDate: string;
+  paymentDate?: string;
+  paymentMethod: string;
+  totalPaid?: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface PaymentsByFilterResponse {
+  payments: PaymentByFilter[];
+}
