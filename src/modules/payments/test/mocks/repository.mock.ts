@@ -53,6 +53,8 @@ export const mockGetPaymentFilter: PaymentFilter = {
   appointmentId: mockAppointmentId,
   clientName: faker.person.fullName(),
   status: PaymentStatus.PAID,
+  appointmentDateFrom: faker.date.recent().toISOString().slice(0, 10),
+  appointmentDateUntil: faker.date.recent().toISOString().slice(0, 10),
 };
 
 interface PrismaPaymentsData extends Payment {
