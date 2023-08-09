@@ -6,8 +6,11 @@ import {
   mockAppointmentsIds,
   mockCreatePayment,
   mockCreatePaymentPrismaResponse,
+  mockGetPaymentFilter,
   mockManyPaymentsResponse,
   mockPaymentResponse,
+  mockPaymentsByFilter,
+  mockPrismaPaymentByFilterResponse,
   mockProfessionalId,
 } from './mocks/repository.mock';
 import { Prisma } from '@prisma/client';
@@ -177,6 +180,66 @@ describe('PaymentRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
         expect(error.message).toBe('payments not created');
+      }
+    });
+  });
+
+  describe('get payment by filter', () => {
+    it('should get payment by appointmentId successfully', async () => {
+      jest
+        .spyOn(prismaService.payment, 'findMany')
+        .mockResolvedValueOnce(mockPrismaPaymentByFilterResponse);
+
+      const result = await paymentRepository.findPaymentByFilter(
+        mockProfessionalId,
+        { appointmentId: mockGetPaymentFilter.appointmentId },
+      );
+
+      expect(prismaService.payment.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockPaymentsByFilter);
+    });
+
+    it('should get payment by clientName successfully', async () => {
+      jest
+        .spyOn(prismaService.payment, 'findMany')
+        .mockResolvedValueOnce(mockPrismaPaymentByFilterResponse);
+
+      const result = await paymentRepository.findPaymentByFilter(
+        mockProfessionalId,
+        { clientName: mockGetPaymentFilter.clientName },
+      );
+
+      expect(prismaService.payment.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockPaymentsByFilter);
+    });
+
+    it('should get payment by appointmentDateFrom successfully', async () => {
+      jest
+        .spyOn(prismaService.payment, 'findMany')
+        .mockResolvedValueOnce(mockPrismaPaymentByFilterResponse);
+
+      const result = await paymentRepository.findPaymentByFilter(
+        mockProfessionalId,
+        { appointmentDateFrom: mockGetPaymentFilter.appointmentDateFrom },
+      );
+
+      expect(prismaService.payment.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockPaymentsByFilter);
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(prismaService.payment, 'findMany')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await paymentRepository.findPaymentByFilter(mockProfessionalId, {
+          appointmentDateFrom: mockGetPaymentFilter.appointmentDateFrom,
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to get payment');
       }
     });
   });

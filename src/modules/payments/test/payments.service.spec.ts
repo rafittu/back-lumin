@@ -7,8 +7,10 @@ import { PaymentRepository } from '../repository/payment.repository';
 import {
   mockAppointmentId,
   mockCreatePayment,
+  mockGetPaymentFilter,
   mockManyPaymentsResponse,
   mockPaymentResponse,
+  mockPaymentsByFilter,
   mockProfessionalId,
 } from './mocks/service.mock';
 import { AppError } from '../../../common/errors/Error';
@@ -40,6 +42,9 @@ describe('PaymentsService', () => {
             createManyPayments: jest
               .fn()
               .mockResolvedValue(mockManyPaymentsResponse),
+            findPaymentByFilter: jest
+              .fn()
+              .mockResolvedValue(mockPaymentsByFilter),
           },
         },
       ],
@@ -237,6 +242,33 @@ describe('PaymentsService', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(400);
         expect(error.message).toBe('missing values for fields: totalPaid');
+      }
+    });
+  });
+
+  describe('find payments by filter', () => {
+    it('should find payment by filter successfully', async () => {
+      const result = await findPaymentByFilterService.execute(
+        mockProfessionalId,
+        mockGetPaymentFilter,
+      );
+
+      expect(paymentRepository.findPaymentByFilter).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockPaymentsByFilter);
+    });
+
+    it('should throw an AppError if missing params', async () => {
+      try {
+        await findPaymentByFilterService.execute(
+          undefined,
+          mockGetPaymentFilter,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'Missing or invalid query parameter: professionalId',
+        );
       }
     });
   });
