@@ -214,8 +214,6 @@ export class PaymentRepository implements IPaymentRepository {
         payments: paymentsResponse,
       };
     } catch (error) {
-      console.log(error);
-
       throw new AppError(
         'payment-repository.getPaymentByFilter',
         500,
