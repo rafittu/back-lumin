@@ -131,7 +131,13 @@ export class PaymentRepository implements IPaymentRepository {
   }
 
   async findPaymentByFilter(professionalId: string, filter: PaymentFilter) {
-    const { appointmentId, clientName, appointmentDate, status } = filter;
+    const {
+      appointmentId,
+      clientName,
+      appointmentDateFrom,
+      appointmentDateUntil,
+      status,
+    } = filter;
 
     try {
       const paymentQuery: Prisma.PaymentWhereInput = {
@@ -152,20 +158,44 @@ export class PaymentRepository implements IPaymentRepository {
         };
       }
 
-      // if (appointmentDate) {
-      //   paymentQuery.appointment.appointment.appointment_date = {
-      //     gte: appointmentDate.from,
-      //     lte: appointmentDate.until,
-      //   };
-      // }
+      if (appointmentDateFrom || appointmentDateUntil) {
+        paymentQuery.appointment = {
+          appointment: {
+            appointment_date: {
+              gte: appointmentDateFrom,
+              lte: appointmentDateUntil,
+            },
+          },
+        };
+      }
 
       const payments = await this.prisma.payment.findMany({
         where: paymentQuery,
+        select: {
+          id: true,
+          appointment_id: true,
+          payment_date: true,
+          payment_method: true,
+          total_paid: true,
+          status: true,
+          created_at: true,
+          updated_at: true,
+          appointment: {
+            select: {
+              appointment: {
+                select: {
+                  appointment_date: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       const paymentsResponse = payments.map((payment) => ({
         id: payment.id,
         appointmentId: payment.appointment_id,
+        appointmentDate: payment.appointment.appointment.appointment_date,
         paymentDate: payment.payment_date,
         paymentMethod: payment.payment_method,
         totalPaid: payment.total_paid,
