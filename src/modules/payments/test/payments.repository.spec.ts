@@ -6,8 +6,11 @@ import {
   mockAppointmentsIds,
   mockCreatePayment,
   mockCreatePaymentPrismaResponse,
+  mockGetPaymentFilter,
   mockManyPaymentsResponse,
   mockPaymentResponse,
+  mockPaymentsByFilter,
+  mockPrismaPaymentByFilterResponse,
   mockProfessionalId,
 } from './mocks/repository.mock';
 import { Prisma } from '@prisma/client';
@@ -178,6 +181,22 @@ describe('PaymentRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('payments not created');
       }
+    });
+  });
+
+  describe('get payment by filter', () => {
+    it('should get payment by appointmentId successfully', async () => {
+      jest
+        .spyOn(prismaService.payment, 'findMany')
+        .mockResolvedValueOnce(mockPrismaPaymentByFilterResponse);
+
+      const result = await paymentRepository.findPaymentByFilter(
+        mockProfessionalId,
+        { appointmentId: mockGetPaymentFilter.appointmentId },
+      );
+
+      expect(prismaService.payment.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockPaymentsByFilter);
     });
   });
 });
