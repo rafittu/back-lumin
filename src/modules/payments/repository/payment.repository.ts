@@ -189,6 +189,7 @@ export class PaymentRepository implements IPaymentRepository {
               appointment: {
                 select: {
                   appointment_date: true,
+                  client_name: true,
                 },
               },
             },
@@ -200,6 +201,7 @@ export class PaymentRepository implements IPaymentRepository {
         id: payment.id,
         appointmentId: payment.appointment_id,
         appointmentDate: payment.appointment.appointment.appointment_date,
+        clientName: payment.appointment.appointment.client_name,
         paymentDate: payment.payment_date,
         paymentMethod: payment.payment_method,
         totalPaid: payment.total_paid,

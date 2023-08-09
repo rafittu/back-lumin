@@ -23,6 +23,7 @@ export interface PaymentByFilter {
   id: string;
   appointmentId: string;
   appointmentDate: string;
+  clientName: string;
   paymentDate?: string;
   paymentMethod: string;
   totalPaid?: string;
