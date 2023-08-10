@@ -6,6 +6,7 @@ import {
   mockAppointmentsIds,
   mockCreatePayment,
   mockGetPaymentFilter,
+  mockGetPaymentResponse,
   mockManyPaymentsResponse,
   mockPaymentResponse,
   mockPaymentsByFilter,
@@ -52,7 +53,7 @@ describe('PaymentsController', () => {
         {
           provide: GetOnePaymentService,
           useValue: {
-            execute: jest.fn(),
+            execute: jest.fn().mockResolvedValue(mockGetPaymentResponse),
           },
         },
         {
@@ -157,6 +158,15 @@ describe('PaymentsController', () => {
       await expect(
         controller.findByFilter(mockProfessionalId, mockGetPaymentFilter),
       ).rejects.toThrowError();
+    });
+  });
+
+  describe('get payment by id', () => {
+    it('should get payment successfully', async () => {
+      const result = await controller.findOne(mockPaymentResponse.id);
+
+      expect(findOnePaymentService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockGetPaymentResponse);
     });
   });
 });
