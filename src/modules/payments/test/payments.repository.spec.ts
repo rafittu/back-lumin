@@ -7,9 +7,11 @@ import {
   mockCreatePayment,
   mockCreatePaymentPrismaResponse,
   mockGetPaymentFilter,
+  mockGetPaymentResponse,
   mockManyPaymentsResponse,
   mockPaymentResponse,
   mockPaymentsByFilter,
+  mockPrismaGetPaymentResponse,
   mockPrismaPaymentByFilterResponse,
   mockProfessionalId,
 } from './mocks/repository.mock';
@@ -241,6 +243,21 @@ describe('PaymentRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to get payment');
       }
+    });
+  });
+
+  describe('get payment by id', () => {
+    it('should get payment successfully', async () => {
+      jest
+        .spyOn(prismaService.payment, 'findFirst')
+        .mockResolvedValueOnce(mockPrismaGetPaymentResponse);
+
+      const result = await paymentRepository.getPaymentById(
+        mockGetPaymentResponse.id,
+      );
+
+      expect(prismaService.payment.findFirst).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockGetPaymentResponse);
     });
   });
 });
