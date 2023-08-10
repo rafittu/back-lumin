@@ -11,6 +11,6 @@ export class GetOnePaymentService {
   ) {}
 
   execute(id: string): Promise<GetPaymentResponse> {
-    return this.paymentRepository.getOnePayment(id);
+    return this.paymentRepository.getPaymentById(id);
   }
 }

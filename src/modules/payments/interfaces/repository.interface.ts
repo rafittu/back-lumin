@@ -23,6 +23,6 @@ export interface IPaymentRepository {
     professionalId: string,
     filter: PaymentFilter,
   ): Promise<PaymentsByFilterResponse>;
-  getOnePayment(id: string): Promise<GetPaymentResponse>;
+  getPaymentById(id: string): Promise<GetPaymentResponse>;
   updatePayment(paymentId: string, updatePaymentDto: UpdatePaymentDto);
 }

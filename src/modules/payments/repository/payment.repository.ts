@@ -223,7 +223,7 @@ export class PaymentRepository implements IPaymentRepository {
     }
   }
 
-  async getOnePayment(id: string): Promise<GetPaymentResponse> {
+  async getPaymentById(id: string): Promise<GetPaymentResponse> {
     try {
       const paymentData = await this.prisma.payment.findFirst({
         where: { id },
@@ -244,7 +244,7 @@ export class PaymentRepository implements IPaymentRepository {
       return paymentResponse;
     } catch (error) {
       throw new AppError(
-        'payment-repository.getOnePayment',
+        'payment-repository.getPaymentById',
         500,
         'failed to get payment',
       );
