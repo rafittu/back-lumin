@@ -2286,7 +2286,7 @@
         }
       }
     },
-    "/payment//get/filter/:id": {
+    "/payment/get/filter/:id": {
       "get": {
         "summary": "Find payments by filter",
         "description": "Route to find payments by filter",
@@ -2457,6 +2457,97 @@
                   "error": {
                     "message": "failed to get payment",
                     "code": "payment-repository.getPaymentByFilter'",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment/:id": {
+      "get": {
+        "summary": "Find payment by id",
+        "description": "Route to get payment by id",
+        "tags": ["Payment"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Payment id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentByIdResponse"
+                },
+                "example": {
+                  "id": "48a325a6-736c-4248-b931-14e5891082fa",
+                  "appointmentId": "154d71e2-49e0-4ed6-bb7d-885d98d4ce5c",
+                  "professionalId": "49616889-0213-4a54-aad2-9cb72c85e097",
+                  "paymentDate": "2023-08-07",
+                  "paymentMethod": "CASH",
+                  "totalPaid": "314.00",
+                  "status": "PAID",
+                  "createdAt": "2023-08-07T22:36:35.447Z",
+                  "updatedAt": "2023-08-07T22:36:35.447Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "failed to get payment",
+                    "code": "payment-repository.getPaymentById",
                     "status": true
                   },
                   "data": {}
@@ -3163,6 +3254,47 @@
                 }
               }
             }
+          }
+        }
+      },
+      "GetPaymentByIdResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Payment ID"
+          },
+          "appointmentId": {
+            "type": "string",
+            "description": "Appointment ID"
+          },
+          "professionalId": {
+            "type": "string",
+            "description": "Professional ID"
+          },
+          "paymentDate": {
+            "type": "string",
+            "description": "Appointment payment date"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "description": "Payment method PIX or CASH"
+          },
+          "status": {
+            "type": "string",
+            "description": "Payment status, OPEN or PAID"
+          },
+          "totalPaid": {
+            "type": "string",
+            "description": "Total paid for the appointment"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time of payment creation"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Date and time of payment update"
           }
         }
       },
