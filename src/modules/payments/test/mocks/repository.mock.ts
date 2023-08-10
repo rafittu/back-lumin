@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import {
+  GetPaymentResponse,
   ManyPaymentsResponse,
   PaymentByFilter,
   PaymentFilter,
@@ -105,4 +106,28 @@ export const mockPaymentByFilter: PaymentByFilter = {
 
 export const mockPaymentsByFilter: PaymentsByFilterResponse = {
   payments: [mockPaymentByFilter],
+};
+
+export const mockPrismaGetPaymentResponse: Payment = {
+  id: faker.string.uuid(),
+  professional_id: mockGetPaymentFilter.appointmentId,
+  appointment_id: mockGetPaymentFilter.appointmentId,
+  payment_date: mockCreatePayment.paymentDate,
+  payment_method: mockCreatePayment.paymentMethod,
+  total_paid: mockCreatePayment.totalPaid,
+  status: mockGetPaymentFilter.status as PaymentStatus.PAID,
+  created_at: faker.date.recent(),
+  updated_at: faker.date.recent(),
+};
+
+export const mockGetPaymentResponse: GetPaymentResponse = {
+  id: mockPrismaGetPaymentResponse.id,
+  professionalId: mockPrismaGetPaymentResponse.professional_id,
+  appointmentId: mockPrismaGetPaymentResponse.appointment_id,
+  paymentDate: mockPrismaGetPaymentResponse.payment_date,
+  paymentMethod: mockPrismaGetPaymentResponse.payment_method,
+  totalPaid: mockPrismaGetPaymentResponse.total_paid,
+  status: mockPrismaGetPaymentResponse.status,
+  createdAt: mockPrismaGetPaymentResponse.created_at,
+  updatedAt: mockPrismaGetPaymentResponse.updated_at,
 };

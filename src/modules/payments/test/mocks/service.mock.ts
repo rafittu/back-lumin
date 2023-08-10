@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import {
+  GetPaymentResponse,
   ManyPaymentsResponse,
   PaymentByFilter,
   PaymentFilter,
@@ -57,4 +58,16 @@ export const mockGetPaymentFilter: PaymentFilter = {
   appointmentId: mockPaymentByFilter.appointmentId,
   clientName: mockPaymentByFilter.clientName,
   status: mockPaymentByFilter.status,
+};
+
+export const mockGetPaymentResponse: GetPaymentResponse = {
+  id: mockPaymentResponse.id,
+  professionalId: mockProfessionalId,
+  appointmentId: mockAppointmentId,
+  paymentDate: mockPaymentResponse.paymentDate,
+  paymentMethod: mockCreatePayment.paymentMethod,
+  totalPaid: mockPaymentResponse.totalPaid,
+  status: mockPaymentResponse.status,
+  createdAt: mockPaymentResponse.createdAt,
+  updatedAt: mockPaymentResponse.updatedAt,
 };

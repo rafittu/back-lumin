@@ -8,6 +8,7 @@ import {
   mockAppointmentId,
   mockCreatePayment,
   mockGetPaymentFilter,
+  mockGetPaymentResponse,
   mockManyPaymentsResponse,
   mockPaymentResponse,
   mockPaymentsByFilter,
@@ -45,6 +46,7 @@ describe('PaymentsService', () => {
             findPaymentByFilter: jest
               .fn()
               .mockResolvedValue(mockPaymentsByFilter),
+            getPaymentById: jest.fn().mockResolvedValue(mockGetPaymentResponse),
           },
         },
       ],
@@ -270,6 +272,27 @@ describe('PaymentsService', () => {
           'Missing or invalid query parameter: professionalId',
         );
       }
+    });
+  });
+
+  describe('create payment', () => {
+    it('should get payment successfully', async () => {
+      const result = await findOnePaymentService.execute(
+        mockPaymentResponse.id,
+      );
+
+      expect(paymentRepository.getPaymentById).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockGetPaymentResponse);
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(paymentRepository, 'getPaymentById')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        findOnePaymentService.execute(mockPaymentResponse.id),
+      ).rejects.toThrowError();
     });
   });
 });
