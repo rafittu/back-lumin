@@ -259,5 +259,19 @@ describe('PaymentRepository', () => {
       expect(prismaService.payment.findFirst).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockGetPaymentResponse);
     });
+
+    it('should throw an error if could not get payment', async () => {
+      jest
+        .spyOn(prismaService.payment, 'findFirst')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await paymentRepository.getPaymentById(mockGetPaymentResponse.id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to get payment');
+      }
+    });
   });
 });
