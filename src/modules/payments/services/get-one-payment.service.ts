@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PaymentRepository } from '../repository/payment.repository';
 import { IPaymentRepository } from '../interfaces/repository.interface';
+import { GetPaymentResponse } from '../interfaces/payment.interface';
 
 @Injectable()
 export class GetOnePaymentService {
@@ -9,7 +10,7 @@ export class GetOnePaymentService {
     private paymentRepository: IPaymentRepository,
   ) {}
 
-  execute(id) {
+  execute(id: string): Promise<GetPaymentResponse> {
     return this.paymentRepository.getOnePayment(id);
   }
 }
