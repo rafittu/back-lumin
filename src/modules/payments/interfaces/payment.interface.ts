@@ -35,3 +35,15 @@ export interface PaymentByFilter {
 export interface PaymentsByFilterResponse {
   payments: PaymentByFilter[];
 }
+
+export interface GetPaymentResponse {
+  id: string;
+  appointmentId: string;
+  professionalId: string;
+  totalPaid?: string;
+  paymentMethod?: string;
+  paymentDate?: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
