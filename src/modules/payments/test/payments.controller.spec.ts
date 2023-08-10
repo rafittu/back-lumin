@@ -168,5 +168,15 @@ describe('PaymentsController', () => {
       expect(findOnePaymentService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockGetPaymentResponse);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(findOnePaymentService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.findOne(mockPaymentResponse.id),
+      ).rejects.toThrowError();
+    });
   });
 });
