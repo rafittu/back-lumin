@@ -284,5 +284,15 @@ describe('PaymentsService', () => {
       expect(paymentRepository.getPaymentById).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockGetPaymentResponse);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(paymentRepository, 'getPaymentById')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        findOnePaymentService.execute(mockPaymentResponse.id),
+      ).rejects.toThrowError();
+    });
   });
 });
