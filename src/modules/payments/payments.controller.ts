@@ -22,6 +22,7 @@ import { AppError } from '../../common/errors/Error';
 import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from '../user/enum/user-role.enum';
 import {
+  GetPaymentResponse,
   ManyPaymentsResponse,
   PaymentFilter,
   PaymentResponse,
@@ -78,8 +79,9 @@ export class PaymentsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.findOneService.execute(+id);
+  @Roles(UserRole.ADMIN)
+  findOne(@Param('id') id: string): Promise<GetPaymentResponse> {
+    return this.findOneService.execute(id);
   }
 
   @Patch(':id')

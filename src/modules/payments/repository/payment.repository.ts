@@ -5,6 +5,7 @@ import { IPaymentRepository } from '../interfaces/repository.interface';
 import { CreatePaymentDto } from '../dto/create-payment.dto';
 import { UpdatePaymentDto } from '../dto/update-payment.dto';
 import {
+  GetPaymentResponse,
   ManyPaymentsResponse,
   PaymentFilter,
   PaymentResponse,
@@ -222,11 +223,31 @@ export class PaymentRepository implements IPaymentRepository {
     }
   }
 
-  async getOnePayment(id) {
+  async getPaymentById(id: string): Promise<GetPaymentResponse> {
     try {
-      return 'payment data';
+      const paymentData = await this.prisma.payment.findFirst({
+        where: { id },
+      });
+
+      const paymentResponse = {
+        id: paymentData.id,
+        appointmentId: paymentData.appointment_id,
+        professionalId: paymentData.professional_id,
+        totalPaid: paymentData.total_paid,
+        paymentMethod: paymentData.payment_method,
+        paymentDate: paymentData.payment_date,
+        status: paymentData.status,
+        createdAt: paymentData.created_at,
+        updatedAt: paymentData.updated_at,
+      };
+
+      return paymentResponse;
     } catch (error) {
-      throw new AppError('Not Implemented', 501, 'message');
+      throw new AppError(
+        'payment-repository.getPaymentById',
+        500,
+        'failed to get payment',
+      );
     }
   }
 
