@@ -10,9 +10,11 @@ import {
   mockGetPaymentFilter,
   mockGetPaymentResponse,
   mockManyPaymentsResponse,
+  mockPaymentId,
   mockPaymentResponse,
   mockPaymentsByFilter,
   mockProfessionalId,
+  mockUpdatePayment,
 } from './mocks/service.mock';
 import { AppError } from '../../../common/errors/Error';
 import { CreateManyPaymentsService } from '../services/create-many-pmts.service';
@@ -47,6 +49,7 @@ describe('PaymentsService', () => {
               .fn()
               .mockResolvedValue(mockPaymentsByFilter),
             getPaymentById: jest.fn().mockResolvedValue(mockGetPaymentResponse),
+            updatePayment: jest.fn().mockResolvedValue(mockGetPaymentResponse),
           },
         },
       ],
@@ -275,7 +278,7 @@ describe('PaymentsService', () => {
     });
   });
 
-  describe('create payment', () => {
+  describe('find payment by id', () => {
     it('should get payment successfully', async () => {
       const result = await findOnePaymentService.execute(
         mockPaymentResponse.id,
@@ -294,5 +297,113 @@ describe('PaymentsService', () => {
         findOnePaymentService.execute(mockPaymentResponse.id),
       ).rejects.toThrowError();
     });
+  });
+
+  describe('update payment', () => {
+    it('should update payment successfully', async () => {
+      mockGetPaymentResponse.status = PaymentStatus.OPEN;
+
+      jest
+        .spyOn(paymentRepository, 'getPaymentById')
+        .mockResolvedValueOnce(mockGetPaymentResponse);
+
+      const result = await updatePaymentService.execute(
+        mockPaymentId,
+        mockUpdatePayment,
+      );
+
+      expect(paymentRepository.updatePayment).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockGetPaymentResponse);
+    });
+
+    it('should revert a created payment to open successfully', async () => {
+      jest
+        .spyOn(paymentRepository, 'getPaymentById')
+        .mockResolvedValueOnce(mockGetPaymentResponse);
+
+      const modifiedBody = {
+        status: PaymentStatus.OPEN,
+      };
+
+      const result = await updatePaymentService.execute(
+        mockPaymentId,
+        modifiedBody,
+      );
+
+      console.log(result);
+
+      expect(paymentRepository.updatePayment).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockGetPaymentResponse);
+    });
+
+    // it('should throw an AppError if missing params', async () => {
+    //   try {
+    //     await createPaymentService.execute(
+    //       undefined,
+    //       mockAppointmentId,
+    //       mockCreatePayment,
+    //     );
+    //   } catch (error) {
+    //     expect(error).toBeInstanceOf(AppError);
+    //     expect(error.code).toBe(400);
+    //     expect(error.message).toBe(
+    //       'Missing or invalid query parameter: professionalId',
+    //     );
+    //   }
+
+    //   try {
+    //     await createPaymentService.execute(
+    //       mockProfessionalId,
+    //       undefined,
+    //       mockCreatePayment,
+    //     );
+    //   } catch (error) {
+    //     expect(error).toBeInstanceOf(AppError);
+    //     expect(error.code).toBe(400);
+    //     expect(error.message).toBe(
+    //       'Missing or invalid query parameter: appointmentId',
+    //     );
+    //   }
+    // });
+
+    // it('should throw an AppError oppening an invalid payment', async () => {
+    //   const modifiedCreatePayment = {
+    //     ...mockCreatePayment,
+    //     status: PaymentStatus.OPEN,
+    //   };
+    //   delete modifiedCreatePayment.totalPaid;
+    //   delete modifiedCreatePayment.paymentDate;
+
+    //   try {
+    //     await createPaymentService.execute(
+    //       mockProfessionalId,
+    //       mockAppointmentId,
+    //       modifiedCreatePayment,
+    //     );
+    //   } catch (error) {
+    //     expect(error).toBeInstanceOf(AppError);
+    //     expect(error.code).toBe(400);
+    //     expect(error.message).toBe(
+    //       'The properties totalPaid, paymentDate, and paymentMethod are not allowed when the status is OPEN',
+    //     );
+    //   }
+    // });
+
+    // it('should throw an AppError if request body is invalid', async () => {
+    //   const modifiedCreatePayment = { ...mockCreatePayment };
+    //   delete modifiedCreatePayment.totalPaid;
+
+    //   try {
+    //     await createPaymentService.execute(
+    //       mockProfessionalId,
+    //       mockAppointmentId,
+    //       modifiedCreatePayment,
+    //     );
+    //   } catch (error) {
+    //     expect(error).toBeInstanceOf(AppError);
+    //     expect(error.code).toBe(400);
+    //     expect(error.message).toBe('missing values for fields: totalPaid');
+    //   }
+    // });
   });
 });
