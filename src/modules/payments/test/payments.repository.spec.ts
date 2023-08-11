@@ -291,5 +291,19 @@ describe('PaymentRepository', () => {
       expect(prismaService.payment.update).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockGetPaymentResponse);
     });
+
+    it('should throw an error if payment is not created', async () => {
+      jest
+        .spyOn(prismaService.payment, 'update')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await paymentRepository.updatePayment(mockPaymentId, mockUpdatePayment);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to update payment');
+      }
+    });
   });
 });
