@@ -5,6 +5,7 @@ import {
 } from '../../interfaces/scheduler.interface';
 import { mockPrismaNewAppointment } from './repository.mock';
 import { mockUpdateAppointment } from './controller.mock';
+import { faker } from '@faker-js/faker';
 
 export const mockNewAppointment: NewAppointment = {
   id: mockPrismaNewAppointment.id,
@@ -31,3 +32,5 @@ export const mockUpdatedAppointment: Appointment = {
   createdAt: mockNewAppointment.createdAt,
   updatedAt: mockNewAppointment.updatedAt,
 };
+
+export const mockInvalidDateTime = faker.date.past().toISOString().slice(0, 10);

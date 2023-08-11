@@ -7,11 +7,11 @@ export const mockProfessionalId = faker.string.uuid();
 export const mockCreateAppointment: CreateAppointmentDto = {
   clientName: faker.person.fullName(),
   clientPhone: faker.phone.number(),
-  appointmentDate: faker.date.recent().toLocaleDateString(),
-  appointmentTime: faker.date.recent().toISOString().slice(11, 16),
+  appointmentDate: faker.date.future().toISOString().slice(0, 10),
+  appointmentTime: faker.date.future().toISOString().slice(11, 16),
 };
 
 export const mockUpdateAppointment: UpdateAppointmentDto = {
-  appointmentDate: faker.date.recent().toLocaleDateString(),
-  appointmentTime: faker.date.recent().toISOString().slice(11, 16),
+  appointmentDate: faker.date.future().toISOString().slice(0, 10),
+  appointmentTime: faker.date.future().toISOString().slice(11, 16),
 };
