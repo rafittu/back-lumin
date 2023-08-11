@@ -13,17 +13,16 @@ export class UpdatePaymentService {
   ) {}
 
   async execute(paymentId: string, updatePaymentDto: UpdatePaymentDto) {
+    const { totalPaid, paymentDate, paymentMethod, status } = updatePaymentDto;
+
     const paymentToUpdate = await this.paymentRepository.getPaymentById(
       paymentId,
     );
 
     if (
       paymentToUpdate.status === PaymentStatus.OPEN &&
-      (!updatePaymentDto.status ||
-        updatePaymentDto.status !== PaymentStatus.PAID)
+      (!status || status !== PaymentStatus.PAID)
     ) {
-      const { totalPaid, paymentDate, paymentMethod } = updatePaymentDto;
-
       if (totalPaid || paymentDate || paymentMethod) {
         throw new AppError(
           'payment-service.updatePayment',
@@ -31,6 +30,12 @@ export class UpdatePaymentService {
           'The properties totalPaid, paymentDate, and paymentMethod are not allowed when the payment status is OPEN',
         );
       }
+    }
+
+    if (updatePaymentDto.status === PaymentStatus.OPEN) {
+      updatePaymentDto.paymentDate = null;
+      updatePaymentDto.paymentMethod = null;
+      updatePaymentDto.totalPaid = null;
     }
 
     if (updatePaymentDto.status === PaymentStatus.PAID) {
