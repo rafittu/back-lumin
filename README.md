@@ -58,9 +58,9 @@ Este projeto utiliza as seguintes tecnologias:
    - [x] Atualizar um registro
 
 5. Módulo financeiro
-   - [ ] Registrar pagamento de sessões
-   - [ ] Buscar valores em aberto
-   - [ ] Consultar histórico de pagamento
+   - [x] Registrar pagamento de sessões
+   - [x] Buscar pagamentos por filtro
+   - [x] Atualizar dados de pagamento
 
 <br>
 
