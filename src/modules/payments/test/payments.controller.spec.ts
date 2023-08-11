@@ -8,9 +8,11 @@ import {
   mockGetPaymentFilter,
   mockGetPaymentResponse,
   mockManyPaymentsResponse,
+  mockPaymentId,
   mockPaymentResponse,
   mockPaymentsByFilter,
   mockProfessionalId,
+  mockUpdatePayment,
 } from './mocks/controller.mock';
 import { RedisCacheService } from '../../../modules/auth/infra/cache/redis-cache.service';
 import { FindPaymentByFilterService } from '../services/find-by-filter.service';
@@ -59,7 +61,7 @@ describe('PaymentsController', () => {
         {
           provide: UpdatePaymentService,
           useValue: {
-            execute: jest.fn(),
+            execute: jest.fn().mockResolvedValue(mockGetPaymentResponse),
           },
         },
       ],
@@ -177,6 +179,15 @@ describe('PaymentsController', () => {
       await expect(
         controller.findOne(mockPaymentResponse.id),
       ).rejects.toThrowError();
+    });
+  });
+
+  describe('update payment', () => {
+    it('should update payment successfully', async () => {
+      const result = await controller.update(mockPaymentId, mockUpdatePayment);
+
+      expect(updatePaymentService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockGetPaymentResponse);
     });
   });
 });
