@@ -189,5 +189,15 @@ describe('PaymentsController', () => {
       expect(updatePaymentService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockGetPaymentResponse);
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(updatePaymentService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.update(mockPaymentId, mockUpdatePayment),
+      ).rejects.toThrowError();
+    });
   });
 });
