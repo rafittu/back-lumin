@@ -143,7 +143,7 @@ describe('PaymentsService', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(400);
         expect(error.message).toBe(
-          'The properties totalPaid, paymentDate, and paymentMethod are not allowed when the status is OPEN',
+          'The properties totalPaid, paymentDate, and paymentMethod are not allowed when the payment status is OPEN',
         );
       }
     });
@@ -330,64 +330,35 @@ describe('PaymentsService', () => {
         modifiedBody,
       );
 
-      console.log(result);
-
       expect(paymentRepository.updatePayment).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockGetPaymentResponse);
     });
 
-    // it('should throw an AppError if missing params', async () => {
-    //   try {
-    //     await createPaymentService.execute(
-    //       undefined,
-    //       mockAppointmentId,
-    //       mockCreatePayment,
-    //     );
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(AppError);
-    //     expect(error.code).toBe(400);
-    //     expect(error.message).toBe(
-    //       'Missing or invalid query parameter: professionalId',
-    //     );
-    //   }
+    it('should throw an AppError updating an open payment', async () => {
+      mockGetPaymentResponse.status = PaymentStatus.OPEN;
 
-    //   try {
-    //     await createPaymentService.execute(
-    //       mockProfessionalId,
-    //       undefined,
-    //       mockCreatePayment,
-    //     );
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(AppError);
-    //     expect(error.code).toBe(400);
-    //     expect(error.message).toBe(
-    //       'Missing or invalid query parameter: appointmentId',
-    //     );
-    //   }
-    // });
+      jest
+        .spyOn(paymentRepository, 'getPaymentById')
+        .mockResolvedValueOnce(mockGetPaymentResponse);
 
-    // it('should throw an AppError oppening an invalid payment', async () => {
-    //   const modifiedCreatePayment = {
-    //     ...mockCreatePayment,
-    //     status: PaymentStatus.OPEN,
-    //   };
-    //   delete modifiedCreatePayment.totalPaid;
-    //   delete modifiedCreatePayment.paymentDate;
+      const modifiedCreatePayment = {
+        ...mockUpdatePayment,
+      };
+      delete modifiedCreatePayment.status;
 
-    //   try {
-    //     await createPaymentService.execute(
-    //       mockProfessionalId,
-    //       mockAppointmentId,
-    //       modifiedCreatePayment,
-    //     );
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(AppError);
-    //     expect(error.code).toBe(400);
-    //     expect(error.message).toBe(
-    //       'The properties totalPaid, paymentDate, and paymentMethod are not allowed when the status is OPEN',
-    //     );
-    //   }
-    // });
+      try {
+        await updatePaymentService.execute(
+          mockPaymentId,
+          modifiedCreatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe(
+          'The properties totalPaid, paymentDate, and paymentMethod are not allowed when the payment status is OPEN',
+        );
+      }
+    });
 
     // it('should throw an AppError if request body is invalid', async () => {
     //   const modifiedCreatePayment = { ...mockCreatePayment };
