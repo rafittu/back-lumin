@@ -19,6 +19,7 @@ import {
 } from './mocks/repository.mock';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../../../common/errors/Error';
+import { PaymentStatus } from '../enum/payment-status.enum';
 
 describe('PaymentRepository', () => {
   let paymentRepository: PaymentRepository;
@@ -197,6 +198,20 @@ describe('PaymentRepository', () => {
       const result = await paymentRepository.findPaymentByFilter(
         mockProfessionalId,
         { appointmentId: mockGetPaymentFilter.appointmentId },
+      );
+
+      expect(prismaService.payment.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockPaymentsByFilter);
+    });
+
+    it('should get payment by status successfully', async () => {
+      jest
+        .spyOn(prismaService.payment, 'findMany')
+        .mockResolvedValueOnce(mockPrismaPaymentByFilterResponse);
+
+      const result = await paymentRepository.findPaymentByFilter(
+        mockProfessionalId,
+        { status: PaymentStatus.OPEN },
       );
 
       expect(prismaService.payment.findMany).toHaveBeenCalledTimes(1);
