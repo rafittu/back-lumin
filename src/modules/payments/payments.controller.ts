@@ -78,14 +78,18 @@ export class PaymentsController {
     return this.findByFilterService.execute(professionalId, filter);
   }
 
-  @Get(':id')
+  @Get('/:id')
   @Roles(UserRole.ADMIN)
   findOne(@Param('id') id: string): Promise<GetPaymentResponse> {
     return this.findOneService.execute(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
-    return this.updatePaymentService.execute(id, updatePaymentDto);
+  @Patch('/update/:id')
+  @Roles(UserRole.ADMIN)
+  update(
+    @Param('id') paymentId: string,
+    @Body() updatePaymentDto: UpdatePaymentDto,
+  ): Promise<GetPaymentResponse> {
+    return this.updatePaymentService.execute(paymentId, updatePaymentDto);
   }
 }

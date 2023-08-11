@@ -24,5 +24,8 @@ export interface IPaymentRepository {
     filter: PaymentFilter,
   ): Promise<PaymentsByFilterResponse>;
   getPaymentById(id: string): Promise<GetPaymentResponse>;
-  updatePayment(paymentId: string, updatePaymentDto: UpdatePaymentDto);
+  updatePayment(
+    paymentId: string,
+    updatePaymentDto: UpdatePaymentDto,
+  ): Promise<GetPaymentResponse>;
 }

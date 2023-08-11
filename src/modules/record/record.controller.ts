@@ -73,6 +73,7 @@ export class RecordController {
   }
 
   @Patch('/update/:id')
+  @Roles(UserRole.ADMIN)
   async update(
     @Param('id') recordId: string,
     @Body() updateRecordDto: UpdateRecordDto,

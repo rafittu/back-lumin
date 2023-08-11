@@ -251,11 +251,42 @@ export class PaymentRepository implements IPaymentRepository {
     }
   }
 
-  async updatePayment(paymentId: string, updatePaymentDto: UpdatePaymentDto) {
+  async updatePayment(
+    paymentId: string,
+    updatePaymentDto: UpdatePaymentDto,
+  ): Promise<GetPaymentResponse> {
+    const { paymentDate, paymentMethod, totalPaid, status } = updatePaymentDto;
+
     try {
-      return 'payment data';
+      const updatedPaymentData = await this.prisma.payment.update({
+        where: { id: paymentId },
+        data: {
+          payment_date: paymentDate,
+          payment_method: paymentMethod,
+          total_paid: totalPaid,
+          status,
+        },
+      });
+
+      const paymentResponse = {
+        id: updatedPaymentData.id,
+        appointmentId: updatedPaymentData.appointment_id,
+        professionalId: updatedPaymentData.professional_id,
+        totalPaid: updatedPaymentData.total_paid,
+        paymentMethod: updatedPaymentData.payment_method,
+        paymentDate: updatedPaymentData.payment_date,
+        status: updatedPaymentData.status,
+        createdAt: updatedPaymentData.created_at,
+        updatedAt: updatedPaymentData.updated_at,
+      };
+
+      return paymentResponse;
     } catch (error) {
-      throw new AppError('Not Implemented', 501, 'message');
+      throw new AppError(
+        'payment-repository.updatePayment',
+        500,
+        'failed to update payment',
+      );
     }
   }
 }
