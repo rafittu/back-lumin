@@ -341,15 +341,15 @@ describe('PaymentsService', () => {
         .spyOn(paymentRepository, 'getPaymentById')
         .mockResolvedValueOnce(mockGetPaymentResponse);
 
-      const modifiedCreatePayment = {
+      const modifiedUpdatePayment = {
         ...mockUpdatePayment,
       };
-      delete modifiedCreatePayment.status;
+      delete modifiedUpdatePayment.status;
 
       try {
         await updatePaymentService.execute(
           mockPaymentId,
-          modifiedCreatePayment,
+          modifiedUpdatePayment,
         );
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
@@ -360,21 +360,26 @@ describe('PaymentsService', () => {
       }
     });
 
-    // it('should throw an AppError if request body is invalid', async () => {
-    //   const modifiedCreatePayment = { ...mockCreatePayment };
-    //   delete modifiedCreatePayment.totalPaid;
+    it('should throw an AppError if request body is invalid', async () => {
+      mockGetPaymentResponse.status = PaymentStatus.OPEN;
 
-    //   try {
-    //     await createPaymentService.execute(
-    //       mockProfessionalId,
-    //       mockAppointmentId,
-    //       modifiedCreatePayment,
-    //     );
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(AppError);
-    //     expect(error.code).toBe(400);
-    //     expect(error.message).toBe('missing values for fields: totalPaid');
-    //   }
-    // });
+      jest
+        .spyOn(paymentRepository, 'getPaymentById')
+        .mockResolvedValueOnce(mockGetPaymentResponse);
+
+      const modifiedUpdatePayment = { ...mockUpdatePayment };
+      delete modifiedUpdatePayment.totalPaid;
+
+      try {
+        await updatePaymentService.execute(
+          mockPaymentId,
+          modifiedUpdatePayment,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('missing values for fields: totalPaid');
+      }
+    });
   });
 });
