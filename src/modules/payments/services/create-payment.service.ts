@@ -51,7 +51,7 @@ export class CreatePaymentService {
         throw new AppError(
           'payment-service.createPayment',
           400,
-          'The properties totalPaid, paymentDate, and paymentMethod are not allowed when the status is OPEN',
+          'The properties totalPaid, paymentDate, and paymentMethod are not allowed when the payment status is OPEN',
         );
       }
     }

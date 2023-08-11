@@ -9,14 +9,17 @@ import {
   mockGetPaymentFilter,
   mockGetPaymentResponse,
   mockManyPaymentsResponse,
+  mockPaymentId,
   mockPaymentResponse,
   mockPaymentsByFilter,
   mockPrismaGetPaymentResponse,
   mockPrismaPaymentByFilterResponse,
   mockProfessionalId,
+  mockUpdatePayment,
 } from './mocks/repository.mock';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../../../common/errors/Error';
+import { PaymentStatus } from '../enum/payment-status.enum';
 
 describe('PaymentRepository', () => {
   let paymentRepository: PaymentRepository;
@@ -201,6 +204,20 @@ describe('PaymentRepository', () => {
       expect(result).toEqual(mockPaymentsByFilter);
     });
 
+    it('should get payment by status successfully', async () => {
+      jest
+        .spyOn(prismaService.payment, 'findMany')
+        .mockResolvedValueOnce(mockPrismaPaymentByFilterResponse);
+
+      const result = await paymentRepository.findPaymentByFilter(
+        mockProfessionalId,
+        { status: PaymentStatus.OPEN },
+      );
+
+      expect(prismaService.payment.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockPaymentsByFilter);
+    });
+
     it('should get payment by clientName successfully', async () => {
       jest
         .spyOn(prismaService.payment, 'findMany')
@@ -271,6 +288,36 @@ describe('PaymentRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to get payment');
+      }
+    });
+  });
+
+  describe('update payment', () => {
+    it('should update payment successfully', async () => {
+      jest
+        .spyOn(prismaService.payment, 'update')
+        .mockResolvedValueOnce(mockPrismaGetPaymentResponse);
+
+      const result = await paymentRepository.updatePayment(
+        mockPaymentId,
+        mockUpdatePayment,
+      );
+
+      expect(prismaService.payment.update).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockGetPaymentResponse);
+    });
+
+    it('should throw an error if payment is not created', async () => {
+      jest
+        .spyOn(prismaService.payment, 'update')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await paymentRepository.updatePayment(mockPaymentId, mockUpdatePayment);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to update payment');
       }
     });
   });

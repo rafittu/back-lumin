@@ -10,12 +10,15 @@ import {
 import { CreatePaymentDto } from '../../dto/create-payment.dto';
 import { PaymentMethod } from '../../enum/payment-method.enum';
 import { PaymentStatus } from '../../enum/payment-status.enum';
+import { UpdatePaymentDto } from '../../dto/update-payment.dto';
 
 export const mockProfessionalId = faker.string.uuid();
 
 export const mockAppointmentId = faker.string.uuid();
 
 export const mockAppointmentsIds = [faker.string.uuid(), faker.string.uuid()];
+
+export const mockPaymentId = faker.string.uuid();
 
 export const mockCreatePayment: CreatePaymentDto = {
   paymentDate: faker.date.recent().toISOString().slice(0, 10),
@@ -25,7 +28,7 @@ export const mockCreatePayment: CreatePaymentDto = {
 };
 
 export const mockPaymentResponse: PaymentResponse = {
-  id: faker.string.uuid(),
+  id: mockPaymentId,
   paymentDate: mockCreatePayment.paymentDate,
   status: mockCreatePayment.status,
   totalPaid: mockCreatePayment.totalPaid,
@@ -70,4 +73,11 @@ export const mockGetPaymentResponse: GetPaymentResponse = {
   status: mockPaymentResponse.status,
   createdAt: mockPaymentResponse.createdAt,
   updatedAt: mockPaymentResponse.updatedAt,
+};
+
+export const mockUpdatePayment: UpdatePaymentDto = {
+  totalPaid: faker.commerce.price(),
+  paymentDate: faker.date.recent().toISOString().slice(0, 10),
+  paymentMethod: PaymentMethod.PIX,
+  status: PaymentStatus.PAID,
 };

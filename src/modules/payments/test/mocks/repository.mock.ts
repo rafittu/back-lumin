@@ -11,6 +11,7 @@ import { CreatePaymentDto } from '../../dto/create-payment.dto';
 import { PaymentMethod } from '../../enum/payment-method.enum';
 import { PaymentStatus } from '../../enum/payment-status.enum';
 import { Payment, Scheduler } from '@prisma/client';
+import { UpdatePaymentDto } from '../../dto/update-payment.dto';
 
 export const mockProfessionalId = faker.string.uuid();
 
@@ -108,8 +109,10 @@ export const mockPaymentsByFilter: PaymentsByFilterResponse = {
   payments: [mockPaymentByFilter],
 };
 
+export const mockPaymentId = faker.string.uuid();
+
 export const mockPrismaGetPaymentResponse: Payment = {
-  id: faker.string.uuid(),
+  id: mockPaymentId,
   professional_id: mockGetPaymentFilter.appointmentId,
   appointment_id: mockGetPaymentFilter.appointmentId,
   payment_date: mockCreatePayment.paymentDate,
@@ -130,4 +133,8 @@ export const mockGetPaymentResponse: GetPaymentResponse = {
   status: mockPrismaGetPaymentResponse.status,
   createdAt: mockPrismaGetPaymentResponse.created_at,
   updatedAt: mockPrismaGetPaymentResponse.updated_at,
+};
+
+export const mockUpdatePayment: UpdatePaymentDto = {
+  totalPaid: faker.commerce.price(),
 };
