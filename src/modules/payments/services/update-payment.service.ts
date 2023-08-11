@@ -4,6 +4,7 @@ import { IPaymentRepository } from '../interfaces/repository.interface';
 import { UpdatePaymentDto } from '../dto/update-payment.dto';
 import { PaymentStatus } from '../enum/payment-status.enum';
 import { AppError } from '../../../common/errors/Error';
+import { GetPaymentResponse } from '../interfaces/payment.interface';
 
 @Injectable()
 export class UpdatePaymentService {
@@ -12,7 +13,10 @@ export class UpdatePaymentService {
     private paymentRepository: IPaymentRepository,
   ) {}
 
-  async execute(paymentId: string, updatePaymentDto: UpdatePaymentDto) {
+  async execute(
+    paymentId: string,
+    updatePaymentDto: UpdatePaymentDto,
+  ): Promise<GetPaymentResponse> {
     const { totalPaid, paymentDate, paymentMethod, status } = updatePaymentDto;
 
     const paymentToUpdate = await this.paymentRepository.getPaymentById(

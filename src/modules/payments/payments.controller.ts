@@ -89,7 +89,7 @@ export class PaymentsController {
   update(
     @Param('id') paymentId: string,
     @Body() updatePaymentDto: UpdatePaymentDto,
-  ) {
+  ): Promise<GetPaymentResponse> {
     return this.updatePaymentService.execute(paymentId, updatePaymentDto);
   }
 }

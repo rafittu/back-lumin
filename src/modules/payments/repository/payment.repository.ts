@@ -251,7 +251,10 @@ export class PaymentRepository implements IPaymentRepository {
     }
   }
 
-  async updatePayment(paymentId: string, updatePaymentDto: UpdatePaymentDto) {
+  async updatePayment(
+    paymentId: string,
+    updatePaymentDto: UpdatePaymentDto,
+  ): Promise<GetPaymentResponse> {
     const { paymentDate, paymentMethod, totalPaid, status } = updatePaymentDto;
 
     try {
