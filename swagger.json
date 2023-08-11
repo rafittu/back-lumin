@@ -2557,6 +2557,176 @@
           }
         }
       }
+    },
+    "/payment/update/:id": {
+      "patch": {
+        "summary": "Update a payment",
+        "description": "Route to update payments data",
+        "tags": ["Payment"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "payment id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePayment"
+              },
+              "examples": {
+                "example1": {
+                  "summary": "Updating an opened payment",
+                  "value": {
+                    "paymentDate": "2023-08-11",
+                    "paymentMethod": "PIX",
+                    "totalPaid": "180.00",
+                    "status": "PAID"
+                  }
+                },
+                "example2": {
+                  "summary": "Updating total paid",
+                  "value": {
+                    "totalPaid": "180.00"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentByIdResponse"
+                },
+                "examples": {
+                  "example1": {
+                    "summary": "closed payment",
+                    "value": {
+                      "id": "48a325a6-736c-4248-b931-14e5891082fa",
+                      "appointmentId": "154d71e2-49e0-4ed6-bb7d-885d98d4ce5c",
+                      "professionalId": "49616889-0213-4a54-aad2-9cb72c85e097",
+                      "paymentDate": "2023-08-11",
+                      "paymentMethod": "PIX",
+                      "totalPaid": "180.00",
+                      "status": "PAID",
+                      "createdAt": "2023-08-11T22:36:35.447Z",
+                      "updatedAt": "2023-08-12T22:36:35.447Z"
+                    }
+                  },
+                  "example2": {
+                    "summary": "opened payment",
+                    "value": {
+                      "id": "48a325a6-736c-4248-b931-14e5891082fa",
+                      "appointmentId": "154d71e2-49e0-4ed6-bb7d-885d98d4ce5c",
+                      "professionalId": "49616889-0213-4a54-aad2-9cb72c85e097",
+                      "paymentDate": null,
+                      "paymentMethod": null,
+                      "totalPaid": null,
+                      "status": "OPEN",
+                      "createdAt": "2023-08-11T22:36:35.447Z",
+                      "updatedAt": "2023-08-12T22:36:35.447Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "example1": {
+                    "summary": "Updating open payment invalid body request",
+                    "value": {
+                      "error": {
+                        "message": "The properties totalPaid, paymentDate, and paymentMethod are not allowed when the status payment is OPEN",
+                        "code": "payment-service.updatePayment",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  },
+                  "example2": {
+                    "summary": "Updating open payment to closed invalid body request",
+                    "value": {
+                      "error": {
+                        "message": "missing values for fields: ['totalPaid', 'paymentDate', 'paymentMethod']",
+                        "code": "payment-service.updatePayment",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "generic error",
+                    "code": "payment-repository.updatePayment",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3295,6 +3465,27 @@
           "updatedAt": {
             "type": "string",
             "description": "Date and time of payment update"
+          }
+        }
+      },
+      "UpdatePayment": {
+        "type": "object",
+        "properties": {
+          "paymentDate": {
+            "type": "string",
+            "description": "Appointment payment date"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "description": "Payment method PIX or CASH"
+          },
+          "status": {
+            "type": "string",
+            "description": "Payment status, OPEN or PAID"
+          },
+          "totalPaid": {
+            "type": "string",
+            "description": "Total paid for the appointment"
           }
         }
       },
