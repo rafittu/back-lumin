@@ -9,11 +9,13 @@ import {
   mockGetPaymentFilter,
   mockGetPaymentResponse,
   mockManyPaymentsResponse,
+  mockPaymentId,
   mockPaymentResponse,
   mockPaymentsByFilter,
   mockPrismaGetPaymentResponse,
   mockPrismaPaymentByFilterResponse,
   mockProfessionalId,
+  mockUpdatePayment,
 } from './mocks/repository.mock';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../../../common/errors/Error';
@@ -272,6 +274,22 @@ describe('PaymentRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to get payment');
       }
+    });
+  });
+
+  describe('update payment', () => {
+    it('should update payment successfully', async () => {
+      jest
+        .spyOn(prismaService.payment, 'update')
+        .mockResolvedValueOnce(mockPrismaGetPaymentResponse);
+
+      const result = await paymentRepository.updatePayment(
+        mockPaymentId,
+        mockUpdatePayment,
+      );
+
+      expect(prismaService.payment.update).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockGetPaymentResponse);
     });
   });
 });
