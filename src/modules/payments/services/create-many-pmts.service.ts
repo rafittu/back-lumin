@@ -64,7 +64,7 @@ export class CreateManyPaymentsService {
 
       if (missingFields.length > 0) {
         throw new AppError(
-          'payment-service.createPayment',
+          'payment-service.createManyPayments',
           400,
           `missing values for fields: ${missingFields.join(', ')}`,
         );
