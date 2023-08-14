@@ -192,4 +192,21 @@ export class RecordRepository implements IRecordRepository {
       );
     }
   }
+
+  async updateAllRecords(records) {
+    try {
+      records.map(async (record) => {
+        await this.prisma.appointmentRecord.update({
+          where: { id: record.id },
+          data: { record: record.record },
+        });
+      });
+    } catch (error) {
+      throw new AppError(
+        'record-repository.updateAllRecords',
+        500,
+        'failed to update records',
+      );
+    }
+  }
 }

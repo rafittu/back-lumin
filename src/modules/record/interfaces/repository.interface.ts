@@ -29,4 +29,5 @@ export interface IRecordRepository {
     updateRecordDto: UpdateRecordDto,
   ): Promise<UpdatedRecordResponse>;
   allRecords();
+  updateAllRecords(records);
 }
