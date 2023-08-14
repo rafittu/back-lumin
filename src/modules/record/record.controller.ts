@@ -16,6 +16,7 @@ import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from '../user/enum/user-role.enum';
 import { CreateRecordDto } from './dto/create-record.dto';
 import { UpdateRecordDto } from './dto/update-record.dto';
+import { CipherSecretsDTO } from './dto/reencrypt-record.dto';
 import { CreateRecordService } from './services/create-record.service';
 import {
   AllProfessionalRecords,
@@ -26,6 +27,7 @@ import {
 import { GetAllRecordsService } from './services/all-records.service';
 import { GetOneRecordService } from './services/get-one-record.service';
 import { UpdateRecordService } from './services/update-record.service';
+import { ReencryptRecordsService } from './services/reencrypt-record.service';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -36,6 +38,7 @@ export class RecordController {
     private readonly getAllRecordsService: GetAllRecordsService,
     private readonly getOneRecordRecordService: GetOneRecordService,
     private readonly updateRecordService: UpdateRecordService,
+    private readonly reencryptRecordsService: ReencryptRecordsService,
   ) {}
 
   @Post('/create')
@@ -79,5 +82,10 @@ export class RecordController {
     @Body() updateRecordDto: UpdateRecordDto,
   ): Promise<UpdatedRecord> {
     return await this.updateRecordService.execute(recordId, updateRecordDto);
+  }
+
+  @Patch('/update/reencrypt-records')
+  async reencryptRecords(@Body() cipherSecrets: CipherSecretsDTO) {
+    return await this.reencryptRecordsService.execute(cipherSecrets);
   }
 }
