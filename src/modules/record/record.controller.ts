@@ -16,7 +16,6 @@ import { Roles } from '../auth/infra/decorators/role.decorator';
 import { UserRole } from '../user/enum/user-role.enum';
 import { CreateRecordDto } from './dto/create-record.dto';
 import { UpdateRecordDto } from './dto/update-record.dto';
-import { CipherSecretsDTO } from './dto/reencrypt-record.dto';
 import { CreateRecordService } from './services/create-record.service';
 import {
   AllProfessionalRecords,
@@ -84,8 +83,8 @@ export class RecordController {
     return await this.updateRecordService.execute(recordId, updateRecordDto);
   }
 
-  @Patch('/update/reencrypt-records')
-  async reencryptRecords(@Body() cipherSecrets: CipherSecretsDTO) {
-    return await this.reencryptRecordsService.execute(cipherSecrets);
+  @Patch('/config/reencrypt-records')
+  async reencryptRecords() {
+    return await this.reencryptRecordsService.execute();
   }
 }
