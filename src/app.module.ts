@@ -33,6 +33,8 @@ import { PaymentsModule } from './modules/payments/payments.module';
         RECORD_CIPHER_ALGORITHM: Joi.string().required(),
         RECORD_CIPHER_KEY: Joi.string().required(),
         RECORD_CIPHER_IV: Joi.string().required(),
+        NEW_CIPHER_KEY: Joi.string().optional(),
+        NEW_CIPHER_IV: Joi.string().optional(),
       }),
     }),
     UserModule,
