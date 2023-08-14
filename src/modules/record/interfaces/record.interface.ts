@@ -27,3 +27,8 @@ export interface UpdatedRecord {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface RecordToReencrypt {
+  id: string;
+  record: string;
+}

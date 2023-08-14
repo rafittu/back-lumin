@@ -84,7 +84,7 @@ export class RecordController {
   }
 
   @Patch('/config/reencrypt-records')
-  async reencryptRecords() {
+  async reencryptRecords(): Promise<string> {
     return await this.reencryptRecordsService.execute();
   }
 }

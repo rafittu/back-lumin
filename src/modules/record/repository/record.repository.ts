@@ -11,6 +11,7 @@ import { Prisma } from '@prisma/client';
 import {
   AllProfessionalRecords,
   ProfessionalRecord,
+  RecordToReencrypt,
 } from '../interfaces/record.interface';
 import { UpdateRecordDto } from '../dto/update-record.dto';
 
@@ -174,7 +175,7 @@ export class RecordRepository implements IRecordRepository {
     }
   }
 
-  async allRecords() {
+  async allRecords(): Promise<RecordToReencrypt[]> {
     try {
       const records = await this.prisma.appointmentRecord.findMany({
         select: {
@@ -193,7 +194,7 @@ export class RecordRepository implements IRecordRepository {
     }
   }
 
-  async updateAllRecords(records) {
+  async updateAllRecords(records: RecordToReencrypt[]): Promise<void> {
     try {
       records.map(async (record) => {
         await this.prisma.appointmentRecord.update({

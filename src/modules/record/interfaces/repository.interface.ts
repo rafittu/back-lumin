@@ -1,6 +1,10 @@
 import { CreateRecordDto } from '../dto/create-record.dto';
 import { UpdateRecordDto } from '../dto/update-record.dto';
-import { AllProfessionalRecords, ProfessionalRecord } from './record.interface';
+import {
+  AllProfessionalRecords,
+  ProfessionalRecord,
+  RecordToReencrypt,
+} from './record.interface';
 
 export interface Record {
   id: string;
@@ -28,6 +32,6 @@ export interface IRecordRepository {
     recordId: string,
     updateRecordDto: UpdateRecordDto,
   ): Promise<UpdatedRecordResponse>;
-  allRecords();
-  updateAllRecords(records);
+  allRecords(): Promise<RecordToReencrypt[]>;
+  updateAllRecords(records: RecordToReencrypt[]): Promise<void>;
 }
