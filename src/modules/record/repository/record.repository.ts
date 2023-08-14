@@ -173,4 +173,23 @@ export class RecordRepository implements IRecordRepository {
       );
     }
   }
+
+  async allRecords() {
+    try {
+      const records = await this.prisma.appointmentRecord.findMany({
+        select: {
+          id: true,
+          record: true,
+        },
+      });
+
+      return records;
+    } catch (error) {
+      throw new AppError(
+        'record-repository.allRecords',
+        500,
+        'failed to get records',
+      );
+    }
+  }
 }
