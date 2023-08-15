@@ -29,41 +29,6 @@ Este projeto utiliza as seguintes tecnologias:
 
 <br>
 
-## Lista de tarefas
-
-1. Módulo de autenticação
-
-   - [x] Rota para login
-
-2. Módulo de usuários
-
-   - [x] Criar administrador
-   - [x] Criar cliente
-   - [x] Buscar um usuário
-   - [x] Buscar todos os clientes de um profissional
-   - [x] Atualizar usuário
-
-3. Módulo de agendamento
-
-   - [x] Criar um agendamento
-   - [x] Buscar agentamento por filtro
-   - [x] Buscar todos os agentamentos de um profissional
-   - [x] Atualizar agendamento
-   - [x] Cancelar agendamento
-
-4. Módulo de gerenciamento de sessões
-
-   - [x] Criar ficha de atendimento
-   - [x] Buscar registros de cliente
-   - [x] Atualizar um registro
-
-5. Módulo financeiro
-   - [x] Registrar pagamento de sessões
-   - [x] Buscar pagamentos por filtro
-   - [x] Atualizar dados de pagamento
-
-<br>
-
 ## Instalação
 
 Clonando o repositório:
