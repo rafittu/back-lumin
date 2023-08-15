@@ -41,16 +41,6 @@ describe('RecordServices', () => {
         GetOneRecordService,
         UpdateRecordService,
         ReencryptRecordsService,
-        // {
-        //   provide: ReencryptRecordsService,
-        //   useValue: {
-        //     decryptRecord: jest.fn().mockResolvedValue('Decrypted record'),
-        //     encryptRecord: jest.fn().mockResolvedValue('Encrypted record'),
-        //     execute: jest
-        //       .fn()
-        //       .mockResolvedValue('Records reencrypted successfully'),
-        //   },
-        // },
         {
           provide: SchedulerRepository,
           useValue: {
@@ -355,6 +345,31 @@ describe('RecordServices', () => {
       );
 
       expect(result).toEqual('decrypted-recordfinal-decrypted-record');
+    });
+
+    it('should encrypt data with new keys successfully', async () => {
+      process.env.RECORD_CIPHER_ALGORITHM = 'aes-256-cbc';
+      process.env.NEW_RECORD_CIPHER_KEY = crypto
+        .randomBytes(32)
+        .toString('hex');
+      process.env.RECORD_CIPHER_IV = crypto.randomBytes(16).toString('hex');
+
+      const mockCipher: crypto.Cipher = {
+        update: jest.fn().mockReturnValue('encrypted-record'),
+        final: jest.fn().mockReturnValue('final-encrypted-record'),
+      } as any;
+
+      jest.spyOn(crypto, 'createCipheriv').mockReturnValue(mockCipher);
+
+      const result = await reencryptRecordsService.encryptRecord(
+        'record to encrypt',
+      );
+
+      delete process.env.RECORD_CIPHER_ALGORITHM;
+      delete process.env.NEW_RECORD_CIPHER_KEY;
+      delete process.env.RECORD_CIPHER_IV;
+
+      expect(result).toEqual('encrypted-recordfinal-encrypted-record');
     });
   });
 });
