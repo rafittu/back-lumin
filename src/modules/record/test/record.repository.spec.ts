@@ -206,6 +206,20 @@ describe('RecordRepository', () => {
       expect(prismaService.appointmentRecord.findMany).toHaveBeenCalledTimes(1);
     });
 
+    it('should throw an error getting records', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findMany')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await recordRepository.allRecords();
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to get records');
+      }
+    });
+
     it('should reencrypt all records successfully', async () => {
       jest
         .spyOn(prismaService.appointmentRecord, 'update')
@@ -214,6 +228,20 @@ describe('RecordRepository', () => {
       await recordRepository.updateAllRecords([mockRecordsToReencrypt]);
 
       expect(prismaService.appointmentRecord.update).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw an error reencrypting records', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'update')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await recordRepository.updateAllRecords([mockRecordsToReencrypt]);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to update records');
+      }
     });
   });
 });
