@@ -387,5 +387,18 @@ describe('RecordServices', () => {
       expect(recordRepository.updateAllRecords).toHaveBeenCalledTimes(1);
       expect(result).toEqual('Records reencrypted successfully');
     });
+
+    it('should throw an AppError if records reencryption fails', async () => {
+      jest.spyOn(crypto, 'createCipheriv').mockImplementation(() => {
+        throw new Error('Error encrypting data');
+      });
+
+      try {
+        await reencryptRecordsService.execute();
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+      }
+    });
   });
 });
