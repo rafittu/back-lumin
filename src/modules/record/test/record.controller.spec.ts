@@ -179,5 +179,13 @@ describe('RecordController', () => {
       expect(reencryptRecordsService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual('Records reencrypted successfully');
     });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(reencryptRecordsService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(controller.reencryptRecords()).rejects.toThrowError();
+    });
   });
 });
