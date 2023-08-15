@@ -13,6 +13,7 @@ import {
   mockRepositoryRecordResponse,
   mockPrismaUpdateRecord,
   mockUpdatedRecordResponse,
+  mockRecordsToReencrypt,
 } from './mocks/repository.mock';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../../../common/errors/Error';
@@ -191,6 +192,18 @@ describe('RecordRepository', () => {
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to update record');
       }
+    });
+  });
+
+  describe('reencrypt records', () => {
+    it('should reencrypt all records successfully', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'update')
+        .mockResolvedValueOnce(mockPrismaUpdateRecord);
+
+      await recordRepository.updateAllRecords([mockRecordsToReencrypt]);
+
+      expect(prismaService.appointmentRecord.update).toHaveBeenCalledTimes(1);
     });
   });
 });
