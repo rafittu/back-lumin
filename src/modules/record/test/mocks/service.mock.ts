@@ -8,6 +8,7 @@ import {
   AllProfessionalRecords,
   NewRecord,
   ProfessionalRecord,
+  RecordToReencrypt,
   UpdatedRecord,
 } from '../../interfaces/record.interface';
 import {
@@ -94,4 +95,9 @@ export const mockUpdatedRecord: UpdatedRecord = {
   record: mockProfessionalRecord.record,
   createdAt: mockProfessionalRecord.createdAt,
   updatedAt: mockProfessionalRecord.updatedAt,
+};
+
+export const mockRecordToReencrypt: RecordToReencrypt = {
+  id: faker.string.uuid(),
+  record: faker.string.sample(),
 };

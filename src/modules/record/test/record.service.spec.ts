@@ -14,18 +14,21 @@ import {
   mockProfessionalAppointments,
   mockProfessionalId,
   mockProfessionalRecord,
+  mockRecordToReencrypt,
   mockRepositoryRecordResponse,
   mockUpdatedRecord,
   mockUpdatedRecordRepositoryResponse,
 } from './mocks/service.mock';
 import { GetOneRecordService } from '../services/get-one-record.service';
 import { UpdateRecordService } from '../services/update-record.service';
+import { ReencryptRecordsService } from '../services/reencrypt-record.service';
 
 describe('RecordServices', () => {
   let createRecordService: CreateRecordService;
   let getAllRecordsService: GetAllRecordsService;
   let getOneRecordService: GetOneRecordService;
   let updateRecordService: UpdateRecordService;
+  let reencryptRecordsService: ReencryptRecordsService;
 
   let recordRepository: RecordRepository;
   let schedulerRepository: SchedulerRepository;
@@ -37,6 +40,7 @@ describe('RecordServices', () => {
         GetAllRecordsService,
         GetOneRecordService,
         UpdateRecordService,
+        ReencryptRecordsService,
         {
           provide: SchedulerRepository,
           useValue: {
@@ -58,6 +62,8 @@ describe('RecordServices', () => {
             updateRecord: jest
               .fn()
               .mockResolvedValue(mockUpdatedRecordRepositoryResponse),
+            allRecords: jest.fn().mockResolvedValue([mockRecordToReencrypt]),
+            updateAllRecords: jest.fn(),
           },
         },
       ],
@@ -68,6 +74,9 @@ describe('RecordServices', () => {
       module.get<GetAllRecordsService>(GetAllRecordsService);
     getOneRecordService = module.get<GetOneRecordService>(GetOneRecordService);
     updateRecordService = module.get<UpdateRecordService>(UpdateRecordService);
+    reencryptRecordsService = module.get<ReencryptRecordsService>(
+      ReencryptRecordsService,
+    );
 
     recordRepository = module.get<RecordRepository>(RecordRepository);
     schedulerRepository = module.get<SchedulerRepository>(SchedulerRepository);
@@ -78,6 +87,7 @@ describe('RecordServices', () => {
     expect(getAllRecordsService).toBeDefined();
     expect(getOneRecordService).toBeDefined();
     expect(updateRecordService).toBeDefined();
+    expect(reencryptRecordsService).toBeDefined();
   });
 
   describe('create record', () => {
@@ -310,6 +320,81 @@ describe('RecordServices', () => {
           mockProfessionalRecord.recordId,
           mockUpdatedRecord,
         );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+      }
+    });
+  });
+
+  describe('reencrypt all records', () => {
+    it('should decrypt a record successfully', async () => {
+      process.env.RECORD_CIPHER_ALGORITHM = 'aes-256-cbc';
+      process.env.RECORD_CIPHER_KEY = crypto.randomBytes(32).toString('hex');
+      process.env.RECORD_CIPHER_IV = crypto.randomBytes(16).toString('hex');
+
+      const mockCipher: crypto.Cipher = {
+        update: jest.fn().mockReturnValue('decrypted-record'),
+        final: jest.fn().mockReturnValue('final-decrypted-record'),
+      } as any;
+
+      jest.spyOn(crypto, 'createDecipheriv').mockReturnValue(mockCipher);
+
+      const result = await reencryptRecordsService.decryptRecord(
+        'encrypted record',
+      );
+
+      expect(result).toEqual('decrypted-recordfinal-decrypted-record');
+    });
+
+    it('should encrypt data with new keys successfully', async () => {
+      process.env.RECORD_CIPHER_ALGORITHM = 'aes-256-cbc';
+      process.env.NEW_RECORD_CIPHER_KEY = crypto
+        .randomBytes(32)
+        .toString('hex');
+      process.env.RECORD_CIPHER_IV = crypto.randomBytes(16).toString('hex');
+
+      const mockCipher: crypto.Cipher = {
+        update: jest.fn().mockReturnValue('encrypted-record'),
+        final: jest.fn().mockReturnValue('final-encrypted-record'),
+      } as any;
+
+      jest.spyOn(crypto, 'createCipheriv').mockReturnValue(mockCipher);
+
+      const result = await reencryptRecordsService.encryptRecord(
+        'record to encrypt',
+      );
+
+      delete process.env.RECORD_CIPHER_ALGORITHM;
+      delete process.env.NEW_RECORD_CIPHER_KEY;
+      delete process.env.RECORD_CIPHER_IV;
+
+      expect(result).toEqual('encrypted-recordfinal-encrypted-record');
+    });
+
+    it('should reencrypt and update all records successfully', async () => {
+      jest
+        .spyOn(reencryptRecordsService, 'encryptRecord')
+        .mockResolvedValue('Encrypted record');
+
+      jest
+        .spyOn(reencryptRecordsService, 'decryptRecord')
+        .mockResolvedValue('Decrypted record');
+
+      const result = await reencryptRecordsService.execute();
+
+      expect(recordRepository.allRecords).toHaveBeenCalledTimes(1);
+      expect(recordRepository.updateAllRecords).toHaveBeenCalledTimes(1);
+      expect(result).toEqual('Records reencrypted successfully');
+    });
+
+    it('should throw an AppError if records reencryption fails', async () => {
+      jest.spyOn(crypto, 'createCipheriv').mockImplementation(() => {
+        throw new Error('Error encrypting data');
+      });
+
+      try {
+        await reencryptRecordsService.execute();
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);

@@ -26,6 +26,7 @@ import {
 import { GetAllRecordsService } from './services/all-records.service';
 import { GetOneRecordService } from './services/get-one-record.service';
 import { UpdateRecordService } from './services/update-record.service';
+import { ReencryptRecordsService } from './services/reencrypt-record.service';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -36,6 +37,7 @@ export class RecordController {
     private readonly getAllRecordsService: GetAllRecordsService,
     private readonly getOneRecordRecordService: GetOneRecordService,
     private readonly updateRecordService: UpdateRecordService,
+    private readonly reencryptRecordsService: ReencryptRecordsService,
   ) {}
 
   @Post('/create')
@@ -79,5 +81,10 @@ export class RecordController {
     @Body() updateRecordDto: UpdateRecordDto,
   ): Promise<UpdatedRecord> {
     return await this.updateRecordService.execute(recordId, updateRecordDto);
+  }
+
+  @Patch('/config/reencrypt-records')
+  async reencryptRecords(): Promise<string> {
+    return await this.reencryptRecordsService.execute();
   }
 }

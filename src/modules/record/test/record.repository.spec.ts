@@ -13,6 +13,7 @@ import {
   mockRepositoryRecordResponse,
   mockPrismaUpdateRecord,
   mockUpdatedRecordResponse,
+  mockRecordsToReencrypt,
 } from './mocks/repository.mock';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../../../common/errors/Error';
@@ -190,6 +191,56 @@ describe('RecordRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to update record');
+      }
+    });
+  });
+
+  describe('reencrypt records', () => {
+    it('should get all records to reencrypt successfully', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findMany')
+        .mockResolvedValueOnce(mockPrismaGetAllProfessionalRecord);
+
+      await recordRepository.allRecords();
+
+      expect(prismaService.appointmentRecord.findMany).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw an error getting records', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findMany')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await recordRepository.allRecords();
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to get records');
+      }
+    });
+
+    it('should reencrypt all records successfully', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'update')
+        .mockResolvedValueOnce(mockPrismaUpdateRecord);
+
+      await recordRepository.updateAllRecords([mockRecordsToReencrypt]);
+
+      expect(prismaService.appointmentRecord.update).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw an error reencrypting records', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'update')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await recordRepository.updateAllRecords([mockRecordsToReencrypt]);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to update records');
       }
     });
   });

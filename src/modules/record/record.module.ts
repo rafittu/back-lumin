@@ -8,6 +8,7 @@ import { SchedulerRepository } from '../scheduler/repository/scheduler.repositor
 import { GetAllRecordsService } from './services/all-records.service';
 import { GetOneRecordService } from './services/get-one-record.service';
 import { UpdateRecordService } from './services/update-record.service';
+import { ReencryptRecordsService } from './services/reencrypt-record.service';
 
 @Module({
   controllers: [RecordController],
@@ -20,6 +21,7 @@ import { UpdateRecordService } from './services/update-record.service';
     GetAllRecordsService,
     GetOneRecordService,
     UpdateRecordService,
+    ReencryptRecordsService,
   ],
 })
 export class RecordModule {}

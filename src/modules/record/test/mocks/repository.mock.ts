@@ -5,6 +5,7 @@ import { CreateRecordDto } from '../../dto/create-record.dto';
 import {
   AllProfessionalRecords,
   ProfessionalRecord,
+  RecordToReencrypt,
 } from '../../interfaces/record.interface';
 
 export const mockProfessionalId = faker.string.uuid();
@@ -118,4 +119,9 @@ export const mockUpdatedRecordResponse = {
   appointmentId: mockPrismaUpdateRecord.schedule_id,
   createdAt: mockPrismaUpdateRecord.created_at,
   updatedAt: mockPrismaUpdateRecord.updated_at,
+};
+
+export const mockRecordsToReencrypt: RecordToReencrypt = {
+  id: faker.string.uuid(),
+  record: faker.string.sample(),
 };
