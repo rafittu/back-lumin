@@ -371,5 +371,21 @@ describe('RecordServices', () => {
 
       expect(result).toEqual('encrypted-recordfinal-encrypted-record');
     });
+
+    it('should reencrypt and update all records successfully', async () => {
+      jest
+        .spyOn(reencryptRecordsService, 'encryptRecord')
+        .mockResolvedValue('Encrypted record');
+
+      jest
+        .spyOn(reencryptRecordsService, 'decryptRecord')
+        .mockResolvedValue('Decrypted record');
+
+      const result = await reencryptRecordsService.execute();
+
+      expect(recordRepository.allRecords).toHaveBeenCalledTimes(1);
+      expect(recordRepository.updateAllRecords).toHaveBeenCalledTimes(1);
+      expect(result).toEqual('Records reencrypted successfully');
+    });
   });
 });
