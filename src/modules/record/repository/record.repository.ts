@@ -11,6 +11,7 @@ import { Prisma } from '@prisma/client';
 import {
   AllProfessionalRecords,
   ProfessionalRecord,
+  RecordToReencrypt,
 } from '../interfaces/record.interface';
 import { UpdateRecordDto } from '../dto/update-record.dto';
 
@@ -170,6 +171,44 @@ export class RecordRepository implements IRecordRepository {
         'record-repository.updateRecord',
         500,
         'failed to update record',
+      );
+    }
+  }
+
+  async allRecords(): Promise<RecordToReencrypt[]> {
+    try {
+      const records = await this.prisma.appointmentRecord.findMany({
+        select: {
+          id: true,
+          record: true,
+        },
+      });
+
+      return records;
+    } catch (error) {
+      throw new AppError(
+        'record-repository.allRecords',
+        500,
+        'failed to get records',
+      );
+    }
+  }
+
+  async updateAllRecords(records: RecordToReencrypt[]): Promise<void> {
+    try {
+      await Promise.all(
+        records.map(async (record) => {
+          await this.prisma.appointmentRecord.update({
+            where: { id: record.id },
+            data: { record: record.record },
+          });
+        }),
+      );
+    } catch (error) {
+      throw new AppError(
+        'record-repository.updateAllRecords',
+        500,
+        'failed to update records',
       );
     }
   }

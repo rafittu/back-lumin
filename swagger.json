@@ -1837,6 +1837,107 @@
         }
       }
     },
+    "/record/config/reencrypt-records": {
+      "patch": {
+        "summary": "Reencrypt records",
+        "description": "Route to reencrypt all database records before change .env secrets",
+        "tags": ["Record"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReencryptedRecords"
+                },
+                "example": {
+                  "message": "Records reencrypted successfully"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "example1": {
+                    "summary": "Failed do reencrypt records",
+                    "value": {
+                      "error": {
+                        "message": "generic error",
+                        "code": "record-module.reencryptRecordsService",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  },
+                  "example2": {
+                    "summary": "Failed to get record",
+                    "value": {
+                      "error": {
+                        "message": "failed to get record",
+                        "code": "record-repository.allRecords",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  },
+                  "example3": {
+                    "summary": "Failed to update record",
+                    "value": {
+                      "error": {
+                        "message": "failed to update record",
+                        "code": "record-repository.updateAllRecords",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
 
     "/payment/create": {
       "post": {
@@ -3486,6 +3587,15 @@
           "totalPaid": {
             "type": "string",
             "description": "Total paid for the appointment"
+          }
+        }
+      },
+      "ReencryptedRecords": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Reencryption response"
           }
         }
       },
