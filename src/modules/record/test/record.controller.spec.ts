@@ -15,6 +15,7 @@ import {
 import { GetAllRecordsService } from '../services/all-records.service';
 import { GetOneRecordService } from '../services/get-one-record.service';
 import { UpdateRecordService } from '../services/update-record.service';
+import { ReencryptRecordsService } from '../services/reencrypt-record.service';
 
 describe('RecordController', () => {
   let controller: RecordController;
@@ -23,6 +24,7 @@ describe('RecordController', () => {
   let getAllRecordsService: GetAllRecordsService;
   let getOneRecordService: GetOneRecordService;
   let updateRecordService: UpdateRecordService;
+  let reencryptRecordsService: ReencryptRecordsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -53,6 +55,14 @@ describe('RecordController', () => {
             execute: jest.fn().mockResolvedValue(mockUpdatedRecord),
           },
         },
+        {
+          provide: ReencryptRecordsService,
+          useValue: {
+            execute: jest
+              .fn()
+              .mockResolvedValue('Records reencrypted successfully'),
+          },
+        },
       ],
     }).compile();
 
@@ -63,6 +73,9 @@ describe('RecordController', () => {
       module.get<GetAllRecordsService>(GetAllRecordsService);
     getOneRecordService = module.get<GetOneRecordService>(GetOneRecordService);
     updateRecordService = module.get<UpdateRecordService>(UpdateRecordService);
+    reencryptRecordsService = module.get<ReencryptRecordsService>(
+      ReencryptRecordsService,
+    );
   });
 
   it('should be defined', () => {
@@ -156,6 +169,15 @@ describe('RecordController', () => {
       await expect(
         controller.update(mockProfessionalRecord.recordId, mockUpdateRecord),
       ).rejects.toThrowError();
+    });
+  });
+
+  describe('reencrypt records', () => {
+    it('should reencrypt all records successfully', async () => {
+      const result = await controller.reencryptRecords();
+
+      expect(reencryptRecordsService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual('Records reencrypted successfully');
     });
   });
 });
