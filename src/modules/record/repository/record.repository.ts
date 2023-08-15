@@ -196,12 +196,14 @@ export class RecordRepository implements IRecordRepository {
 
   async updateAllRecords(records: RecordToReencrypt[]): Promise<void> {
     try {
-      records.map(async (record) => {
-        await this.prisma.appointmentRecord.update({
-          where: { id: record.id },
-          data: { record: record.record },
-        });
-      });
+      await Promise.all(
+        records.map(async (record) => {
+          await this.prisma.appointmentRecord.update({
+            where: { id: record.id },
+            data: { record: record.record },
+          });
+        }),
+      );
     } catch (error) {
       throw new AppError(
         'record-repository.updateAllRecords',
