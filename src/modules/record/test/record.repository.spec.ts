@@ -196,6 +196,16 @@ describe('RecordRepository', () => {
   });
 
   describe('reencrypt records', () => {
+    it('should get all records to reencrypt successfully', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findMany')
+        .mockResolvedValueOnce(mockPrismaGetAllProfessionalRecord);
+
+      await recordRepository.allRecords();
+
+      expect(prismaService.appointmentRecord.findMany).toHaveBeenCalledTimes(1);
+    });
+
     it('should reencrypt all records successfully', async () => {
       jest
         .spyOn(prismaService.appointmentRecord, 'update')
