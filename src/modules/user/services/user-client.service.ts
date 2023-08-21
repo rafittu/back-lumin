@@ -26,7 +26,7 @@ export class CreateClientUserService {
 
       return accessToken;
     } catch (error) {
-      throw new AppError('user-service.createAdminUser', 400, error.message);
+      throw new AppError('user-service.createClientUser', 400, error.message);
     }
   }
 }
