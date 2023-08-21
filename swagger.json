@@ -3038,6 +3038,74 @@
           }
         }
       },
+      "UpdatedUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID"
+          },
+          "personal": {
+            "type": "object",
+            "properties": {
+              "firstName": {
+                "type": "string",
+                "description": "First name of the user"
+              },
+              "lastName": {
+                "type": "string",
+                "description": "Last name of the user"
+              },
+              "socialName": {
+                "type": "string",
+                "description": "Social name of the user"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Date and time of user personal data update"
+              }
+            }
+          },
+          "contact": {
+            "type": "object",
+            "properties": {
+              "username": {
+                "type": "string",
+                "description": "Username of the user"
+              },
+              "email": {
+                "type": "string",
+                "description": "Email of the user"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Date and time of user contact data update"
+              }
+            }
+          },
+          "security": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "description": "User account status"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Date and time of user security data update"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time of user creation"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Date and time of user update"
+          }
+        }
+      },
       "UserCredentials": {
         "type": "object",
         "properties": {
