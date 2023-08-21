@@ -12,7 +12,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import {
   ProfessionalClients,
   UpdatedUser,
-  User,
   UserData,
 } from './interfaces/user.interface';
 import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
@@ -50,7 +49,7 @@ export class UserController {
 
   @isPublic()
   @Post('/client')
-  createClientUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+  createClientUser(@Body() createUserDto: CreateUserDto): Promise<JwtToken> {
     return this.clientUserService.execute(createUserDto);
   }
 
