@@ -184,7 +184,7 @@ export class UserRepository implements IUserRepository {
 
       return user;
     } catch (error) {
-      throw new AppError('user-repository.findUser', 500, 'could not get user');
+      throw new AppError('user-repository.findById', 500, 'could not get user');
     }
   };
 
