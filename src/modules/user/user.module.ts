@@ -9,6 +9,7 @@ import { RedisCacheService } from '../auth/infra/cache/redis-cache.service';
 import { GetUserService } from './services/get-user.service';
 import { UpdateUserService } from './services/update-user.service';
 import { AuthRepository } from '../auth/repository/auth.repository';
+import { FindUserByIdService } from './services/find-user-by-id.service';
 
 @Module({
   controllers: [UserController],
@@ -22,6 +23,7 @@ import { AuthRepository } from '../auth/repository/auth.repository';
     GetClientsService,
     GetUserService,
     UpdateUserService,
+    FindUserByIdService,
   ],
 })
 export class UserModule {}

@@ -13,6 +13,7 @@ import {
   ProfessionalClients,
   UpdatedUser,
   UserData,
+  UserInfo,
 } from './interfaces/user.interface';
 import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
 import { AppError } from '../../common/errors/Error';
@@ -27,6 +28,7 @@ import { GetUserService } from './services/get-user.service';
 import { AccessToken } from '../auth/infra/decorators/access-token.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserService } from './services/update-user.service';
+import { FindUserByIdService } from './services/find-user-by-id.service';
 import { JwtToken } from '../auth/interfaces/auth.interface';
 
 @UseGuards(RolesGuard)
@@ -39,6 +41,7 @@ export class UserController {
     private readonly getClientsService: GetClientsService,
     private readonly getUserService: GetUserService,
     private readonly updateUserService: UpdateUserService,
+    private readonly findUserByIdService: FindUserByIdService,
   ) {}
 
   @isPublic()
@@ -59,6 +62,11 @@ export class UserController {
     @Param('id') professionalId: string,
   ): Promise<ProfessionalClients> {
     return this.getClientsService.execute(professionalId);
+  }
+
+  @Get('/user/:id')
+  findUserById(@Param('id') userId: string): Promise<UserInfo> {
+    return this.findUserByIdService.execute(userId);
   }
 
   @Get('/user/:id')

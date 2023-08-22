@@ -14,6 +14,7 @@ import {
   UpdatedUser,
   User,
   UserData,
+  UserInfo,
 } from '../interfaces/user.interface';
 import axios from 'axios';
 import { Prisma } from '@prisma/client';
@@ -157,6 +158,33 @@ export class UserRepository implements IUserRepository {
         500,
         'could not get clients',
       );
+    }
+  };
+
+  findById = async (userId: string): Promise<UserInfo> => {
+    try {
+      const userData = await this.prisma.user.findFirst({
+        where: {
+          id: userId,
+        },
+      });
+
+      const { id, alma_id, name, social_name, role, created_at, updated_at } =
+        userData;
+
+      const user = {
+        id,
+        almaId: alma_id,
+        name,
+        socialName: social_name,
+        role,
+        createdAt: created_at,
+        updatedAt: updated_at,
+      };
+
+      return user;
+    } catch (error) {
+      throw new AppError('user-repository.findById', 500, 'could not get user');
     }
   };
 
