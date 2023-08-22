@@ -8,12 +8,14 @@ import { GetClientsService } from './services/get-clients.service';
 import { RedisCacheService } from '../auth/infra/cache/redis-cache.service';
 import { GetUserService } from './services/get-user.service';
 import { UpdateUserService } from './services/update-user.service';
+import { AuthRepository } from '../auth/repository/auth.repository';
 
 @Module({
   controllers: [UserController],
   providers: [
     PrismaService,
     RedisCacheService,
+    AuthRepository,
     UserRepository,
     CreateAdminUserService,
     CreateClientUserService,

@@ -12,7 +12,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import {
   ProfessionalClients,
   UpdatedUser,
-  User,
   UserData,
 } from './interfaces/user.interface';
 import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
@@ -28,6 +27,7 @@ import { GetUserService } from './services/get-user.service';
 import { AccessToken } from '../auth/infra/decorators/access-token.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserService } from './services/update-user.service';
+import { JwtToken } from '../auth/interfaces/auth.interface';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -43,13 +43,13 @@ export class UserController {
 
   @isPublic()
   @Post('/admin')
-  createAdminUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+  createAdminUser(@Body() createUserDto: CreateUserDto): Promise<JwtToken> {
     return this.adminUserService.execute(createUserDto);
   }
 
   @isPublic()
   @Post('/client')
-  createClientUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+  createClientUser(@Body() createUserDto: CreateUserDto): Promise<JwtToken> {
     return this.clientUserService.execute(createUserDto);
   }
 
