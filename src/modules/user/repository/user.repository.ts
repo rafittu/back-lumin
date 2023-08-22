@@ -226,10 +226,14 @@ export class UserRepository implements IUserRepository {
       return userData;
     } catch (error) {
       if (error instanceof AppError) {
-        throw new AppError('user-repository.getUser', 503, error.message);
+        throw new AppError('user-repository.getUserByJwt', 503, error.message);
       }
 
-      throw new AppError('user-repository.getUser', 500, 'could not get user');
+      throw new AppError(
+        'user-repository.getUserByJwt',
+        500,
+        'could not get user',
+      );
     }
   };
 

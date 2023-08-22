@@ -290,6 +290,109 @@
         }
       }
     },
+    "/users/user": {
+      "get": {
+        "summary": "Get user by access token",
+        "description": "Route to get an user by jwt token",
+        "tags": ["User"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User Data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserData"
+                },
+                "example": {
+                  "id": "123456",
+                  "almaId": "78910",
+                  "name": "Riley Doe",
+                  "socialName": "RD",
+                  "bornDate": "1991-01-01",
+                  "motherName": "Jane Doe",
+                  "email": "rileydoe@example.com",
+                  "phone": "1234567890",
+                  "status": "ACTIVE",
+                  "role": "ADMIN",
+                  "createdAt": "2023-05-10T12:00:00Z",
+                  "updatedAt": "2023-05-11T12:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Missing authorization token",
+                    "code": "auth-guard.jwtAuth",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "could not get user",
+                    "code": "user-repository.getUserByJwt",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unvailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "could not get user",
+                    "code": "user-repository.getUserByJwt",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/users/professional/{id}": {
       "get": {
         "summary": "Get professional clients",
@@ -2902,6 +3005,10 @@
             "type": "string",
             "description": "User ID"
           },
+          "almaId": {
+            "type": "string",
+            "description": "User ALMA API ID"
+          },
           "name": {
             "type": "string",
             "description": "Name of the user"
@@ -2933,6 +3040,10 @@
           "status": {
             "type": "string",
             "description": "User status"
+          },
+          "role": {
+            "type": "string",
+            "description": "User account role"
           },
           "createdAt": {
             "type": "string",
