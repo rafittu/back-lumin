@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from '../user.controller';
 import { CreateAdminUserService } from '../services/user-admin.service';
 import { CreateClientUserService } from '../services/user-client.service';
-import { GetUserService } from '../services/get-user.service';
+import { GetUserByJwtService } from '../services/get-user-by-jwt.service';
 import { GetClientsService } from '../services/get-clients.service';
 import { UpdateUserService } from '../services/update-user.service';
 import { RedisCacheService } from '../../../modules/auth/infra/cache/redis-cache.service';
@@ -24,7 +24,7 @@ describe('UserController', () => {
 
   let createAdminService: CreateAdminUserService;
   let createClientService: CreateClientUserService;
-  let getUserService: GetUserService;
+  let getUserByJwtService: GetUserByJwtService;
   let getClientsService: GetClientsService;
   let updateUserService: UpdateUserService;
   let findUserByIdService: FindUserByIdService;
@@ -47,7 +47,7 @@ describe('UserController', () => {
           },
         },
         {
-          provide: GetUserService,
+          provide: GetUserByJwtService,
           useValue: {
             execute: jest.fn().mockResolvedValue(mockUserData),
           },
@@ -80,7 +80,7 @@ describe('UserController', () => {
     createClientService = module.get<CreateClientUserService>(
       CreateClientUserService,
     );
-    getUserService = module.get<GetUserService>(GetUserService);
+    getUserByJwtService = module.get<GetUserByJwtService>(GetUserByJwtService);
     getClientsService = module.get<GetClientsService>(GetClientsService);
     updateUserService = module.get<UpdateUserService>(UpdateUserService);
     findUserByIdService = module.get<FindUserByIdService>(FindUserByIdService);
@@ -147,25 +147,24 @@ describe('UserController', () => {
     });
   });
 
-  // describe('find user by id', () => {
-  //   it('should get an user successfully', async () => {
-  //     const result = await controller.findUser(
-  //       mockNewClientUser.id,
-  //       mockAccessToken,
-  //     );
+  describe('get user by access token', () => {
+    it('should get an user successfully', async () => {
+      const result = await controller.GetUserByJwt(mockAccessToken);
 
-  //     expect(getUserService.execute).toHaveBeenCalledTimes(1);
-  //     expect(result).toEqual(mockUserData);
-  //   });
+      expect(getUserByJwtService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUserData);
+    });
 
-  //   it('should throw an error', async () => {
-  //     jest.spyOn(getUserService, 'execute').mockRejectedValueOnce(new Error());
+    it('should throw an error', async () => {
+      jest
+        .spyOn(getUserByJwtService, 'execute')
+        .mockRejectedValueOnce(new Error());
 
-  //     await expect(
-  //       controller.findUser(mockNewClientUser.id, mockAccessToken),
-  //     ).rejects.toThrowError();
-  //   });
-  // });
+      await expect(
+        controller.GetUserByJwt(mockAccessToken),
+      ).rejects.toThrowError();
+    });
+  });
 
   describe('find all professional clients', () => {
     it('should get clients successfully', async () => {

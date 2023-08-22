@@ -60,6 +60,7 @@ export const mockNewClientUser: User = {
 
 export const mockUserData: UserData = {
   id: mockNewClientUser.id,
+  almaId: mockNewClientUser.almaId,
   name: mockNewClientUser.name,
   socialName: mockNewClientUser.socialName,
   bornDate: faker.date.birthdate().toISOString().split('T')[0],
@@ -68,6 +69,7 @@ export const mockUserData: UserData = {
   email: mockNewClientUser.email,
   phone: faker.phone.number(),
   status: faker.string.sample(),
+  role: mockNewClientUser.role,
   createdAt: faker.date.recent(),
   updatedAt: faker.date.recent(),
 };
