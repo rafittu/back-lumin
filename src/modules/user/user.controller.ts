@@ -69,13 +69,13 @@ export class UserController {
     return this.findUserByIdService.execute(userId);
   }
 
-  // @Get('/user/:id')
-  // findUser(
-  //   @Param('id') userId: string,
-  //   @AccessToken() accessToken: string,
-  // ): Promise<UserData> {
-  //   return this.getUserService.execute(userId, accessToken);
-  // }
+  @Get('/user/:id')
+  findUser(
+    @Param('id') userId: string,
+    @AccessToken() accessToken: string,
+  ): Promise<UserData> {
+    return this.getUserService.execute(userId, accessToken);
+  }
 
   @Patch('/update/:id')
   update(
