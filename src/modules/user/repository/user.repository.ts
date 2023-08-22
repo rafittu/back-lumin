@@ -14,6 +14,7 @@ import {
   UpdatedUser,
   User,
   UserData,
+  UserInfo,
 } from '../interfaces/user.interface';
 import axios from 'axios';
 import { Prisma } from '@prisma/client';
@@ -160,7 +161,7 @@ export class UserRepository implements IUserRepository {
     }
   };
 
-  findById = async (userId: string) => {
+  findById = async (userId: string): Promise<UserInfo> => {
     try {
       const userData = await this.prisma.user.findFirst({
         where: {

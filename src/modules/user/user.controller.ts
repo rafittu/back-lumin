@@ -13,6 +13,7 @@ import {
   ProfessionalClients,
   UpdatedUser,
   UserData,
+  UserInfo,
 } from './interfaces/user.interface';
 import { HttpExceptionFilter } from '../../common/filter/http-exception.filter';
 import { AppError } from '../../common/errors/Error';
@@ -64,7 +65,7 @@ export class UserController {
   }
 
   @Get('/user/:id')
-  findUserById(@Param('id') userId: string) {
+  findUserById(@Param('id') userId: string): Promise<UserInfo> {
     return this.findUserByIdService.execute(userId);
   }
 

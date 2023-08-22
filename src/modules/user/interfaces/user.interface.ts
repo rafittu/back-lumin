@@ -56,3 +56,13 @@ export interface ProfessionalClients {
   professionalId: string;
   clients: Client[];
 }
+
+export interface UserInfo {
+  id: string;
+  almaId: string;
+  name: string;
+  socialName: string;
+  role: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
