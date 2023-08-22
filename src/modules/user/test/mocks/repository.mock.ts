@@ -86,6 +86,7 @@ export const mockAlmaUserData: AlmaUserData = {
 
 export const mockGetUser: Interfaces.UserData = {
   id: mockPrismaUser.id,
+  almaId: mockPrismaUser.alma_id,
   name: mockPrismaUser.name,
   socialName: mockPrismaUser.social_name,
   bornDate: mockAlmaUserData.personal.bornDate,
@@ -94,6 +95,7 @@ export const mockGetUser: Interfaces.UserData = {
   email: mockAlmaUserData.contact.email,
   phone: mockAlmaUserData.contact.phone,
   status: mockAlmaUserData.security.status,
+  role: mockPrismaUser.role,
   createdAt: mockPrismaUser.created_at,
   updatedAt: mockPrismaUser.updated_at,
 };
