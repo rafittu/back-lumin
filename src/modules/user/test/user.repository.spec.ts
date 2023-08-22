@@ -144,60 +144,61 @@ describe('UserRepository', () => {
     });
   });
 
-  // describe('getUser', () => {
-  //   it('should find an user by id successfully', async () => {
-  //     jest
-  //       .spyOn(prismaService.user, 'findFirst')
-  //       .mockResolvedValueOnce(mockPrismaUser);
+  describe('getUserByJwt', () => {
+    it('should find an user by id successfully', async () => {
+      jest
+        .spyOn(jwt, 'verify')
+        .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
 
-  //     jest
-  //       .spyOn(userRepository as any, 'almaGetRequest')
-  //       .mockResolvedValueOnce(mockAlmaUserData);
+      jest
+        .spyOn(prismaService.user, 'findFirst')
+        .mockResolvedValueOnce(mockPrismaUser);
 
-  //     const result = await userRepository.getUser(
-  //       mockPrismaUser.id,
-  //       mockAccessToken,
-  //     );
+      jest
+        .spyOn(userRepository as any, 'almaGetRequest')
+        .mockResolvedValueOnce(mockAlmaUserData);
 
-  //     expect(userRepository['almaGetRequest']).toHaveBeenCalledTimes(1);
-  //     expect(prismaService.user.findFirst).toHaveBeenCalledTimes(1);
-  //     expect(result).toEqual(mockGetUser);
-  //   });
+      const result = await userRepository.getUserByJwt(mockAccessToken);
 
-  //   it('should throw an AppError when almaGetRequest throws an error', async () => {
-  //     jest
-  //       .spyOn(prismaService.user, 'findFirst')
-  //       .mockResolvedValueOnce(mockPrismaUser);
+      expect(userRepository['almaGetRequest']).toHaveBeenCalledTimes(1);
+      expect(prismaService.user.findFirst).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockGetUser);
+    });
 
-  //     jest
-  //       .spyOn(userRepository as any, 'almaGetRequest')
-  //       .mockRejectedValueOnce(
-  //         new AppError('error.code', 500, 'Error message'),
-  //       );
+    // it('should throw an AppError when almaGetRequest throws an error', async () => {
+    //   jest
+    //     .spyOn(prismaService.user, 'findFirst')
+    //     .mockResolvedValueOnce(mockPrismaUser);
 
-  //     try {
-  //       await userRepository.getUser(mockPrismaUser.id, mockAccessToken);
-  //     } catch (error) {
-  //       expect(error).toBeInstanceOf(AppError);
-  //       expect(error.code).toBe(503);
-  //       expect(error.message).toBe('Error message');
-  //     }
-  //   });
+    //   jest
+    //     .spyOn(userRepository as any, 'almaGetRequest')
+    //     .mockRejectedValueOnce(
+    //       new AppError('error.code', 500, 'Error message'),
+    //     );
 
-  //   it('should throw an error if user is not found', async () => {
-  //     jest
-  //       .spyOn(prismaService.user, 'findFirst')
-  //       .mockRejectedValueOnce(new Error());
+    //   try {
+    //     await userRepository.getUser(mockPrismaUser.id, mockAccessToken);
+    //   } catch (error) {
+    //     expect(error).toBeInstanceOf(AppError);
+    //     expect(error.code).toBe(503);
+    //     expect(error.message).toBe('Error message');
+    //   }
+    // });
 
-  //     try {
-  //       await userRepository.getUser(mockPrismaUser.id, mockAccessToken);
-  //     } catch (error) {
-  //       expect(error).toBeInstanceOf(AppError);
-  //       expect(error.code).toBe(500);
-  //       expect(error.message).toBe('could not get user');
-  //     }
-  //   });
-  // });
+    // it('should throw an error if user is not found', async () => {
+    //   jest
+    //     .spyOn(prismaService.user, 'findFirst')
+    //     .mockRejectedValueOnce(new Error());
+
+    //   try {
+    //     await userRepository.getUser(mockPrismaUser.id, mockAccessToken);
+    //   } catch (error) {
+    //     expect(error).toBeInstanceOf(AppError);
+    //     expect(error.code).toBe(500);
+    //     expect(error.message).toBe('could not get user');
+    //   }
+    // });
+  });
 
   describe('getClients', () => {
     it('should find all professional clients successfully', async () => {
