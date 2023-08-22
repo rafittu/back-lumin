@@ -98,7 +98,8 @@ describe('UserService', () => {
       const result = await createClientService.execute(mockCreateUserBody);
 
       expect(userRepository.createUser).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(mockNewClientUser);
+      expect(authRepository.signIn).toHaveBeenCalledTimes(1);
+      expect(result).toEqual('accessToken');
     });
   });
 
