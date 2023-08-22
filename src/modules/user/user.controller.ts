@@ -27,6 +27,7 @@ import { GetUserService } from './services/get-user.service';
 import { AccessToken } from '../auth/infra/decorators/access-token.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserService } from './services/update-user.service';
+import { FindUserByIdService } from './services/find-user-by-id.service';
 import { JwtToken } from '../auth/interfaces/auth.interface';
 
 @UseGuards(RolesGuard)
@@ -39,6 +40,7 @@ export class UserController {
     private readonly getClientsService: GetClientsService,
     private readonly getUserService: GetUserService,
     private readonly updateUserService: UpdateUserService,
+    private readonly findUserByIdService: FindUserByIdService,
   ) {}
 
   @isPublic()
@@ -62,12 +64,17 @@ export class UserController {
   }
 
   @Get('/user/:id')
-  findUser(
-    @Param('id') userId: string,
-    @AccessToken() accessToken: string,
-  ): Promise<UserData> {
-    return this.getUserService.execute(userId, accessToken);
+  findUserById(@Param('id') userId: string) {
+    return this.findUserByIdService.execute(userId);
   }
+
+  // @Get('/user/:id')
+  // findUser(
+  //   @Param('id') userId: string,
+  //   @AccessToken() accessToken: string,
+  // ): Promise<UserData> {
+  //   return this.getUserService.execute(userId, accessToken);
+  // }
 
   @Patch('/update/:id')
   update(
