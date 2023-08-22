@@ -189,19 +189,23 @@ describe('UserRepository', () => {
       }
     });
 
-    // it('should throw an error if user is not found', async () => {
-    //   jest
-    //     .spyOn(prismaService.user, 'findFirst')
-    //     .mockRejectedValueOnce(new Error());
+    it('should throw an error if user is not found', async () => {
+      jest
+        .spyOn(jwt, 'verify')
+        .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
 
-    //   try {
-    //     await userRepository.getUser(mockPrismaUser.id, mockAccessToken);
-    //   } catch (error) {
-    //     expect(error).toBeInstanceOf(AppError);
-    //     expect(error.code).toBe(500);
-    //     expect(error.message).toBe('could not get user');
-    //   }
-    // });
+      jest
+        .spyOn(prismaService.user, 'findFirst')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await userRepository.getUserByJwt(mockAccessToken);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('could not get user');
+      }
+    });
   });
 
   describe('getClients', () => {
