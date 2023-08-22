@@ -14,9 +14,11 @@ import {
   mockUpdateUser,
   mockUpdatedUser,
   mockUserData,
+  mockUserInfo,
 } from './mocks/controller.mock';
 import { AuthRepository } from '../../../modules/auth/repository/auth.repository';
 import { AppError } from '../../../common/errors/Error';
+import { FindUserByIdService } from '../services/find-user-by-id.service';
 
 describe('UserService', () => {
   let createAdminService: CreateAdminUserService;
@@ -24,6 +26,7 @@ describe('UserService', () => {
   let getUserService: GetUserService;
   let getClientsService: GetClientsService;
   let updateUserService: UpdateUserService;
+  let findUserByIdService: FindUserByIdService;
 
   let userRepository: UserRepository;
   let authRepository: AuthRepository;
@@ -36,6 +39,7 @@ describe('UserService', () => {
         GetUserService,
         GetClientsService,
         UpdateUserService,
+        FindUserByIdService,
         {
           provide: UserRepository,
           useValue: {
@@ -43,6 +47,7 @@ describe('UserService', () => {
             getUser: jest.fn().mockResolvedValue(mockUserData),
             getClients: jest.fn().mockResolvedValue(mockProfessionalClients),
             updateUser: jest.fn().mockResolvedValue(mockUpdatedUser),
+            findById: jest.fn().mockResolvedValue(mockUserInfo),
           },
         },
         {
@@ -63,6 +68,7 @@ describe('UserService', () => {
     getUserService = module.get<GetUserService>(GetUserService);
     getClientsService = module.get<GetClientsService>(GetClientsService);
     updateUserService = module.get<UpdateUserService>(UpdateUserService);
+    findUserByIdService = module.get<FindUserByIdService>(FindUserByIdService);
 
     userRepository = module.get<UserRepository>(UserRepository);
     authRepository = module.get<AuthRepository>(AuthRepository);
@@ -71,9 +77,10 @@ describe('UserService', () => {
   it('should be defined', () => {
     expect(createAdminService).toBeDefined();
     expect(createClientService).toBeDefined();
-    expect(getUserService).toBeDefined();
+    // expect(getUserService).toBeDefined();
     expect(getClientsService).toBeDefined();
     expect(updateUserService).toBeDefined();
+    expect(findUserByIdService).toBeDefined();
   });
 
   describe('create admin user', () => {
@@ -132,15 +139,24 @@ describe('UserService', () => {
 
   describe('find user by id', () => {
     it('should get an user successfully', async () => {
-      const result = await getUserService.execute(
-        mockNewClientUser.id,
-        mockAccessToken,
-      );
+      const result = await findUserByIdService.execute(mockNewClientUser.id);
 
-      expect(userRepository.getUser).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(mockUserData);
+      expect(userRepository.findById).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUserInfo);
     });
   });
+
+  // describe('find user by id', () => {
+  //   it('should get an user successfully', async () => {
+  //     const result = await getUserService.execute(
+  //       mockNewClientUser.id,
+  //       mockAccessToken,
+  //     );
+
+  //     expect(userRepository.getUser).toHaveBeenCalledTimes(1);
+  //     expect(result).toEqual(mockUserData);
+  //   });
+  // });
 
   describe('find all professional clients', () => {
     it('should get clients successfully', async () => {

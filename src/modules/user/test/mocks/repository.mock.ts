@@ -36,6 +36,16 @@ export const mockPrismaUser: User = {
   updated_at: faker.date.recent(),
 };
 
+export const mockUserInfo: Interfaces.UserInfo = {
+  id: mockPrismaUser.id,
+  almaId: mockPrismaUser.alma_id,
+  name: mockPrismaUser.name,
+  socialName: mockPrismaUser.social_name,
+  role: mockPrismaUser.role,
+  createdAt: mockPrismaUser.created_at,
+  updatedAt: mockPrismaUser.updated_at,
+};
+
 export const mockNewUser: Interfaces.User = {
   id: mockPrismaUser.id,
   almaId: mockPrismaUser.alma_id,

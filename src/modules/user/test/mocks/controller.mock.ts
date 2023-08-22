@@ -6,6 +6,7 @@ import {
   UpdatedUser,
   User,
   UserData,
+  UserInfo,
 } from '../../interfaces/user.interface';
 import { UserRole } from '../../enum/user-role.enum';
 import { UpdateUserDto } from '../../dto/update-user.dto';
@@ -31,6 +32,16 @@ export const mockNewAdminUser: User = {
   name: faker.person.fullName({ sex: 'male' }),
   socialName: faker.person.firstName('female'),
   email: faker.internet.email(),
+  role: UserRole.ADMIN,
+  createdAt: faker.date.recent(),
+  updatedAt: faker.date.recent(),
+};
+
+export const mockUserInfo: UserInfo = {
+  id: faker.string.uuid(),
+  almaId: faker.string.uuid(),
+  name: faker.person.fullName({ sex: 'male' }),
+  socialName: faker.person.firstName('female'),
   role: UserRole.ADMIN,
   createdAt: faker.date.recent(),
   updatedAt: faker.date.recent(),
