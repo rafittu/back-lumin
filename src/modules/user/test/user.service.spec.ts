@@ -15,6 +15,7 @@ import {
   mockUpdatedUser,
   mockUserData,
 } from './mocks/controller.mock';
+import { AuthRepository } from '../../../modules/auth/repository/auth.repository';
 
 describe('UserService', () => {
   let createAdminService: CreateAdminUserService;
@@ -24,6 +25,7 @@ describe('UserService', () => {
   let updateUserService: UpdateUserService;
 
   let userRepository: UserRepository;
+  let authRepository: AuthRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -42,6 +44,12 @@ describe('UserService', () => {
             updateUser: jest.fn().mockResolvedValue(mockUpdatedUser),
           },
         },
+        {
+          provide: AuthRepository,
+          useValue: {
+            signIn: jest.fn().mockResolvedValue('accessToken'),
+          },
+        },
       ],
     }).compile();
 
@@ -56,6 +64,7 @@ describe('UserService', () => {
     updateUserService = module.get<UpdateUserService>(UpdateUserService);
 
     userRepository = module.get<UserRepository>(UserRepository);
+    authRepository = module.get<AuthRepository>(AuthRepository);
   });
 
   it('should be defined', () => {
@@ -75,7 +84,8 @@ describe('UserService', () => {
       const result = await createAdminService.execute(mockCreateUserBody);
 
       expect(userRepository.createUser).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(mockNewAdminUser);
+      expect(authRepository.signIn).toHaveBeenCalledTimes(1);
+      expect(result).toEqual('accessToken');
     });
   });
 
