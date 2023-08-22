@@ -16,6 +16,7 @@ import {
   mockUserData,
 } from './mocks/controller.mock';
 import { AuthRepository } from '../../../modules/auth/repository/auth.repository';
+import { AppError } from '../../../common/errors/Error';
 
 describe('UserService', () => {
   let createAdminService: CreateAdminUserService;
@@ -86,6 +87,19 @@ describe('UserService', () => {
       expect(userRepository.createUser).toHaveBeenCalledTimes(1);
       expect(authRepository.signIn).toHaveBeenCalledTimes(1);
       expect(result).toEqual('accessToken');
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(userRepository, 'createUser')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await createAdminService.execute(mockCreateUserBody);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+      }
     });
   });
 
