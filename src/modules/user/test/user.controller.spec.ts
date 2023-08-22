@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from '../user.controller';
 import { CreateAdminUserService } from '../services/user-admin.service';
 import { CreateClientUserService } from '../services/user-client.service';
-import { GetUserService } from '../services/get-user.service';
+import { GetUserByJwtService } from '../services/get-user-by-jwt.service';
 import { GetClientsService } from '../services/get-clients.service';
 import { UpdateUserService } from '../services/update-user.service';
 import { RedisCacheService } from '../../../modules/auth/infra/cache/redis-cache.service';
@@ -15,16 +15,19 @@ import {
   mockUpdateUser,
   mockUpdatedUser,
   mockUserData,
+  mockUserInfo,
 } from './mocks/controller.mock';
+import { FindUserByIdService } from '../services/find-user-by-id.service';
 
 describe('UserController', () => {
   let controller: UserController;
 
   let createAdminService: CreateAdminUserService;
   let createClientService: CreateClientUserService;
-  let getUserService: GetUserService;
+  let getUserByJwtService: GetUserByJwtService;
   let getClientsService: GetClientsService;
   let updateUserService: UpdateUserService;
+  let findUserByIdService: FindUserByIdService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -44,7 +47,7 @@ describe('UserController', () => {
           },
         },
         {
-          provide: GetUserService,
+          provide: GetUserByJwtService,
           useValue: {
             execute: jest.fn().mockResolvedValue(mockUserData),
           },
@@ -61,6 +64,12 @@ describe('UserController', () => {
             execute: jest.fn().mockResolvedValue(mockUpdatedUser),
           },
         },
+        {
+          provide: FindUserByIdService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(mockUserInfo),
+          },
+        },
       ],
     }).compile();
 
@@ -71,9 +80,10 @@ describe('UserController', () => {
     createClientService = module.get<CreateClientUserService>(
       CreateClientUserService,
     );
-    getUserService = module.get<GetUserService>(GetUserService);
+    getUserByJwtService = module.get<GetUserByJwtService>(GetUserByJwtService);
     getClientsService = module.get<GetClientsService>(GetClientsService);
     updateUserService = module.get<UpdateUserService>(UpdateUserService);
+    findUserByIdService = module.get<FindUserByIdService>(FindUserByIdService);
   });
 
   it('should be defined', () => {
@@ -120,20 +130,38 @@ describe('UserController', () => {
 
   describe('find user by id', () => {
     it('should get an user successfully', async () => {
-      const result = await controller.findUser(
-        mockNewClientUser.id,
-        mockAccessToken,
-      );
+      const result = await controller.findUserById(mockNewClientUser.id);
 
-      expect(getUserService.execute).toHaveBeenCalledTimes(1);
+      expect(findUserByIdService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUserInfo);
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(findUserByIdService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.findUserById(mockNewClientUser.id),
+      ).rejects.toThrowError();
+    });
+  });
+
+  describe('get user by access token', () => {
+    it('should get an user successfully', async () => {
+      const result = await controller.GetUserByJwt(mockAccessToken);
+
+      expect(getUserByJwtService.execute).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockUserData);
     });
 
     it('should throw an error', async () => {
-      jest.spyOn(getUserService, 'execute').mockRejectedValueOnce(new Error());
+      jest
+        .spyOn(getUserByJwtService, 'execute')
+        .mockRejectedValueOnce(new Error());
 
       await expect(
-        controller.findUser(mockNewClientUser.id, mockAccessToken),
+        controller.GetUserByJwt(mockAccessToken),
       ).rejects.toThrowError();
     });
   });

@@ -14,6 +14,7 @@ import {
   UpdatedUser,
   User,
   UserData,
+  UserInfo,
 } from '../interfaces/user.interface';
 import axios from 'axios';
 import { Prisma } from '@prisma/client';
@@ -160,11 +161,41 @@ export class UserRepository implements IUserRepository {
     }
   };
 
-  getUser = async (userId: string, accessToken: string): Promise<UserData> => {
+  findById = async (userId: string): Promise<UserInfo> => {
     try {
-      const user = await this.prisma.user.findFirst({
+      const userData = await this.prisma.user.findFirst({
         where: {
           id: userId,
+        },
+      });
+
+      const { id, alma_id, name, social_name, role, created_at, updated_at } =
+        userData;
+
+      const user = {
+        id,
+        almaId: alma_id,
+        name,
+        socialName: social_name,
+        role,
+        createdAt: created_at,
+        updatedAt: updated_at,
+      };
+
+      return user;
+    } catch (error) {
+      throw new AppError('user-repository.findById', 500, 'could not get user');
+    }
+  };
+
+  getUserByJwt = async (accessToken: string): Promise<UserData> => {
+    try {
+      const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+      const userAlmaId = decodedToken?.sub;
+
+      const user = await this.prisma.user.findFirst({
+        where: {
+          alma_id: String(userAlmaId),
         },
       });
 
@@ -174,10 +205,11 @@ export class UserRepository implements IUserRepository {
       const { socialName, bornDate, motherName } = userAlmaData.personal;
       const { username, email, phone } = userAlmaData.contact;
       const { status } = userAlmaData.security;
-      const { id, name, created_at, updated_at } = user;
+      const { id, alma_id, name, role, created_at, updated_at } = user;
 
       const userData = {
         id,
+        almaId: alma_id,
         name,
         socialName,
         bornDate,
@@ -186,6 +218,7 @@ export class UserRepository implements IUserRepository {
         email,
         phone,
         status,
+        role,
         createdAt: created_at,
         updatedAt: updated_at,
       };
@@ -193,10 +226,14 @@ export class UserRepository implements IUserRepository {
       return userData;
     } catch (error) {
       if (error instanceof AppError) {
-        throw new AppError('user-repository.getUser', 503, error.message);
+        throw new AppError('user-repository.getUserByJwt', 503, error.message);
       }
 
-      throw new AppError('user-repository.getUser', 500, 'could not get user');
+      throw new AppError(
+        'user-repository.getUserByJwt',
+        500,
+        'could not get user',
+      );
     }
   };
 

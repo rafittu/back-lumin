@@ -59,17 +59,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/AccessToken"
                 },
                 "example": {
-                  "id": "123456",
-                  "almaId": "78910",
-                  "name": "John Doe",
-                  "socialName": "JD",
-                  "email": "johndoe@example.com",
-                  "role": "ADMIN",
-                  "createdAt": "2023-07-18T12:00:00Z",
-                  "updatedAt": "2023-07-18T12:00:00Z"
+                  "accessToken": "eyJhbGciOiJ.eyJzdW5MDIyfQ.SflKxwk6yJV_adQssw5c"
                 }
               }
             }
@@ -161,17 +154,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/AccessToken"
                 },
                 "example": {
-                  "id": "78910",
-                  "almaId": "123456",
-                  "name": "Riley Doe",
-                  "socialName": "RD",
-                  "email": "rileydoe@example.com",
-                  "role": "CLIENT",
-                  "createdAt": "2023-07-18T12:00:00Z",
-                  "updatedAt": "2023-07-18T12:00:00Z"
+                  "accessToken": "eyJhbGciOiJ.eyJzdW5MDIyfQ.SflKxwk6yJV_adQssw5c"
                 }
               }
             }
@@ -247,23 +233,38 @@
         ],
         "responses": {
           "200": {
-            "description": "User data",
+            "description": "User info",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserData"
+                  "$ref": "#/components/schemas/UserInfo"
                 },
                 "example": {
                   "id": "123456",
+                  "almaId": "78910",
                   "name": "Riley Doe",
                   "socialName": "RD",
-                  "bornDate": "1991-01-01",
-                  "motherName": "Jane Doe",
-                  "email": "rileydoe@example.com",
-                  "phone": "1234567890",
-                  "status": "ACTIVE",
+                  "role": "ADMIN",
                   "createdAt": "2023-05-10T12:00:00Z",
                   "updatedAt": "2023-05-11T12:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Missing authorization token",
+                    "code": "auth-guard.jwtAuth",
+                    "status": true
+                  },
+                  "data": {}
                 }
               }
             }
@@ -278,7 +279,110 @@
                 "example": {
                   "error": {
                     "message": "could not get user",
-                    "code": "user-repository.getUser",
+                    "code": "user-repository.findById",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/user": {
+      "get": {
+        "summary": "Get user by access token",
+        "description": "Route to get an user by jwt token",
+        "tags": ["User"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User Data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserData"
+                },
+                "example": {
+                  "id": "123456",
+                  "almaId": "78910",
+                  "name": "Riley Doe",
+                  "socialName": "RD",
+                  "bornDate": "1991-01-01",
+                  "motherName": "Jane Doe",
+                  "email": "rileydoe@example.com",
+                  "phone": "1234567890",
+                  "status": "ACTIVE",
+                  "role": "ADMIN",
+                  "createdAt": "2023-05-10T12:00:00Z",
+                  "updatedAt": "2023-05-11T12:00:00Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Missing authorization token",
+                    "code": "auth-guard.jwtAuth",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "could not get user",
+                    "code": "user-repository.getUserByJwt",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unvailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "could not get user",
+                    "code": "user-repository.getUserByJwt",
                     "status": true
                   },
                   "data": {}
@@ -2894,7 +2998,7 @@
           "passwordConfirmation"
         ]
       },
-      "User": {
+      "UserData": {
         "type": "object",
         "properties": {
           "id": {
@@ -2903,40 +3007,7 @@
           },
           "almaId": {
             "type": "string",
-            "description": "User alma ID"
-          },
-          "name": {
-            "type": "string",
-            "description": "Name of the user"
-          },
-          "socialName": {
-            "type": "string",
-            "description": "Social name of the user"
-          },
-          "email": {
-            "type": "string",
-            "description": "Email of the user"
-          },
-          "role": {
-            "type": "string",
-            "description": "Role of the user"
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "Date and time of user creation"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "Date and time of user update"
-          }
-        }
-      },
-      "UserData": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "User ID"
+            "description": "User ALMA API ID"
           },
           "name": {
             "type": "string",
@@ -2969,6 +3040,43 @@
           "status": {
             "type": "string",
             "description": "User status"
+          },
+          "role": {
+            "type": "string",
+            "description": "User account role"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time of user creation"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Date and time of user update"
+          }
+        }
+      },
+      "UserInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID"
+          },
+          "almaId": {
+            "type": "string",
+            "description": "User alma ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the user"
+          },
+          "socialName": {
+            "type": "string",
+            "description": "Social name of the user"
+          },
+          "role": {
+            "type": "string",
+            "description": "User role"
           },
           "createdAt": {
             "type": "string",
@@ -3086,6 +3194,74 @@
           "updatedAt": {
             "type": "string",
             "description": "Date and time of last user update"
+          }
+        }
+      },
+      "UpdatedUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID"
+          },
+          "personal": {
+            "type": "object",
+            "properties": {
+              "firstName": {
+                "type": "string",
+                "description": "First name of the user"
+              },
+              "lastName": {
+                "type": "string",
+                "description": "Last name of the user"
+              },
+              "socialName": {
+                "type": "string",
+                "description": "Social name of the user"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Date and time of user personal data update"
+              }
+            }
+          },
+          "contact": {
+            "type": "object",
+            "properties": {
+              "username": {
+                "type": "string",
+                "description": "Username of the user"
+              },
+              "email": {
+                "type": "string",
+                "description": "Email of the user"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Date and time of user contact data update"
+              }
+            }
+          },
+          "security": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "description": "User account status"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Date and time of user security data update"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time of user creation"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Date and time of user update"
           }
         }
       },

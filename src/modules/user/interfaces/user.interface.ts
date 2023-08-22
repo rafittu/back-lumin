@@ -13,6 +13,7 @@ export interface User {
 
 export interface UserData {
   id: string;
+  almaId: string;
   name: string;
   socialName: string;
   bornDate: string;
@@ -21,6 +22,7 @@ export interface UserData {
   email: string;
   phone: string;
   status: string;
+  role: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -55,4 +57,14 @@ export interface Client {
 export interface ProfessionalClients {
   professionalId: string;
   clients: Client[];
+}
+
+export interface UserInfo {
+  id: string;
+  almaId: string;
+  name: string;
+  socialName: string;
+  role: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
