@@ -15,7 +15,9 @@ import {
   mockUpdateUser,
   mockUpdatedUser,
   mockUserData,
+  mockUserInfo,
 } from './mocks/controller.mock';
+import { FindUserByIdService } from '../services/find-user-by-id.service';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -25,6 +27,7 @@ describe('UserController', () => {
   let getUserService: GetUserService;
   let getClientsService: GetClientsService;
   let updateUserService: UpdateUserService;
+  let findUserByIdService: FindUserByIdService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -61,6 +64,12 @@ describe('UserController', () => {
             execute: jest.fn().mockResolvedValue(mockUpdatedUser),
           },
         },
+        {
+          provide: FindUserByIdService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(mockUserInfo),
+          },
+        },
       ],
     }).compile();
 
@@ -74,6 +83,7 @@ describe('UserController', () => {
     getUserService = module.get<GetUserService>(GetUserService);
     getClientsService = module.get<GetClientsService>(GetClientsService);
     updateUserService = module.get<UpdateUserService>(UpdateUserService);
+    findUserByIdService = module.get<FindUserByIdService>(FindUserByIdService);
   });
 
   it('should be defined', () => {
@@ -120,23 +130,42 @@ describe('UserController', () => {
 
   describe('find user by id', () => {
     it('should get an user successfully', async () => {
-      const result = await controller.findUser(
-        mockNewClientUser.id,
-        mockAccessToken,
-      );
+      const result = await controller.findUserById(mockNewClientUser.id);
 
-      expect(getUserService.execute).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(mockUserData);
+      expect(findUserByIdService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockUserInfo);
     });
 
     it('should throw an error', async () => {
-      jest.spyOn(getUserService, 'execute').mockRejectedValueOnce(new Error());
+      jest
+        .spyOn(findUserByIdService, 'execute')
+        .mockRejectedValueOnce(new Error());
 
       await expect(
-        controller.findUser(mockNewClientUser.id, mockAccessToken),
+        controller.findUserById(mockNewClientUser.id),
       ).rejects.toThrowError();
     });
   });
+
+  // describe('find user by id', () => {
+  //   it('should get an user successfully', async () => {
+  //     const result = await controller.findUser(
+  //       mockNewClientUser.id,
+  //       mockAccessToken,
+  //     );
+
+  //     expect(getUserService.execute).toHaveBeenCalledTimes(1);
+  //     expect(result).toEqual(mockUserData);
+  //   });
+
+  //   it('should throw an error', async () => {
+  //     jest.spyOn(getUserService, 'execute').mockRejectedValueOnce(new Error());
+
+  //     await expect(
+  //       controller.findUser(mockNewClientUser.id, mockAccessToken),
+  //     ).rejects.toThrowError();
+  //   });
+  // });
 
   describe('find all professional clients', () => {
     it('should get clients successfully', async () => {
