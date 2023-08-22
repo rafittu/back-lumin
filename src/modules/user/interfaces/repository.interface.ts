@@ -12,6 +12,7 @@ export interface IUserRepository {
   createUser(data: CreateUserDto, role: UserRole): Promise<User>;
   getClients(professionalId: string): Promise<ProfessionalClients>;
   getUser(userId: string, accessToken: string): Promise<UserData>;
+  findById(userId: string);
   updateUser(
     userId: string,
     accessToken: string,

@@ -160,6 +160,33 @@ export class UserRepository implements IUserRepository {
     }
   };
 
+  findById = async (userId: string) => {
+    try {
+      const userData = await this.prisma.user.findFirst({
+        where: {
+          id: userId,
+        },
+      });
+
+      const { id, alma_id, name, social_name, role, created_at, updated_at } =
+        userData;
+
+      const user = {
+        id,
+        almaId: alma_id,
+        name,
+        socialName: social_name,
+        role,
+        createdAt: created_at,
+        updatedAt: updated_at,
+      };
+
+      return user;
+    } catch (error) {
+      throw new AppError('user-repository.findUser', 500, 'could not get user');
+    }
+  };
+
   getUser = async (userId: string, accessToken: string): Promise<UserData> => {
     try {
       const user = await this.prisma.user.findFirst({
