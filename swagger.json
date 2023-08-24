@@ -3011,7 +3011,7 @@
           },
           "signupToken": {
             "type": "string",
-            "description": "Password confirmation"
+            "description": "Admin token to signup"
           }
         },
         "required": [
