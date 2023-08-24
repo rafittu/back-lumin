@@ -77,4 +77,8 @@ export class CreateUserDto {
     message: 'passwords doesnt match',
   })
   passwordConfirmation: string;
+
+  @IsOptional()
+  @IsString()
+  signupToken: string;
 }
