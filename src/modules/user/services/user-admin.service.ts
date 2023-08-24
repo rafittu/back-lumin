@@ -16,6 +16,17 @@ export class CreateAdminUserService {
   ) {}
 
   async execute(data: CreateUserDto): Promise<JwtToken> {
+    const adminSignupToken = process.env.ADMIN_SIGNUP_TOKEN;
+    const { signupToken } = data;
+
+    if (!signupToken || signupToken !== adminSignupToken) {
+      throw new AppError(
+        'user-service.createAdminUser',
+        400,
+        'missing or invalid signup token',
+      );
+    }
+
     try {
       await this.userRepository.createUser(data, UserRole.ADMIN);
 
