@@ -85,15 +85,40 @@ describe('UserService', () => {
 
   describe('create admin user', () => {
     it('should create a new one successfully', async () => {
+      process.env.ADMIN_SIGNUP_TOKEN = 'admin_signup_token';
+
       jest
         .spyOn(userRepository, 'createUser')
         .mockResolvedValueOnce(mockNewAdminUser);
 
       const result = await createAdminService.execute(mockCreateUserBody);
 
+      delete process.env.ADMIN_SIGNUP_TOKEN;
+
       expect(userRepository.createUser).toHaveBeenCalledTimes(1);
       expect(authRepository.signIn).toHaveBeenCalledTimes(1);
       expect(result).toEqual('accessToken');
+    });
+
+    it('should throw an error if missing signup token', async () => {
+      process.env.ADMIN_SIGNUP_TOKEN = 'admin_signup_token';
+
+      jest
+        .spyOn(userRepository, 'createUser')
+        .mockRejectedValueOnce(new Error());
+
+      const modifiedCreateUserBody = {
+        ...mockCreateUserBody,
+      };
+
+      delete modifiedCreateUserBody.signupToken;
+
+      try {
+        await createAdminService.execute(modifiedCreateUserBody);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+      }
     });
 
     it('should throw an error', async () => {

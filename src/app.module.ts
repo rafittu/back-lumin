@@ -35,6 +35,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
         RECORD_CIPHER_IV: Joi.string().required(),
         NEW_CIPHER_KEY: Joi.optional(),
         NEW_CIPHER_IV: Joi.optional(),
+        ADMIN_SIGNUP_TOKEN: Joi.string().required(),
       }),
     }),
     UserModule,
