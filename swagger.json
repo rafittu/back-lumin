@@ -35,7 +35,8 @@
                     "email": "johndoe@example.com",
                     "phone": "1234567890",
                     "password": "password123",
-                    "passwordConfirmation": "password123"
+                    "passwordConfirmation": "password123",
+                    "signupToken": "admin_signup_token"
                   }
                 },
                 "example2": {
@@ -46,7 +47,8 @@
                     "motherName": "Jane Doe",
                     "email": "johndoe@example.com",
                     "password": "password123",
-                    "passwordConfirmation": "password123"
+                    "passwordConfirmation": "password123",
+                    "signupToken": "admin_signup_token"
                   }
                 }
               }
@@ -67,6 +69,7 @@
               }
             }
           },
+
           "400": {
             "description": "Bad request",
             "content": {
@@ -74,13 +77,31 @@
                 "schema": {
                   "$ref": "#/components/schemas/Error"
                 },
-                "example": {
-                  "error": {
-                    "message": ["One or more fields are missing or invalid"],
-                    "code": "bad.request",
-                    "status": true
+                "examples": {
+                  "example1": {
+                    "summary": "Dto validation",
+                    "value": {
+                      "error": {
+                        "message": [
+                          "One or more fields are missing or invalid"
+                        ],
+                        "code": "bad.request",
+                        "status": true
+                      },
+                      "data": {}
+                    }
                   },
-                  "data": {}
+                  "example2": {
+                    "summary": "Missing or invalid field",
+                    "value": {
+                      "error": {
+                        "message": "missing or invalid signup token",
+                        "code": "user-service.createAdminUser",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  }
                 }
               }
             }
@@ -2987,6 +3008,10 @@
           "passwordConfirmation": {
             "type": "string",
             "description": "Password confirmation"
+          },
+          "signupToken": {
+            "type": "string",
+            "description": "Admin token to signup"
           }
         },
         "required": [
@@ -2995,7 +3020,8 @@
           "motherName",
           "email",
           "password",
-          "passwordConfirmation"
+          "passwordConfirmation",
+          "signupToken"
         ]
       },
       "UserData": {
