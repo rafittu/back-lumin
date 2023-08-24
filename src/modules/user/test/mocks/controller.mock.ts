@@ -24,6 +24,7 @@ export const mockCreateUserBody: CreateUserDto = {
   phone: faker.phone.number(),
   password: '@Password123',
   passwordConfirmation: '@Password123',
+  signupToken: 'admin_signup_token',
 };
 
 export const mockNewAdminUser: User = {
