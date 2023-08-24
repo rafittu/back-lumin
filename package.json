@@ -1,6 +1,6 @@
 {
   "name": "back-lumin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Back-end API to manage appointment records and streamline payment transactions for healthcare professionals",
   "author": "Rafael Ribeiro",
   "private": true,
