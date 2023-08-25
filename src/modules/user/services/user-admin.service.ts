@@ -26,6 +26,7 @@ export class CreateAdminUserService {
         'missing or invalid signup token',
       );
     }
+    delete data.signupToken;
 
     try {
       await this.userRepository.createUser(data, UserRole.ADMIN);

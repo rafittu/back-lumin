@@ -122,6 +122,9 @@ describe('UserService', () => {
     });
 
     it('should throw an error', async () => {
+      process.env.ADMIN_SIGNUP_TOKEN = 'admin_signup_token';
+      mockCreateUserBody.signupToken = 'admin_signup_token';
+
       jest
         .spyOn(userRepository, 'createUser')
         .mockRejectedValueOnce(new Error());
