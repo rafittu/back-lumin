@@ -1085,6 +1085,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "appointmentId",
+            "in": "query",
+            "description": "appointment id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
