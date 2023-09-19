@@ -3,6 +3,7 @@ import { UpdateRecordDto } from '../dto/update-record.dto';
 import {
   AllProfessionalRecords,
   ProfessionalRecord,
+  RecordFilters,
   RecordToReencrypt,
 } from './record.interface';
 
@@ -34,4 +35,5 @@ export interface IRecordRepository {
   ): Promise<UpdatedRecordResponse>;
   allRecords(): Promise<RecordToReencrypt[]>;
   updateAllRecords(records: RecordToReencrypt[]): Promise<void>;
+  getRecordByFilter(filter: RecordFilters): Promise<ProfessionalRecord>;
 }
