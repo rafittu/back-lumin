@@ -29,6 +29,37 @@ export class GetRecordByFilterService {
 
     const recordData = await this.recordRepository.getRecordByFilter(filter);
 
+    if (professionalId != recordData.professionalId) {
+      throw new AppError(
+        'record-module.getRecordByFilterService',
+        403,
+        `record does not belong to the specified 'professionalId'`,
+      );
+    }
+    delete recordData.professionalId;
+
+    try {
+      const cipherKey = Buffer.from(process.env.RECORD_CIPHER_KEY, 'hex');
+      const cipherIv = Buffer.from(process.env.RECORD_CIPHER_IV, 'hex');
+
+      const decipher = crypto.createDecipheriv(
+        process.env.RECORD_CIPHER_ALGORITHM,
+        cipherKey,
+        cipherIv,
+      );
+
+      let decryptedRecord = decipher.update(recordData.record, 'hex', 'utf8');
+      decryptedRecord += decipher.final('utf8');
+
+      recordData.record = decryptedRecord;
+    } catch (error) {
+      throw new AppError(
+        'record-module.getRecordByFilterService',
+        500,
+        error.code,
+      );
+    }
+
     return recordData;
   }
 }
