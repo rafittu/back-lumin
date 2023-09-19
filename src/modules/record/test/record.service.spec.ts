@@ -434,5 +434,15 @@ describe('RecordServices', () => {
       expect(recordRepository.getRecordByFilter).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockRecordByFilter);
     });
+
+    it('should throw an AppError if missing params', async () => {
+      try {
+        await getRecordByFilterService.execute(undefined, mockRecordFilters);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('missing parameter [professionalId]');
+      }
+    });
   });
 });
