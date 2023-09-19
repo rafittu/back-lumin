@@ -14,6 +14,7 @@ import {
   mockPrismaUpdateRecord,
   mockUpdatedRecordResponse,
   mockRecordsToReencrypt,
+  mockRecordFilters,
 } from './mocks/repository.mock';
 import { Prisma } from '@prisma/client';
 import { AppError } from '../../../common/errors/Error';
@@ -241,6 +242,51 @@ describe('RecordRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
         expect(error.message).toBe('failed to update records');
+      }
+    });
+  });
+
+  describe('get record by filter', () => {
+    it('should get a record successfully', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findFirst')
+        .mockResolvedValueOnce(mockPrismaGetOneProfessionalRecord);
+
+      const result = await recordRepository.getRecordByFilter(
+        mockRecordFilters,
+      );
+
+      expect(prismaService.appointmentRecord.findFirst).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(result).toEqual(mockProfessionalRecord);
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findFirst')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await recordRepository.getRecordByFilter(mockRecordFilters);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to get record');
+      }
+    });
+
+    it('should throw an error missing filter', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findFirst')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await recordRepository.getRecordByFilter({ appointmentId: undefined });
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to get record');
       }
     });
   });

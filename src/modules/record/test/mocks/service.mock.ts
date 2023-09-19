@@ -8,6 +8,7 @@ import {
   AllProfessionalRecords,
   NewRecord,
   ProfessionalRecord,
+  RecordFilters,
   RecordToReencrypt,
   UpdatedRecord,
 } from '../../interfaces/record.interface';
@@ -100,4 +101,19 @@ export const mockUpdatedRecord: UpdatedRecord = {
 export const mockRecordToReencrypt: RecordToReencrypt = {
   id: faker.string.uuid(),
   record: faker.string.sample(),
+};
+
+export const mockRecordFilters: RecordFilters = {
+  appointmentId: mockAppointmentId,
+};
+
+export const mockRecordByFilter: ProfessionalRecord = {
+  recordId: mockNewRecord.recordId,
+  professionalId: mockRepositoryRecordResponse.professionalId,
+  clientName: mockNewRecord.clientName,
+  scheduledDate: mockNewRecord.scheduledDate,
+  appointmentTime: mockNewRecord.appointmentTime,
+  record: mockCreateRecord.record,
+  createdAt: mockNewRecord.createdAt,
+  updatedAt: faker.date.recent(),
 };
