@@ -4,6 +4,7 @@ import {
   AllProfessionalRecords,
   NewRecord,
   ProfessionalRecord,
+  RecordFilters,
   UpdatedRecord,
 } from '../../interfaces/record.interface';
 import { UpdateRecordDto } from '../../dto/update-record.dto';
@@ -47,4 +48,8 @@ export const mockUpdatedRecord: UpdatedRecord = {
   record: mockProfessionalRecord.record,
   createdAt: mockProfessionalRecord.createdAt,
   updatedAt: mockProfessionalRecord.updatedAt,
+};
+
+export const mockRecordFilter: RecordFilters = {
+  appointmentId: mockAppointmentId,
 };

@@ -14,14 +14,18 @@ import {
   mockProfessionalAppointments,
   mockProfessionalId,
   mockProfessionalRecord,
+  mockRecordByFilter,
+  mockRecordFilters,
   mockRecordToReencrypt,
   mockRepositoryRecordResponse,
   mockUpdatedRecord,
   mockUpdatedRecordRepositoryResponse,
+  mockUserAppointment,
 } from './mocks/service.mock';
 import { GetOneRecordService } from '../services/get-one-record.service';
 import { UpdateRecordService } from '../services/update-record.service';
 import { ReencryptRecordsService } from '../services/reencrypt-record.service';
+import { GetRecordByFilterService } from '../services/record-by-filter.service';
 
 describe('RecordServices', () => {
   let createRecordService: CreateRecordService;
@@ -29,6 +33,7 @@ describe('RecordServices', () => {
   let getOneRecordService: GetOneRecordService;
   let updateRecordService: UpdateRecordService;
   let reencryptRecordsService: ReencryptRecordsService;
+  let getRecordByFilterService: GetRecordByFilterService;
 
   let recordRepository: RecordRepository;
   let schedulerRepository: SchedulerRepository;
@@ -41,6 +46,7 @@ describe('RecordServices', () => {
         GetOneRecordService,
         UpdateRecordService,
         ReencryptRecordsService,
+        GetRecordByFilterService,
         {
           provide: SchedulerRepository,
           useValue: {
@@ -64,6 +70,7 @@ describe('RecordServices', () => {
               .mockResolvedValue(mockUpdatedRecordRepositoryResponse),
             allRecords: jest.fn().mockResolvedValue([mockRecordToReencrypt]),
             updateAllRecords: jest.fn(),
+            getRecordByFilter: jest.fn().mockResolvedValue(mockRecordByFilter),
           },
         },
       ],
@@ -77,6 +84,9 @@ describe('RecordServices', () => {
     reencryptRecordsService = module.get<ReencryptRecordsService>(
       ReencryptRecordsService,
     );
+    getRecordByFilterService = module.get<GetRecordByFilterService>(
+      GetRecordByFilterService,
+    );
 
     recordRepository = module.get<RecordRepository>(RecordRepository);
     schedulerRepository = module.get<SchedulerRepository>(SchedulerRepository);
@@ -88,6 +98,7 @@ describe('RecordServices', () => {
     expect(getOneRecordService).toBeDefined();
     expect(updateRecordService).toBeDefined();
     expect(reencryptRecordsService).toBeDefined();
+    expect(getRecordByFilterService).toBeDefined();
   });
 
   describe('create record', () => {
@@ -395,6 +406,75 @@ describe('RecordServices', () => {
 
       try {
         await reencryptRecordsService.execute();
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+      }
+    });
+  });
+
+  describe('get record by filter', () => {
+    it('should decrypt and get a record successfully', async () => {
+      process.env.RECORD_CIPHER_ALGORITHM = 'aes-256-cbc';
+      process.env.RECORD_CIPHER_KEY = crypto.randomBytes(32).toString('hex');
+      process.env.RECORD_CIPHER_IV = crypto.randomBytes(16).toString('hex');
+
+      const mockCipher: crypto.Cipher = {
+        update: jest.fn().mockReturnValue('encrypted-record'),
+        final: jest.fn().mockReturnValue('final-encrypted-record'),
+      } as any;
+
+      jest.spyOn(crypto, 'createDecipheriv').mockReturnValue(mockCipher);
+
+      const result = await getRecordByFilterService.execute(
+        mockRecordByFilter.professionalId,
+        mockRecordFilters,
+      );
+
+      expect(recordRepository.getRecordByFilter).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockRecordByFilter);
+    });
+
+    it('should throw an AppError if missing params', async () => {
+      try {
+        await getRecordByFilterService.execute(undefined, mockRecordFilters);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(400);
+        expect(error.message).toBe('missing parameter [professionalId]');
+      }
+    });
+
+    it('should throw an AppError if record does not belong to professionalId', async () => {
+      try {
+        await getRecordByFilterService.execute(
+          mockProfessionalId,
+          mockRecordFilters,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(403);
+        expect(error.message).toBe(
+          `record does not belong to the specified 'professionalId'`,
+        );
+      }
+    });
+
+    it('should throw an AppError if record encryption fails', async () => {
+      jest
+        .spyOn(recordRepository, 'getRecordByFilter')
+        .mockResolvedValueOnce(mockRecordByFilter);
+
+      jest.spyOn(crypto, 'createDecipheriv').mockImplementation(() => {
+        throw new Error('Error decrypting data');
+      });
+
+      try {
+        mockRecordByFilter.professionalId = mockProfessionalId;
+        await getRecordByFilterService.execute(
+          mockRecordByFilter.professionalId,
+          mockRecordFilters,
+        );
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
