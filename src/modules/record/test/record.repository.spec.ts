@@ -275,5 +275,19 @@ describe('RecordRepository', () => {
         expect(error.message).toBe('failed to get record');
       }
     });
+
+    it('should throw an error missing filter', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findFirst')
+        .mockRejectedValueOnce(new Error());
+
+      try {
+        await recordRepository.getRecordByFilter({ appointmentId: undefined });
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('failed to get record');
+      }
+    });
   });
 });
