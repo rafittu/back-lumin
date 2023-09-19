@@ -22,11 +22,13 @@ import {
   NewRecord,
   ProfessionalRecord,
   UpdatedRecord,
+  RecordFilters,
 } from './interfaces/record.interface';
 import { GetAllRecordsService } from './services/all-records.service';
 import { GetOneRecordService } from './services/get-one-record.service';
 import { UpdateRecordService } from './services/update-record.service';
 import { ReencryptRecordsService } from './services/reencrypt-record.service';
+import { GetRecordByFilterService } from './services/record-by-filter.service';
 
 @UseGuards(RolesGuard)
 @UseFilters(new HttpExceptionFilter(new AppError()))
@@ -38,6 +40,7 @@ export class RecordController {
     private readonly getOneRecordRecordService: GetOneRecordService,
     private readonly updateRecordService: UpdateRecordService,
     private readonly reencryptRecordsService: ReencryptRecordsService,
+    private readonly getRecordByFilterService: GetRecordByFilterService,
   ) {}
 
   @Post('/create')
@@ -60,6 +63,15 @@ export class RecordController {
     @Query('professionalId') professionalId: string,
   ): Promise<AllProfessionalRecords> {
     return await this.getAllRecordsService.execute(professionalId);
+  }
+
+  @Get('/filter/:id')
+  @Roles(UserRole.ADMIN)
+  async findByFilter(
+    @Param('id') professionalId: string,
+    @Query() filter: RecordFilters,
+  ): Promise<ProfessionalRecord> {
+    return await this.getRecordByFilterService.execute(professionalId, filter);
   }
 
   @Get('/:id')
