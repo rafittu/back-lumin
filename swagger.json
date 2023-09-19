@@ -1857,6 +1857,156 @@
         }
       }
     },
+    "/record/filter/:id": {
+      "get": {
+        "summary": "Get record by filter",
+        "description": "Route to professionals get a client record by filter [appointment id]",
+        "tags": ["Record"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer {token}",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "professionalId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appointmentId",
+            "in": "query",
+            "description": "Appointment id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Record"
+                },
+                "example": {
+                  "recordId": "25678210",
+                  "clientName": "Riley Doe",
+                  "scheduledDate": "2023-08-03",
+                  "appointmentTime": "09:00",
+                  "record": "During the therapy session, Riley demonstrated a good ability to communicate and express her emotions. She described her feelings clearly and identified specific triggers for her anxiety, such as tight deadlines at work and interpersonal conflicts.",
+                  "createdAt": "2023-07-20T12:00:00Z",
+                  "updatedAt": "2023-07-20T12:00:00Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "missing query parameter [professionalId]",
+                    "code": "record-module.getRecordByFilterService",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "Insufficient privilege to access this route",
+                    "code": "auth-repository.roleGuard",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "record does not belong to the specified 'professional id'",
+                    "code": "record-module.getRecordByFilterService",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "example1": {
+                    "summary": "Failed to decrypt record",
+                    "value": {
+                      "error": {
+                        "message": "generic error",
+                        "code": "record-module.getRecordByFilterService",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  },
+                  "example2": {
+                    "summary": "Failed to get record",
+                    "value": {
+                      "error": {
+                        "message": "failed to get record",
+                        "code": "record-repository.getRecordByFilter",
+                        "status": true
+                      },
+                      "data": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/record/update/:id": {
       "patch": {
         "summary": "Update a record",

@@ -9,6 +9,7 @@ import {
   mockNewRecord,
   mockProfessionalId,
   mockProfessionalRecord,
+  mockRecordFilter,
   mockUpdateRecord,
   mockUpdatedRecord,
 } from './mocks/controller.mock';
@@ -16,6 +17,7 @@ import { GetAllRecordsService } from '../services/all-records.service';
 import { GetOneRecordService } from '../services/get-one-record.service';
 import { UpdateRecordService } from '../services/update-record.service';
 import { ReencryptRecordsService } from '../services/reencrypt-record.service';
+import { GetRecordByFilterService } from '../services/record-by-filter.service';
 
 describe('RecordController', () => {
   let controller: RecordController;
@@ -25,6 +27,7 @@ describe('RecordController', () => {
   let getOneRecordService: GetOneRecordService;
   let updateRecordService: UpdateRecordService;
   let reencryptRecordsService: ReencryptRecordsService;
+  let getRecordByFilterService: GetRecordByFilterService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -63,6 +66,12 @@ describe('RecordController', () => {
               .mockResolvedValue('Records reencrypted successfully'),
           },
         },
+        {
+          provide: GetRecordByFilterService,
+          useValue: {
+            execute: jest.fn().mockResolvedValue(mockProfessionalRecord),
+          },
+        },
       ],
     }).compile();
 
@@ -75,6 +84,9 @@ describe('RecordController', () => {
     updateRecordService = module.get<UpdateRecordService>(UpdateRecordService);
     reencryptRecordsService = module.get<ReencryptRecordsService>(
       ReencryptRecordsService,
+    );
+    getRecordByFilterService = module.get<GetRecordByFilterService>(
+      GetRecordByFilterService,
     );
   });
 
@@ -186,6 +198,28 @@ describe('RecordController', () => {
         .mockRejectedValueOnce(new Error());
 
       await expect(controller.reencryptRecords()).rejects.toThrowError();
+    });
+  });
+
+  describe('get record by filter', () => {
+    it('should get a record successfully', async () => {
+      const result = await controller.findByFilter(
+        mockProfessionalId,
+        mockRecordFilter,
+      );
+
+      expect(getRecordByFilterService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalRecord);
+    });
+
+    it('should throw an error', async () => {
+      jest
+        .spyOn(getRecordByFilterService, 'execute')
+        .mockRejectedValueOnce(new Error());
+
+      await expect(
+        controller.findByFilter(mockProfessionalId, mockRecordFilter),
+      ).rejects.toThrowError();
     });
   });
 });

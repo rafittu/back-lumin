@@ -32,3 +32,7 @@ export interface RecordToReencrypt {
   id: string;
   record: string;
 }
+
+export interface RecordFilters {
+  appointmentId: string;
+}

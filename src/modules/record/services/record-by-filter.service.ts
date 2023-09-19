@@ -1,0 +1,65 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { RecordRepository } from '../repository/record.repository';
+import { IRecordRepository } from '../interfaces/repository.interface';
+import { AppError } from '../../../common/errors/Error';
+import * as crypto from 'crypto';
+import {
+  ProfessionalRecord,
+  RecordFilters,
+} from '../interfaces/record.interface';
+
+@Injectable()
+export class GetRecordByFilterService {
+  constructor(
+    @Inject(RecordRepository)
+    private recordRepository: IRecordRepository,
+  ) {}
+
+  async execute(
+    professionalId: string,
+    filter: RecordFilters,
+  ): Promise<ProfessionalRecord> {
+    if (!professionalId) {
+      throw new AppError(
+        'record-module.getRecordByFilterService',
+        400,
+        'missing parameter [professionalId]',
+      );
+    }
+
+    const recordData = await this.recordRepository.getRecordByFilter(filter);
+
+    if (professionalId != recordData.professionalId) {
+      throw new AppError(
+        'record-module.getRecordByFilterService',
+        403,
+        `record does not belong to the specified 'professionalId'`,
+      );
+    }
+    delete recordData.professionalId;
+
+    try {
+      const cipherKey = Buffer.from(process.env.RECORD_CIPHER_KEY, 'hex');
+      const cipherIv = Buffer.from(process.env.RECORD_CIPHER_IV, 'hex');
+
+      const decipher = crypto.createDecipheriv(
+        process.env.RECORD_CIPHER_ALGORITHM,
+        cipherKey,
+        cipherIv,
+      );
+
+      let decryptedRecord = decipher.update(recordData.record, 'hex', 'utf8');
+      decryptedRecord += decipher.final('utf8');
+
+      recordData.record = decryptedRecord;
+    } catch (error) {
+      throw new AppError(
+        'record-module.getRecordByFilterService',
+        500,
+        error.code,
+      );
+    }
+
+    return recordData;
+  }
+}
