@@ -459,5 +459,26 @@ describe('RecordServices', () => {
         );
       }
     });
+
+    it('should throw an AppError if record encryption fails', async () => {
+      jest
+        .spyOn(recordRepository, 'getRecordByFilter')
+        .mockResolvedValueOnce(mockRecordByFilter);
+
+      jest.spyOn(crypto, 'createDecipheriv').mockImplementation(() => {
+        throw new Error('Error decrypting data');
+      });
+
+      try {
+        mockRecordByFilter.professionalId = mockProfessionalId;
+        await getRecordByFilterService.execute(
+          mockRecordByFilter.professionalId,
+          mockRecordFilters,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+      }
+    });
   });
 });
