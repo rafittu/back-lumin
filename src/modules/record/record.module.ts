@@ -9,6 +9,7 @@ import { GetAllRecordsService } from './services/all-records.service';
 import { GetOneRecordService } from './services/get-one-record.service';
 import { UpdateRecordService } from './services/update-record.service';
 import { ReencryptRecordsService } from './services/reencrypt-record.service';
+import { GetRecordByFilterService } from './services/record-by-filter.service';
 
 @Module({
   controllers: [RecordController],
@@ -22,6 +23,7 @@ import { ReencryptRecordsService } from './services/reencrypt-record.service';
     GetOneRecordService,
     UpdateRecordService,
     ReencryptRecordsService,
+    GetRecordByFilterService,
   ],
 })
 export class RecordModule {}
