@@ -87,7 +87,7 @@ export class UserRepository implements IUserRepository {
       return userResponse;
     } catch (error) {
       if (error instanceof AppError) {
-        throw new AppError('user-repository.createUser', 400, error.message);
+        throw error;
       }
 
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
