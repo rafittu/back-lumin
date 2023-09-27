@@ -151,9 +151,3 @@ export const mockGetUserAxiosResponse = {
     mockAlmaUserData,
   },
 };
-
-export const mockUpdateUserAxiosResponse = {
-  data: {
-    mockAlmaUserData,
-  },
-};
