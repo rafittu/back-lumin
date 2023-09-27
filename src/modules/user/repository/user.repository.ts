@@ -25,51 +25,6 @@ import * as jwt from 'jsonwebtoken';
 export class UserRepository implements IUserRepository {
   constructor(private prisma: PrismaService) {}
 
-  // private async almaPostRequest(path: string, body: object): Promise<AlmaUser> {
-  //   try {
-  //     const response = await axios.post(path, body);
-  //     return response.data;
-  //   } catch (error) {
-  //     const { status, code, message } = error.response.data.error;
-  //     throw new AppError(status, code, message);
-  //   }
-  // }
-
-  // private async almaGetRequest(
-  //   path: string,
-  //   accessToken: string,
-  // ): Promise<AlmaUserData> {
-  //   try {
-  //     const response = await axios.get(path, {
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //     });
-  //     return response.data;
-  //   } catch (error) {
-  //     const { status, code, message } = error.response.data.error;
-  //     throw new AppError(status, code, message);
-  //   }
-  // }
-
-  // private async almaPatchRequest(
-  //   path: string,
-  //   accessToken: string,
-  //   body: object,
-  // ): Promise<AlmaUserUpdated> {
-  //   try {
-  //     const response = await axios.patch(path, body, {
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //     });
-  //     return response.data;
-  //   } catch (error) {
-  //     const { status, code, message } = error.response.data.error;
-  //     throw new AppError(status, code, message);
-  //   }
-  // }
-
   private async almaRequest<T>(
     path: string,
     accessToken: string,
