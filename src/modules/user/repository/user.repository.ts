@@ -25,47 +25,29 @@ import * as jwt from 'jsonwebtoken';
 export class UserRepository implements IUserRepository {
   constructor(private prisma: PrismaService) {}
 
-  private async almaPostRequest(path: string, body: object): Promise<AlmaUser> {
-    try {
-      const response = await axios.post(path, body);
-      return response.data;
-    } catch (error) {
-      const { status, code, message } = error.response.data.error;
-      throw new AppError(status, code, message);
-    }
-  }
-
-  private async almaGetRequest(
+  private async almaRequest<T>(
     path: string,
     accessToken: string,
-  ): Promise<AlmaUserData> {
+    method: 'post' | 'get' | 'patch',
+    body?: object,
+  ): Promise<T> {
     try {
-      const response = await axios.get(path, {
+      const config = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
-      });
-      return response.data;
-    } catch (error) {
-      const { status, code, message } = error.response.data.error;
-      throw new AppError(status, code, message);
-    }
-  }
+      };
 
-  private async almaPatchRequest(
-    path: string,
-    accessToken: string,
-    body: object,
-  ): Promise<AlmaUserUpdated> {
-    try {
-      const response = await axios.patch(path, body, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response =
+        method === 'post'
+          ? await axios.post(path, body, config)
+          : method === 'patch'
+          ? await axios.patch(path, body, config)
+          : await axios.get(path, config);
+
       return response.data;
     } catch (error) {
-      const { status, code, message } = error.response.data.error;
+      const { status, code, message } = error.response?.data?.error || {};
       throw new AppError(status, code, message);
     }
   }
@@ -74,7 +56,12 @@ export class UserRepository implements IUserRepository {
     const signUpPath: string = process.env.SIGNUP_PATH;
 
     try {
-      const almaUser = await this.almaPostRequest(signUpPath, createUser);
+      const almaUser = await this.almaRequest<AlmaUser>(
+        signUpPath,
+        null,
+        'post',
+        createUser,
+      );
 
       const user = await this.prisma.user.create({
         data: {
@@ -86,10 +73,10 @@ export class UserRepository implements IUserRepository {
       });
 
       const { id, alma_id, name, social_name, created_at, updated_at } = user;
-      const userResponse = {
-        id: id,
+      const userResponse: User = {
+        id,
         almaId: alma_id,
-        name: name,
+        name,
         socialName: social_name,
         email: createUser.email,
         role,
@@ -100,26 +87,18 @@ export class UserRepository implements IUserRepository {
       return userResponse;
     } catch (error) {
       if (error instanceof AppError) {
-        throw new AppError(
-          'user-repository.createAdminUser',
-          400,
-          error.message,
-        );
+        throw error;
       }
 
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         throw new AppError(
-          `user-repository.createAdminUser`,
+          `user-repository.createUser`,
           400,
           `[ '${error.meta?.target}' ] already in use`,
         );
       }
 
-      throw new AppError(
-        'user-repository.createAdminUser',
-        500,
-        'user not created',
-      );
+      throw new AppError('user-repository.createUser', 500, 'user not created');
     }
   }
 
@@ -169,6 +148,10 @@ export class UserRepository implements IUserRepository {
         },
       });
 
+      if (!userData) {
+        throw new AppError('user-repository.findById', 404, 'user not found');
+      }
+
       const { id, alma_id, name, social_name, role, created_at, updated_at } =
         userData;
 
@@ -184,6 +167,10 @@ export class UserRepository implements IUserRepository {
 
       return user;
     } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
       throw new AppError('user-repository.findById', 500, 'could not get user');
     }
   };
@@ -200,7 +187,11 @@ export class UserRepository implements IUserRepository {
       });
 
       const getUserPath = `${process.env.GET_USER_PATH}/${user.alma_id}`;
-      const userAlmaData = await this.almaGetRequest(getUserPath, accessToken);
+      const userAlmaData = await this.almaRequest<AlmaUserData>(
+        getUserPath,
+        accessToken,
+        'get',
+      );
 
       const { socialName, bornDate, motherName } = userAlmaData.personal;
       const { username, email, phone } = userAlmaData.contact;
@@ -226,7 +217,7 @@ export class UserRepository implements IUserRepository {
       return userData;
     } catch (error) {
       if (error instanceof AppError) {
-        throw new AppError('user-repository.getUserByJwt', 503, error.message);
+        throw error;
       }
 
       throw new AppError(
@@ -243,13 +234,16 @@ export class UserRepository implements IUserRepository {
     updateUser: UpdateUserDto,
   ): Promise<UpdatedUser> => {
     try {
-      const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+      const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET) as {
+        sub: string;
+      };
       const userAlmaId = decodedToken?.sub;
 
       const updateUserPath = `${process.env.UPDATE_USER_PATH}/${userAlmaId}`;
-      const userAlmaDataUpdated = await this.almaPatchRequest(
+      const userAlmaDataUpdated = await this.almaRequest<AlmaUserUpdated>(
         updateUserPath,
         accessToken,
+        'patch',
         updateUser,
       );
 
@@ -257,9 +251,11 @@ export class UserRepository implements IUserRepository {
       const { personal, contact, security } = userAlmaDataUpdated;
 
       if (firstName || lastName || socialName) {
+        const fullName = `${personal.firstName} ${personal.lastName}`;
+
         await this.prisma.user.update({
           data: {
-            name: `${personal.firstName} ${personal.lastName}`,
+            name: fullName,
             social_name: personal.socialName,
           },
           where: {
@@ -272,7 +268,7 @@ export class UserRepository implements IUserRepository {
       delete contact.id;
       delete security.id;
 
-      const updatedUser = {
+      const updatedUser: UpdatedUser = {
         ...userAlmaDataUpdated,
         id: userId,
       };
@@ -280,7 +276,7 @@ export class UserRepository implements IUserRepository {
       return updatedUser;
     } catch (error) {
       if (error instanceof AppError) {
-        throw new AppError('user-repository.updateUser', 400, error.message);
+        throw error;
       }
 
       throw new AppError(
