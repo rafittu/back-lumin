@@ -68,6 +68,30 @@ describe('UserRepository', () => {
       );
       expect(result).toEqual(mockCreateUserAxiosResponse.data);
     });
+
+    it('should make a get request and return response data', async () => {
+      (
+        axios.get as jest.MockedFunction<typeof axios.get>
+      ).mockResolvedValueOnce(mockGetUserAxiosResponse);
+
+      const path = 'example.com/api/:id';
+
+      const result = await userRepository['almaRequest'](
+        path,
+        mockAccessToken,
+        'get',
+      );
+
+      expect(axios.get).toHaveBeenCalledWith(
+        path,
+        expect.objectContaining({
+          headers: {
+            Authorization: `Bearer ${mockAccessToken}`,
+          },
+        }),
+      );
+      expect(result).toEqual(mockGetUserAxiosResponse.data);
+    });
   });
 
   // describe('createUser', () => {
