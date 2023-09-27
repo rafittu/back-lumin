@@ -92,6 +92,22 @@ describe('UserRepository', () => {
       );
       expect(result).toEqual(mockGetUserAxiosResponse.data);
     });
+
+    it('should throw an AppError if request fails', async () => {
+      (
+        axios.get as jest.MockedFunction<typeof axios.get>
+      ).mockRejectedValueOnce(AppError);
+
+      const path = 'example.com/api/:id';
+
+      try {
+        await userRepository['almaRequest'](path, mockAccessToken, 'patch');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('Internal server error');
+      }
+    });
   });
 
   // describe('createUser', () => {
