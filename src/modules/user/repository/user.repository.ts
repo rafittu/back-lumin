@@ -101,7 +101,12 @@ export class UserRepository implements IUserRepository {
     const signUpPath: string = process.env.SIGNUP_PATH;
 
     try {
-      const almaUser = await this.almaPostRequest(signUpPath, createUser);
+      const almaUser = await this.almaRequest<AlmaUser>(
+        signUpPath,
+        null,
+        'post',
+        createUser,
+      );
 
       const user = await this.prisma.user.create({
         data: {
@@ -113,10 +118,10 @@ export class UserRepository implements IUserRepository {
       });
 
       const { id, alma_id, name, social_name, created_at, updated_at } = user;
-      const userResponse = {
-        id: id,
+      const userResponse: User = {
+        id,
         almaId: alma_id,
-        name: name,
+        name,
         socialName: social_name,
         email: createUser.email,
         role,
@@ -127,26 +132,18 @@ export class UserRepository implements IUserRepository {
       return userResponse;
     } catch (error) {
       if (error instanceof AppError) {
-        throw new AppError(
-          'user-repository.createAdminUser',
-          400,
-          error.message,
-        );
+        throw new AppError('user-repository.createUser', 400, error.message);
       }
 
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         throw new AppError(
-          `user-repository.createAdminUser`,
+          `user-repository.createUser`,
           400,
           `[ '${error.meta?.target}' ] already in use`,
         );
       }
 
-      throw new AppError(
-        'user-repository.createAdminUser',
-        500,
-        'user not created',
-      );
+      throw new AppError('user-repository.createUser', 500, 'user not created');
     }
   }
 
