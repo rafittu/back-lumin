@@ -13,7 +13,6 @@ import {
   mockUserDataToUpdate,
   mockCreateUserAxiosResponse,
   mockGetUserAxiosResponse,
-  mockUpdateUserAxiosResponse,
   mockUserInfo,
 } from './mocks/repository.mock';
 import { UserRole } from '../enum/user-role.enum';
