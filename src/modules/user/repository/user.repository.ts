@@ -234,13 +234,16 @@ export class UserRepository implements IUserRepository {
     updateUser: UpdateUserDto,
   ): Promise<UpdatedUser> => {
     try {
-      const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+      const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET) as {
+        sub: string;
+      };
       const userAlmaId = decodedToken?.sub;
 
       const updateUserPath = `${process.env.UPDATE_USER_PATH}/${userAlmaId}`;
-      const userAlmaDataUpdated = await this.almaPatchRequest(
+      const userAlmaDataUpdated = await this.almaRequest<AlmaUserUpdated>(
         updateUserPath,
         accessToken,
+        'patch',
         updateUser,
       );
 
@@ -248,9 +251,11 @@ export class UserRepository implements IUserRepository {
       const { personal, contact, security } = userAlmaDataUpdated;
 
       if (firstName || lastName || socialName) {
+        const fullName = `${personal.firstName} ${personal.lastName}`;
+
         await this.prisma.user.update({
           data: {
-            name: `${personal.firstName} ${personal.lastName}`,
+            name: fullName,
             social_name: personal.socialName,
           },
           where: {
@@ -263,7 +268,7 @@ export class UserRepository implements IUserRepository {
       delete contact.id;
       delete security.id;
 
-      const updatedUser = {
+      const updatedUser: UpdatedUser = {
         ...userAlmaDataUpdated,
         id: userId,
       };
@@ -271,7 +276,7 @@ export class UserRepository implements IUserRepository {
       return updatedUser;
     } catch (error) {
       if (error instanceof AppError) {
-        throw new AppError('user-repository.updateUser', 400, error.message);
+        throw error;
       }
 
       throw new AppError(
