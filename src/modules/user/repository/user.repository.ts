@@ -187,7 +187,11 @@ export class UserRepository implements IUserRepository {
       });
 
       const getUserPath = `${process.env.GET_USER_PATH}/${user.alma_id}`;
-      const userAlmaData = await this.almaGetRequest(getUserPath, accessToken);
+      const userAlmaData = await this.almaRequest<AlmaUserData>(
+        getUserPath,
+        accessToken,
+        'get',
+      );
 
       const { socialName, bornDate, motherName } = userAlmaData.personal;
       const { username, email, phone } = userAlmaData.contact;
@@ -213,7 +217,7 @@ export class UserRepository implements IUserRepository {
       return userData;
     } catch (error) {
       if (error instanceof AppError) {
-        throw new AppError('user-repository.getUserByJwt', 503, error.message);
+        throw error;
       }
 
       throw new AppError(
