@@ -148,6 +148,10 @@ export class UserRepository implements IUserRepository {
         },
       });
 
+      if (!userData) {
+        throw new AppError('user-repository.findById', 404, 'user not found');
+      }
+
       const { id, alma_id, name, social_name, role, created_at, updated_at } =
         userData;
 
@@ -163,6 +167,10 @@ export class UserRepository implements IUserRepository {
 
       return user;
     } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
       throw new AppError('user-repository.findById', 500, 'could not get user');
     }
   };
