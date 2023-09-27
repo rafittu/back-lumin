@@ -321,81 +321,81 @@ describe('UserRepository', () => {
     });
   });
 
-  // describe('updateUser', () => {
-  //   it('should update an user successfully', async () => {
-  //     jest
-  //       .spyOn(jwt, 'verify')
-  //       .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
+  describe('updateUser', () => {
+    it('should update an user successfully', async () => {
+      jest
+        .spyOn(jwt, 'verify')
+        .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
 
-  //     jest
-  //       .spyOn(userRepository as any, 'almaPatchRequest')
-  //       .mockResolvedValueOnce(mockAlmaUserData);
+      jest
+        .spyOn(userRepository as any, 'almaRequest')
+        .mockResolvedValueOnce(mockAlmaUserData);
 
-  //     jest
-  //       .spyOn(prismaService.user, 'update')
-  //       .mockResolvedValueOnce(mockPrismaUser);
+      jest
+        .spyOn(prismaService.user, 'update')
+        .mockResolvedValueOnce(mockPrismaUser);
 
-  //     const result = await userRepository.updateUser(
-  //       mockPrismaUser.id,
-  //       mockAccessToken,
-  //       mockUserDataToUpdate,
-  //     );
+      const result = await userRepository.updateUser(
+        mockPrismaUser.id,
+        mockAccessToken,
+        mockUserDataToUpdate,
+      );
 
-  //     result.id = mockAlmaUserData.id;
+      result.id = mockAlmaUserData.id;
 
-  //     expect(userRepository['almaPatchRequest']).toHaveBeenCalledTimes(1);
-  //     expect(prismaService.user.update).toHaveBeenCalledTimes(1);
-  //     expect(result).toEqual(mockAlmaUserData);
-  //   });
+      expect(userRepository['almaRequest']).toHaveBeenCalledTimes(1);
+      expect(prismaService.user.update).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockAlmaUserData);
+    });
 
-  //   it('should throw an AppError when almaPatchRequest throws an error', async () => {
-  //     jest
-  //       .spyOn(jwt, 'verify')
-  //       .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
+    it('should throw an AppError when almaRequest throws an error', async () => {
+      jest
+        .spyOn(jwt, 'verify')
+        .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
 
-  //     jest
-  //       .spyOn(userRepository as any, 'almaPatchRequest')
-  //       .mockRejectedValueOnce(
-  //         new AppError('error.code', 500, 'Error message'),
-  //       );
+      jest
+        .spyOn(userRepository as any, 'almaRequest')
+        .mockRejectedValueOnce(
+          new AppError('error.code', 500, 'Error message'),
+        );
 
-  //     try {
-  //       await userRepository.updateUser(
-  //         mockPrismaUser.id,
-  //         mockAccessToken,
-  //         mockUserDataToUpdate,
-  //       );
-  //     } catch (error) {
-  //       expect(error).toBeInstanceOf(AppError);
-  //       expect(error.code).toBe(400);
-  //       expect(error.message).toBe('Error message');
-  //     }
-  //   });
+      try {
+        await userRepository.updateUser(
+          mockPrismaUser.id,
+          mockAccessToken,
+          mockUserDataToUpdate,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('Error message');
+      }
+    });
 
-  //   it('should throw an error if user not updated', async () => {
-  //     jest
-  //       .spyOn(jwt, 'verify')
-  //       .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
+    it('should throw an error if user not updated', async () => {
+      jest
+        .spyOn(jwt, 'verify')
+        .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
 
-  //     jest
-  //       .spyOn(userRepository as any, 'almaPatchRequest')
-  //       .mockResolvedValueOnce(mockAlmaUserData);
+      jest
+        .spyOn(userRepository as any, 'almaRequest')
+        .mockResolvedValueOnce(mockAlmaUserData);
 
-  //     jest
-  //       .spyOn(prismaService.user, 'update')
-  //       .mockRejectedValueOnce(new Error());
+      jest
+        .spyOn(prismaService.user, 'update')
+        .mockRejectedValueOnce(new Error());
 
-  //     try {
-  //       await userRepository.updateUser(
-  //         mockPrismaUser.id,
-  //         mockAccessToken,
-  //         mockUserDataToUpdate,
-  //       );
-  //     } catch (error) {
-  //       expect(error).toBeInstanceOf(AppError);
-  //       expect(error.code).toBe(500);
-  //       expect(error.message).toBe('could not update user');
-  //     }
-  //   });
-  // });
+      try {
+        await userRepository.updateUser(
+          mockPrismaUser.id,
+          mockAccessToken,
+          mockUserDataToUpdate,
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('could not update user');
+      }
+    });
+  });
 });
