@@ -292,34 +292,34 @@ describe('UserRepository', () => {
   //   });
   // });
 
-  // describe('getClients', () => {
-  //   it('should find all professional clients successfully', async () => {
-  //     jest
-  //       .spyOn(prismaService.appointmentRecord, 'findMany')
-  //       .mockResolvedValueOnce(mockGetProfessionalClient);
+  describe('getClients', () => {
+    it('should find all professional clients successfully', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findMany')
+        .mockResolvedValueOnce(mockGetProfessionalClient);
 
-  //     const result = await userRepository.getClients(
-  //       mockGetProfessionalClient[0].id,
-  //     );
+      const result = await userRepository.getClients(
+        mockGetProfessionalClient[0].id,
+      );
 
-  //     expect(prismaService.appointmentRecord.findMany).toHaveBeenCalledTimes(1);
-  //     expect(result).toEqual(mockProfessionalClients);
-  //   });
+      expect(prismaService.appointmentRecord.findMany).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockProfessionalClients);
+    });
 
-  //   it('should throw an error if clients is not found', async () => {
-  //     jest
-  //       .spyOn(prismaService.appointmentRecord, 'findMany')
-  //       .mockRejectedValueOnce(new Error());
+    it('should throw an error if clients is not found', async () => {
+      jest
+        .spyOn(prismaService.appointmentRecord, 'findMany')
+        .mockRejectedValueOnce(new Error());
 
-  //     try {
-  //       await userRepository.getClients(mockPrismaUser.id);
-  //     } catch (error) {
-  //       expect(error).toBeInstanceOf(AppError);
-  //       expect(error.code).toBe(500);
-  //       expect(error.message).toBe('could not get clients');
-  //     }
-  //   });
-  // });
+      try {
+        await userRepository.getClients(mockPrismaUser.id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('could not get clients');
+      }
+    });
+  });
 
   // describe('updateUser', () => {
   //   it('should update an user successfully', async () => {
