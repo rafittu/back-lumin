@@ -40,6 +40,41 @@ describe('AuthRepository', () => {
     expect(authRepository).toBeDefined();
   });
 
+  describe('handle alma api requests', () => {
+    it('should make a post request and return response data', async () => {
+      (
+        axios.post as jest.MockedFunction<typeof axios.post>
+      ).mockResolvedValueOnce(mockSignInAxiosResponse);
+
+      const path = 'example.com/api';
+
+      const result = await authRepository['almaRequest'](
+        path,
+        'post',
+        mockUserCredentials,
+      );
+
+      expect(axios.post).toHaveBeenCalledWith(path, mockUserCredentials);
+      expect(result).toEqual(mockSignInAxiosResponse.data);
+    });
+
+    it('should throw an AppError if request fails', async () => {
+      (
+        axios.post as jest.MockedFunction<typeof axios.post>
+      ).mockRejectedValueOnce(AppError);
+
+      const path = 'example.com/api/:id';
+
+      try {
+        await authRepository['almaRequest'](path, 'post', mockUserCredentials);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('Internal server error');
+      }
+    });
+  });
+
   describe('signIn', () => {
     it('user should sign in successfully', async () => {
       jest
@@ -95,49 +130,49 @@ describe('AuthRepository', () => {
     });
   });
 
-  describe('almaPostRequest', () => {
-    it('should make a post request and return response data', async () => {
-      (
-        axios.post as jest.MockedFunction<typeof axios.post>
-      ).mockResolvedValueOnce(mockSignInAxiosResponse);
+  // describe('almaPostRequest', () => {
+  //   it('should make a post request and return response data', async () => {
+  //     (
+  //       axios.post as jest.MockedFunction<typeof axios.post>
+  //     ).mockResolvedValueOnce(mockSignInAxiosResponse);
 
-      const path = 'example.com/api';
+  //     const path = 'example.com/api';
 
-      const result = await authRepository['almaPostRequest'](
-        path,
-        mockUserCredentials,
-      );
+  //     const result = await authRepository['almaPostRequest'](
+  //       path,
+  //       mockUserCredentials,
+  //     );
 
-      expect(axios.post).toHaveBeenCalledWith(path, mockUserCredentials);
-      expect(result).toEqual(mockSignInAxiosResponse.data);
-    });
+  // expect(axios.post).toHaveBeenCalledWith(path, mockUserCredentials);
+  // expect(result).toEqual(mockSignInAxiosResponse.data);
+  //   });
 
-    it('should throw an AppError if request fails', async () => {
-      const errorResponse = {
-        response: {
-          data: {
-            error: {
-              status: 500,
-              code: 'ERROR_CODE',
-              message: 'Error message',
-            },
-          },
-        },
-      };
+  //   it('should throw an AppError if request fails', async () => {
+  //     const errorResponse = {
+  //       response: {
+  //         data: {
+  //           error: {
+  //             status: 500,
+  //             code: 'ERROR_CODE',
+  //             message: 'Error message',
+  //           },
+  //         },
+  //       },
+  //     };
 
-      (
-        axios.post as jest.MockedFunction<typeof axios.post>
-      ).mockRejectedValueOnce(errorResponse);
+  //     (
+  //       axios.post as jest.MockedFunction<typeof axios.post>
+  //     ).mockRejectedValueOnce(errorResponse);
 
-      const path = 'example.com/api';
+  //     const path = 'example.com/api';
 
-      try {
-        await authRepository['almaPostRequest'](path, mockUserCredentials);
-      } catch (error) {
-        expect(error).toBeInstanceOf(AppError);
-        expect(error.code).toBe('ERROR_CODE');
-        expect(error.message).toBe('Error message');
-      }
-    });
-  });
+  //     try {
+  //       await authRepository['almaPostRequest'](path, mockUserCredentials);
+  //     } catch (error) {
+  //       expect(error).toBeInstanceOf(AppError);
+  //       expect(error.code).toBe('ERROR_CODE');
+  //       expect(error.message).toBe('Error message');
+  //     }
+  //   });
+  // });
 });
