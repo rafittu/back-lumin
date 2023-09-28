@@ -109,6 +109,24 @@ describe('AuthRepository', () => {
       }
     });
 
+    it('should throw an error if user not found', async () => {
+      jest
+        .spyOn(authRepository as any, 'almaRequest')
+        .mockResolvedValueOnce(mockAccessToken);
+
+      jest.spyOn(jwt, 'verify').mockResolvedValueOnce(mockAccessToken as never);
+
+      jest.spyOn(prismaService.user, 'findFirst').mockResolvedValueOnce(null);
+
+      try {
+        await authRepository.signIn(mockUserCredentials);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(404);
+        expect(error.message).toBe('user not found');
+      }
+    });
+
     it('should throw an error if user could not sign in', async () => {
       jest
         .spyOn(authRepository as any, 'almaRequest')
