@@ -50,7 +50,6 @@ describe('AuthRepository', () => {
 
       const result = await authRepository['almaRequest'](
         path,
-        'post',
         mockUserCredentials,
       );
 
@@ -66,7 +65,7 @@ describe('AuthRepository', () => {
       const path = 'example.com/api/:id';
 
       try {
-        await authRepository['almaRequest'](path, 'post', mockUserCredentials);
+        await authRepository['almaRequest'](path, mockUserCredentials);
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
