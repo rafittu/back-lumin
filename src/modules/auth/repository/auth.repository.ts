@@ -14,19 +14,9 @@ export class AuthRepository implements IAuthRepository {
     private readonly redisCacheService: RedisCacheService,
   ) {}
 
-  private async almaRequest<T>(
-    path: string,
-    method: 'post' | 'get' | 'patch',
-    body?: object,
-  ): Promise<T> {
+  private async almaRequest<T>(path: string, body: object): Promise<T> {
     try {
-      const response =
-        method === 'post'
-          ? await axios.post(path, body)
-          : method === 'patch'
-          ? await axios.patch(path, body)
-          : await axios.get(path);
-
+      const response = await axios.post(path, body);
       return response.data;
     } catch (error) {
       const { status, code, message } = error.response?.data?.error || {};
@@ -40,7 +30,6 @@ export class AuthRepository implements IAuthRepository {
     try {
       const { accessToken } = await this.almaRequest<JwtToken>(
         signInPath,
-        'post',
         credentials,
       );
 
