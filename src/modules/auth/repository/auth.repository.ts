@@ -14,12 +14,22 @@ export class AuthRepository implements IAuthRepository {
     private readonly redisCacheService: RedisCacheService,
   ) {}
 
-  private async almaPostRequest(path: string, body: object) {
+  private async almaRequest<T>(
+    path: string,
+    method: 'post' | 'get' | 'patch',
+    body?: object,
+  ): Promise<T> {
     try {
-      const response = await axios.post(path, body);
+      const response =
+        method === 'post'
+          ? await axios.post(path, body)
+          : method === 'patch'
+          ? await axios.patch(path, body)
+          : await axios.get(path);
+
       return response.data;
     } catch (error) {
-      const { status, code, message } = error.response.data.error;
+      const { status, code, message } = error.response?.data?.error || {};
       throw new AppError(status, code, message);
     }
   }
@@ -28,8 +38,9 @@ export class AuthRepository implements IAuthRepository {
     const signInPath: string = process.env.SIGNIN_PATH;
 
     try {
-      const { accessToken } = await this.almaPostRequest(
+      const { accessToken } = await this.almaRequest<JwtToken>(
         signInPath,
+        'post',
         credentials,
       );
 
