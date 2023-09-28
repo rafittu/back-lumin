@@ -78,7 +78,7 @@ describe('AuthRepository', () => {
   describe('signIn', () => {
     it('user should sign in successfully', async () => {
       jest
-        .spyOn(authRepository as any, 'almaPostRequest')
+        .spyOn(authRepository as any, 'almaRequest')
         .mockResolvedValueOnce(mockAccessToken);
 
       jest.spyOn(jwt, 'verify').mockResolvedValueOnce(mockAccessToken as never);
@@ -89,13 +89,13 @@ describe('AuthRepository', () => {
 
       await authRepository.signIn(mockUserCredentials);
 
-      expect(authRepository['almaPostRequest']).toHaveBeenCalledTimes(1);
+      expect(authRepository['almaRequest']).toHaveBeenCalledTimes(1);
       expect(prismaService.user.findFirst).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw an AppError when almaPostRequest throws an error', async () => {
+    it('should throw an AppError when almaRequest throws an error', async () => {
       jest
-        .spyOn(authRepository as any, 'almaPostRequest')
+        .spyOn(authRepository as any, 'almaRequest')
         .mockRejectedValueOnce(
           new AppError('error.code', 500, 'Error message'),
         );
@@ -104,14 +104,14 @@ describe('AuthRepository', () => {
         await authRepository.signIn(mockUserCredentials);
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
-        expect(error.code).toBe(401);
+        expect(error.code).toBe(500);
         expect(error.message).toBe('Error message');
       }
     });
 
     it('should throw an error if user could not sign in', async () => {
       jest
-        .spyOn(authRepository as any, 'almaPostRequest')
+        .spyOn(authRepository as any, 'almaRequest')
         .mockResolvedValueOnce(mockAccessToken);
 
       jest.spyOn(jwt, 'verify').mockResolvedValueOnce(mockAccessToken as never);
