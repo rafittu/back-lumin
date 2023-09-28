@@ -14,12 +14,12 @@ export class AuthRepository implements IAuthRepository {
     private readonly redisCacheService: RedisCacheService,
   ) {}
 
-  private async almaPostRequest(path: string, body: object) {
+  private async almaRequest<T>(path: string, body: object): Promise<T> {
     try {
       const response = await axios.post(path, body);
       return response.data;
     } catch (error) {
-      const { status, code, message } = error.response.data.error;
+      const { status, code, message } = error.response?.data?.error || {};
       throw new AppError(status, code, message);
     }
   }
@@ -28,7 +28,7 @@ export class AuthRepository implements IAuthRepository {
     const signInPath: string = process.env.SIGNIN_PATH;
 
     try {
-      const { accessToken } = await this.almaPostRequest(
+      const { accessToken } = await this.almaRequest<JwtToken>(
         signInPath,
         credentials,
       );
@@ -36,7 +36,7 @@ export class AuthRepository implements IAuthRepository {
       const decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
       const userAlmaId = decodedToken?.sub;
 
-      const { role } = await this.prisma.user.findFirst({
+      const user = await this.prisma.user.findFirst({
         where: {
           alma_id: String(userAlmaId),
         },
@@ -45,13 +45,21 @@ export class AuthRepository implements IAuthRepository {
         },
       });
 
+      if (!user) {
+        throw new AppError('auth-repository.signIn', 404, 'user not found');
+      }
+
       const redisExpirationTime = 60 * 60 * 24 * 27;
-      await this.redisCacheService.set(accessToken, role, redisExpirationTime);
+      await this.redisCacheService.set(
+        accessToken,
+        user.role,
+        redisExpirationTime,
+      );
 
       return { accessToken };
     } catch (error) {
       if (error instanceof AppError) {
-        throw new AppError('auth-repository.signIn', 401, error.message);
+        throw error;
       }
 
       throw new AppError(
