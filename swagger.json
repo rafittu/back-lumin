@@ -749,6 +749,24 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "user not found",
+                    "code": "auth-repository.signIn",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal server error",
             "content": {
