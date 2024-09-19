@@ -96,7 +96,7 @@
                     "value": {
                       "error": {
                         "message": "missing or invalid signup token",
-                        "code": "user-service.createAdminUser",
+                        "code": "user-service.createUser",
                         "status": true
                       },
                       "data": {}
@@ -283,6 +283,24 @@
                   "error": {
                     "message": "Missing authorization token",
                     "code": "auth-guard.jwtAuth",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "user not found",
+                    "code": "user-repository.findById",
                     "status": true
                   },
                   "data": {}
@@ -723,6 +741,24 @@
                 "example": {
                   "error": {
                     "message": "email or password is invalid",
+                    "code": "auth-repository.signIn",
+                    "status": true
+                  },
+                  "data": {}
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "message": "user not found",
                     "code": "auth-repository.signIn",
                     "status": true
                   },

@@ -26,6 +26,10 @@ export class CreateClientUserService {
 
       return accessToken;
     } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
       throw new AppError('user-service.createClientUser', 400, error.message);
     }
   }

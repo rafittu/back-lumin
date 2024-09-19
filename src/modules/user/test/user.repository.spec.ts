@@ -13,7 +13,6 @@ import {
   mockUserDataToUpdate,
   mockCreateUserAxiosResponse,
   mockGetUserAxiosResponse,
-  mockUpdateUserAxiosResponse,
   mockUserInfo,
 } from './mocks/repository.mock';
 import { UserRole } from '../enum/user-role.enum';
@@ -42,10 +41,78 @@ describe('UserRepository', () => {
     expect(userRepository).toBeDefined();
   });
 
+  describe('handle alma api requests', () => {
+    it('should make a post request and return response data', async () => {
+      (
+        axios.post as jest.MockedFunction<typeof axios.post>
+      ).mockResolvedValueOnce(mockCreateUserAxiosResponse);
+
+      const path = 'example.com/api';
+
+      const result = await userRepository['almaRequest'](
+        path,
+        null,
+        'post',
+        mockCreateUserBody,
+      );
+
+      expect(axios.post).toHaveBeenCalledWith(
+        path,
+        mockCreateUserBody,
+        expect.objectContaining({
+          headers: {
+            Authorization: `Bearer ${null}`,
+          },
+        }),
+      );
+      expect(result).toEqual(mockCreateUserAxiosResponse.data);
+    });
+
+    it('should make a get request and return response data', async () => {
+      (
+        axios.get as jest.MockedFunction<typeof axios.get>
+      ).mockResolvedValueOnce(mockGetUserAxiosResponse);
+
+      const path = 'example.com/api/:id';
+
+      const result = await userRepository['almaRequest'](
+        path,
+        mockAccessToken,
+        'get',
+      );
+
+      expect(axios.get).toHaveBeenCalledWith(
+        path,
+        expect.objectContaining({
+          headers: {
+            Authorization: `Bearer ${mockAccessToken}`,
+          },
+        }),
+      );
+      expect(result).toEqual(mockGetUserAxiosResponse.data);
+    });
+
+    it('should throw an AppError if request fails', async () => {
+      (
+        axios.get as jest.MockedFunction<typeof axios.get>
+      ).mockRejectedValueOnce(AppError);
+
+      const path = 'example.com/api/:id';
+
+      try {
+        await userRepository['almaRequest'](path, mockAccessToken, 'patch');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(500);
+        expect(error.message).toBe('Internal server error');
+      }
+    });
+  });
+
   describe('createUser', () => {
     it('should create a new user successfully', async () => {
       jest
-        .spyOn(userRepository as any, 'almaPostRequest')
+        .spyOn(userRepository as any, 'almaRequest')
         .mockResolvedValueOnce(mockAlmaUser);
 
       jest
@@ -57,16 +124,16 @@ describe('UserRepository', () => {
         UserRole.CLIENT,
       );
 
-      expect(userRepository['almaPostRequest']).toHaveBeenCalledTimes(1);
+      expect(userRepository['almaRequest']).toHaveBeenCalledTimes(1);
       expect(prismaService.user.create).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockNewUser);
     });
 
-    it('should throw an AppError when almaPostRequest throws an error', async () => {
+    it('should throw an AppError when almaRequest throws an error', async () => {
       jest
-        .spyOn(userRepository as any, 'almaPostRequest')
+        .spyOn(userRepository as any, 'almaRequest')
         .mockRejectedValueOnce(
-          new AppError('error.code', 500, 'Error message'),
+          new AppError('error.code', 400, 'Error message'),
         );
 
       try {
@@ -88,7 +155,7 @@ describe('UserRepository', () => {
       );
 
       jest
-        .spyOn(userRepository as any, 'almaPostRequest')
+        .spyOn(userRepository as any, 'almaRequest')
         .mockRejectedValueOnce(prismaError);
 
       try {
@@ -103,6 +170,10 @@ describe('UserRepository', () => {
     });
 
     it('should throw an error if user is not created', async () => {
+      jest
+        .spyOn(userRepository as any, 'almaRequest')
+        .mockResolvedValueOnce(mockAlmaUser);
+
       jest
         .spyOn(prismaService.user, 'create')
         .mockRejectedValueOnce(new Error());
@@ -129,7 +200,19 @@ describe('UserRepository', () => {
       expect(result).toEqual(mockUserInfo);
     });
 
-    it('should throw an error if user is not found', async () => {
+    it('should throw a not found error', async () => {
+      jest.spyOn(prismaService.user, 'findFirst').mockResolvedValueOnce(null);
+
+      try {
+        await userRepository.findById(mockPrismaUser.id);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(404);
+        expect(error.message).toBe('user not found');
+      }
+    });
+
+    it('should throw an internal error', async () => {
       jest
         .spyOn(prismaService.user, 'findFirst')
         .mockRejectedValueOnce(new Error());
@@ -155,17 +238,17 @@ describe('UserRepository', () => {
         .mockResolvedValueOnce(mockPrismaUser);
 
       jest
-        .spyOn(userRepository as any, 'almaGetRequest')
+        .spyOn(userRepository as any, 'almaRequest')
         .mockResolvedValueOnce(mockAlmaUserData);
 
       const result = await userRepository.getUserByJwt(mockAccessToken);
 
-      expect(userRepository['almaGetRequest']).toHaveBeenCalledTimes(1);
+      expect(userRepository['almaRequest']).toHaveBeenCalledTimes(1);
       expect(prismaService.user.findFirst).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockGetUser);
     });
 
-    it('should throw an AppError when almaGetRequest throws an error', async () => {
+    it('should throw an AppError when almaRequest throws an error', async () => {
       jest
         .spyOn(jwt, 'verify')
         .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
@@ -175,7 +258,7 @@ describe('UserRepository', () => {
         .mockResolvedValueOnce(mockPrismaUser);
 
       jest
-        .spyOn(userRepository as any, 'almaGetRequest')
+        .spyOn(userRepository as any, 'almaRequest')
         .mockRejectedValueOnce(
           new AppError('error.code', 500, 'Error message'),
         );
@@ -184,7 +267,7 @@ describe('UserRepository', () => {
         await userRepository.getUserByJwt(mockAccessToken);
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
-        expect(error.code).toBe(503);
+        expect(error.code).toBe(500);
         expect(error.message).toBe('Error message');
       }
     });
@@ -244,7 +327,7 @@ describe('UserRepository', () => {
         .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
 
       jest
-        .spyOn(userRepository as any, 'almaPatchRequest')
+        .spyOn(userRepository as any, 'almaRequest')
         .mockResolvedValueOnce(mockAlmaUserData);
 
       jest
@@ -259,18 +342,18 @@ describe('UserRepository', () => {
 
       result.id = mockAlmaUserData.id;
 
-      expect(userRepository['almaPatchRequest']).toHaveBeenCalledTimes(1);
+      expect(userRepository['almaRequest']).toHaveBeenCalledTimes(1);
       expect(prismaService.user.update).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockAlmaUserData);
     });
 
-    it('should throw an AppError when almaPatchRequest throws an error', async () => {
+    it('should throw an AppError when almaRequest throws an error', async () => {
       jest
         .spyOn(jwt, 'verify')
         .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
 
       jest
-        .spyOn(userRepository as any, 'almaPatchRequest')
+        .spyOn(userRepository as any, 'almaRequest')
         .mockRejectedValueOnce(
           new AppError('error.code', 500, 'Error message'),
         );
@@ -283,7 +366,7 @@ describe('UserRepository', () => {
         );
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
-        expect(error.code).toBe(400);
+        expect(error.code).toBe(500);
         expect(error.message).toBe('Error message');
       }
     });
@@ -294,7 +377,7 @@ describe('UserRepository', () => {
         .mockResolvedValueOnce(mockPrismaUser.alma_id as never);
 
       jest
-        .spyOn(userRepository as any, 'almaPatchRequest')
+        .spyOn(userRepository as any, 'almaRequest')
         .mockResolvedValueOnce(mockAlmaUserData);
 
       jest
@@ -311,164 +394,6 @@ describe('UserRepository', () => {
         expect(error).toBeInstanceOf(AppError);
         expect(error.code).toBe(500);
         expect(error.message).toBe('could not update user');
-      }
-    });
-  });
-
-  describe('almaPostRequest', () => {
-    it('should make a post request and return response data', async () => {
-      (
-        axios.post as jest.MockedFunction<typeof axios.post>
-      ).mockResolvedValueOnce(mockCreateUserAxiosResponse);
-
-      const path = 'example.com/api';
-
-      const result = await userRepository['almaPostRequest'](
-        path,
-        mockCreateUserBody,
-      );
-
-      expect(axios.post).toHaveBeenCalledWith(path, mockCreateUserBody);
-      expect(result).toEqual(mockCreateUserAxiosResponse.data);
-    });
-
-    it('should throw an AppError if request fails', async () => {
-      const errorResponse = {
-        response: {
-          data: {
-            error: {
-              status: 500,
-              code: 'ERROR_CODE',
-              message: 'Error message',
-            },
-          },
-        },
-      };
-
-      (
-        axios.post as jest.MockedFunction<typeof axios.post>
-      ).mockRejectedValueOnce(errorResponse);
-
-      const path = 'example.com/api';
-
-      try {
-        await userRepository['almaPostRequest'](path, mockCreateUserBody);
-      } catch (error) {
-        expect(error).toBeInstanceOf(AppError);
-        expect(error.code).toBe('ERROR_CODE');
-        expect(error.message).toBe('Error message');
-      }
-    });
-  });
-
-  describe('almaGetRequest', () => {
-    it('should make a get request and return response data', async () => {
-      (
-        axios.get as jest.MockedFunction<typeof axios.get>
-      ).mockResolvedValueOnce(mockGetUserAxiosResponse);
-
-      const path = 'example.com/api/:id';
-
-      const result = await userRepository['almaGetRequest'](
-        path,
-        mockAccessToken,
-      );
-
-      expect(axios.get).toHaveBeenCalledWith(
-        path,
-        expect.objectContaining({
-          headers: {
-            Authorization: `Bearer ${mockAccessToken}`,
-          },
-        }),
-      );
-      expect(result).toEqual(mockGetUserAxiosResponse.data);
-    });
-
-    it('should throw an AppError if request fails', async () => {
-      const errorResponse = {
-        response: {
-          data: {
-            error: {
-              status: 500,
-              code: 'ERROR_CODE',
-              message: 'Error message',
-            },
-          },
-        },
-      };
-
-      (
-        axios.get as jest.MockedFunction<typeof axios.get>
-      ).mockRejectedValueOnce(errorResponse);
-
-      const path = 'example.com/api/:id';
-
-      try {
-        await userRepository['almaGetRequest'](path, mockAccessToken);
-      } catch (error) {
-        expect(error).toBeInstanceOf(AppError);
-        expect(error.code).toBe('ERROR_CODE');
-        expect(error.message).toBe('Error message');
-      }
-    });
-  });
-
-  describe('almaPatchRequest', () => {
-    it('should make a patch request and return response data', async () => {
-      (
-        axios.patch as jest.MockedFunction<typeof axios.patch>
-      ).mockResolvedValueOnce(mockUpdateUserAxiosResponse);
-
-      const path = 'example.com/api/:id';
-
-      const result = await userRepository['almaPatchRequest'](
-        path,
-        mockAccessToken,
-        mockUserDataToUpdate,
-      );
-
-      expect(axios.patch).toHaveBeenCalledWith(
-        path,
-        mockUserDataToUpdate,
-        expect.objectContaining({
-          headers: {
-            Authorization: `Bearer ${mockAccessToken}`,
-          },
-        }),
-      );
-      expect(result).toEqual(mockUpdateUserAxiosResponse.data);
-    });
-
-    it('should throw an AppError if request fails', async () => {
-      const errorResponse = {
-        response: {
-          data: {
-            error: {
-              status: 500,
-              code: 'ERROR_CODE',
-              message: 'Error message',
-            },
-          },
-        },
-      };
-
-      (
-        axios.patch as jest.MockedFunction<typeof axios.patch>
-      ).mockRejectedValueOnce(errorResponse);
-
-      const path = 'example.com/api/:id';
-
-      try {
-        await userRepository['almaPatchRequest'](
-          path,
-          mockAccessToken,
-          mockUserDataToUpdate,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(AppError);
-        expect(error.code).toBe('ERROR_CODE');
-        expect(error.message).toBe('Error message');
       }
     });
   });

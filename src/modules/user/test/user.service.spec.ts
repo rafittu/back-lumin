@@ -121,6 +121,25 @@ describe('UserService', () => {
       }
     });
 
+    it('should throw an App Error', async () => {
+      process.env.ADMIN_SIGNUP_TOKEN = 'admin_signup_token';
+
+      jest
+        .spyOn(userRepository, 'createUser')
+        .mockRejectedValueOnce(
+          new AppError('error.code', 401, 'Error message'),
+        );
+
+      try {
+        mockCreateUserBody.signupToken = 'admin_signup_token';
+        await createAdminService.execute(mockCreateUserBody);
+      } catch (error) {
+        delete process.env.ADMIN_SIGNUP_TOKEN;
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(401);
+      }
+    });
+
     it('should throw an error', async () => {
       process.env.ADMIN_SIGNUP_TOKEN = 'admin_signup_token';
       mockCreateUserBody.signupToken = 'admin_signup_token';
@@ -151,7 +170,22 @@ describe('UserService', () => {
       expect(result).toEqual('accessToken');
     });
 
-    it('should throw an error', async () => {
+    it('should throw an App Error', async () => {
+      jest
+        .spyOn(userRepository, 'createUser')
+        .mockRejectedValueOnce(
+          new AppError('error.code', 409, 'Error message'),
+        );
+
+      try {
+        await createClientService.execute(mockCreateUserBody);
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        expect(error.code).toBe(409);
+      }
+    });
+
+    it('should throw an internal error', async () => {
       jest
         .spyOn(userRepository, 'createUser')
         .mockRejectedValueOnce(new Error());

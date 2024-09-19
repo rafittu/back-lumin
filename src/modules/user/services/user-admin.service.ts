@@ -38,6 +38,10 @@ export class CreateAdminUserService {
 
       return accessToken;
     } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
       throw new AppError('user-service.createAdminUser', 400, error.message);
     }
   }
